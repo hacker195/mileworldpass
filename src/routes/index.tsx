@@ -483,7 +483,6 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
               <div className="my-8 h-px bg-gradient-to-r from-transparent via-chrome-soft/40 to-transparent" />
 
               <PassRow label="Invitado" value={guest.nombre || "—"} />
-              <PassRow label="Invitación válida para" value={guest.invitacionPara || "—"} />
               <PassRow label="Fecha" value="01 · 01 · 2027" />
               <PassRow label="Hora" value="20:30 hs" />
               <PassRow label="Lugar" value="Oga Guasu · Salón de Eventos" />
@@ -492,12 +491,12 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
 
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-[8px] tracking-cinema text-chrome-soft/60">Producción</p>
-                  <p className="font-display text-sm text-chrome">Los XV de Mile</p>
+                  <p className="text-[9px] tracking-cinema text-chrome-soft/70">Producción</p>
+                  <p className="font-display text-base text-chrome">MILEWORLD</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[8px] tracking-cinema text-chrome-soft/60">Acceso</p>
-                  <p className="font-mono text-xs text-chrome">
+                  <p className="text-[9px] tracking-cinema text-chrome-soft/70">Acceso</p>
+                  <p className="font-mono text-sm text-chrome">
                     #{hashCode(guest.nombre || "MILE")}
                   </p>
                 </div>
