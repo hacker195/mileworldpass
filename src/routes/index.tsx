@@ -293,10 +293,12 @@ function Experience({ guest }: { guest: GuestData }) {
       <PaseAcceso guest={guest} />
       <AlfombraAzul />
       <CodigoVestimenta />
+      <DetallesParaMile />
       <MileworldSection />
       <ArchivoRestringido />
       <CuentaRegresiva />
       <ConfirmarAcceso guest={guest} />
+      <FirmaFinal />
       <Footer />
     </motion.div>
   );
