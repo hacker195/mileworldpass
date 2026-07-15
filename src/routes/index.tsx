@@ -819,17 +819,17 @@ function diff(target: Date) {
 function ConfirmarAcceso({ guest }: { guest: GuestData }) {
   const [confirmed, setConfirmed] = useState(false);
   const whatsappText = encodeURIComponent(
-    `Confirmo mi acceso a MILEWOOD — Los XV de Mile. Invitado: ${guest.nombre}. Invitación válida para: ${guest.invitacionPara}.`,
+    `Confirmo mi acceso a MILEWORLD. Invitado: ${guest.nombre}.`,
   );
   return (
     <section className="relative px-6 py-32">
       <div className="mx-auto max-w-md text-center">
         <Reveal>
           <SectionLabel>Confirmación</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-5xl text-chrome">
+          <h2 className="mt-4 font-display text-4xl md:text-5xl text-chrome italic">
             Confirmar Acceso
           </h2>
-          <p className="mt-6 text-sm text-muted-foreground">
+          <p className="mt-6 font-display text-base md:text-lg text-muted-foreground italic">
             Activa tu invitación privada. Sin confirmación, tu asiento no
             estará reservado en la sala.
           </p>
@@ -838,14 +838,14 @@ function ConfirmarAcceso({ guest }: { guest: GuestData }) {
         <Reveal delay={0.3}>
           <div className="mt-10 flex flex-col gap-3">
             <a
-              href={`https://wa.me/?text=${whatsappText}`}
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappText}`}
               target="_blank"
               rel="noreferrer"
               onClick={() => setConfirmed(true)}
               className="group relative overflow-hidden rounded-full border border-chrome/40 bg-[oklch(1_0_0/0.05)] py-4 text-[11px] tracking-cinema text-chrome transition-all hover:bg-[oklch(1_0_0/0.1)] hover:border-chrome"
             >
               <span className="relative z-10">
-                {confirmed ? "Acceso Activado ✓" : "Confirmar Acceso"}
+                {confirmed ? "Acceso Activado ✓" : "Confirmar Acceso por WhatsApp"}
               </span>
               <span className="shimmer absolute inset-0" />
             </a>
@@ -864,20 +864,46 @@ function ConfirmarAcceso({ guest }: { guest: GuestData }) {
   );
 }
 
+/* 9b. FIRMA FINAL */
+function FirmaFinal() {
+  return (
+    <section className="relative px-6 py-24">
+      <div className="mx-auto max-w-md text-center">
+        <Reveal>
+          <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-chrome-soft/50 to-transparent" />
+          <p className="mt-8 text-[10px] tracking-cinema text-chrome-soft/70">
+            Con cariño,
+          </p>
+          <p
+            className="mt-4 text-chrome text-5xl md:text-6xl leading-none"
+            style={{ fontFamily: "var(--font-signature)" }}
+          >
+            Milena
+          </p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
-    <footer className="relative px-6 pb-16 pt-24 text-center">
-      <div className="mx-auto max-w-md">
-        <img src={mLogo.url} alt="M" className="mx-auto h-16 w-16 opacity-70" />
-        <p className="mt-6 font-display text-lg italic text-chrome/80">
-          Los XV de Mile
+    <footer className="relative px-6 pb-16 pt-16 text-center">
+      <div className="mx-auto max-w-md space-y-5">
+        <p
+          className="font-display text-5xl text-chrome/90"
+          style={{ letterSpacing: "0.1em" }}
+        >
+          M
         </p>
-        <p className="mt-2 text-[10px] tracking-cinema text-chrome-soft/60">
-          Una producción de Milewood
+        <p className="text-[10px] tracking-cinema text-chrome-soft/70">
+          Una producción MILEWORLD
         </p>
-        <div className="mt-8 h-px bg-gradient-to-r from-transparent via-chrome-soft/30 to-transparent" />
-        <p className="mt-6 text-[9px] tracking-cinema text-chrome-soft/40">
-          © MMXXVII · All Access Reserved
+        <p className="text-[9px] tracking-cinema text-chrome-soft/50">
+          Access Reserved
+        </p>
+        <p className="text-[9px] tracking-cinema text-chrome-soft/40">
+          MMXXV
         </p>
       </div>
     </footer>
