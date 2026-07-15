@@ -876,4 +876,3 @@ function MusicPlayer({ active }: { active: boolean }) {
     </>
   );
 }
-}
