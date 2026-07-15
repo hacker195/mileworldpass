@@ -521,9 +521,11 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
 
 function PassRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="mb-3">
-      <p className="text-[8px] tracking-cinema text-chrome-soft/60">{label}</p>
-      <p className="mt-1 font-display text-base text-chrome">{value}</p>
+    <div className="mb-4">
+      <p className="text-[10px] tracking-cinema text-chrome-soft/70">{label}</p>
+      <p className="mt-1.5 font-display text-lg md:text-xl text-chrome leading-tight">
+        {value}
+      </p>
     </div>
   );
 }
@@ -538,24 +540,41 @@ function hashCode(str: string) {
 function AlfombraAzul() {
   return (
     <section className="relative min-h-[90vh] px-6 py-32">
+      {/* subtle premiere ambience — light beams, no literal carpet */}
       <div className="absolute inset-0 overflow-hidden">
-        <img src={carpetImg} alt="" className="h-full w-full object-cover opacity-50" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.05_0.02_260)] via-transparent to-[oklch(0.05_0.02_260)]" />
+        <div className="absolute left-1/2 top-0 h-full w-[60%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.14_258/0.35),transparent_60%)]" />
+        <div
+          className="absolute left-[10%] top-[-10%] h-[120%] w-[30%] rotate-[8deg] opacity-40"
+          style={{
+            background:
+              "linear-gradient(to bottom, oklch(0.7 0.14 258 / 0.25), transparent 70%)",
+            filter: "blur(30px)",
+          }}
+        />
+        <div
+          className="absolute right-[10%] top-[-10%] h-[120%] w-[30%] -rotate-[8deg] opacity-40"
+          style={{
+            background:
+              "linear-gradient(to bottom, oklch(0.7 0.14 258 / 0.25), transparent 70%)",
+            filter: "blur(30px)",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[oklch(0.05_0.02_260/0.4)] to-[oklch(0.05_0.02_260)]" />
       </div>
       <div className="relative mx-auto max-w-2xl text-center">
         <Reveal>
-          <SectionLabel>Capítulo II</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome">
+          <SectionLabel>MILEWORLD · Entrada</SectionLabel>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
             Alfombra Azul
           </h2>
         </Reveal>
         <Reveal delay={0.3}>
           <p className="mt-10 font-display text-xl md:text-2xl italic leading-relaxed text-chrome/90">
-            "Antes de que las luces se enciendan, comienza el primer momento
-            de la experiencia."
+            Antes de que las luces se enciendan, comienza el primer momento
+            de la experiencia.
           </p>
-          <p className="mt-6 text-sm text-muted-foreground">
-            Tu llegada es parte del guión. Camina despacio. Todos están mirando.
+          <p className="mt-6 font-display text-base md:text-lg text-muted-foreground italic">
+            Tu llegada también forma parte del guion.
           </p>
         </Reveal>
       </div>
@@ -570,32 +589,58 @@ function CodigoVestimenta() {
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
           <SectionLabel>Dress Code</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome">
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
             Código de Vestimenta
           </h2>
         </Reveal>
         <Reveal delay={0.3}>
-          <div className="glass-panel chrome-border mt-12 rounded-2xl p-10">
-            <p className="text-[10px] tracking-cinema text-chrome-soft/70">Tema</p>
-            <p className="mt-4 font-display text-3xl md:text-5xl text-chrome italic">
-              Noche de Estreno
+          <div className="glass-panel chrome-border mt-12 rounded-2xl p-10 md:p-12">
+            <p className="font-display text-2xl md:text-3xl italic text-chrome/90 leading-relaxed">
+              Una noche especial merece una presencia especial.
             </p>
             <div className="my-8 h-px bg-gradient-to-r from-transparent via-chrome-soft/40 to-transparent" />
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-              Elegancia cinematográfica. Tonos oscuros, metálicos y cromados.
-              Vístete como si esta noche fuera tu premiere.
+            <p className="font-display text-base md:text-lg text-muted-foreground italic">
+              Vístete para una premiere.
             </p>
-            <div className="mt-8 flex justify-center gap-3">
-              {["oklch(0.08 0.03 260)", "oklch(0.18 0.05 262)", "oklch(0.55 0.14 258)", "oklch(0.92 0.008 250)"].map(
-                (c) => (
-                  <div
-                    key={c}
-                    className="h-10 w-10 rounded-full border border-chrome-soft/30 shadow-lg"
-                    style={{ background: c }}
-                  />
-                ),
-              )}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* 5b. DETALLES PARA MILE */
+function DetallesParaMile() {
+  return (
+    <section className="relative px-6 py-32">
+      <div className="mx-auto max-w-2xl text-center">
+        <Reveal>
+          <SectionLabel>Un gesto</SectionLabel>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
+            Detalles para Mile
+          </h2>
+        </Reveal>
+        <Reveal delay={0.3}>
+          <div className="glass-panel chrome-border mt-12 rounded-2xl p-10">
+            <p className="font-display text-lg md:text-xl italic text-chrome/90 leading-relaxed">
+              Para quienes deseen acompañar la noche con un regalo, dejamos
+              disponible el alias para transferencia.
+            </p>
+            <div className="mt-8">
+              <p className="text-[10px] tracking-cinema text-chrome-soft/70">Alias</p>
+              <p className="mt-2 font-mono text-xl md:text-2xl text-chrome tracking-wider">
+                {GIFT_ALIAS}
+              </p>
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard?.writeText(GIFT_ALIAS).catch(() => {});
+              }}
+              className="mt-8 inline-flex items-center justify-center rounded-full border border-chrome-soft/40 bg-[oklch(1_0_0/0.04)] px-8 py-3.5 text-[11px] tracking-cinema text-chrome transition-all hover:bg-[oklch(1_0_0/0.08)] hover:border-chrome/60"
+            >
+              Realizar Regalo
+            </button>
           </div>
         </Reveal>
       </div>
@@ -610,38 +655,35 @@ function MileworldSection() {
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
           <SectionLabel>El Universo</SectionLabel>
-          <h2 className="mt-4 font-display text-5xl md:text-7xl text-chrome tracking-wide">
-            Mileworld
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic tracking-wide">
+            El Universo MILEWORLD
           </h2>
         </Reveal>
         <Reveal delay={0.3}>
-          <p className="mt-8 font-display text-xl md:text-2xl italic text-chrome/85">
-            No es un lugar. Es un mundo que existe una sola noche.
+          <p className="mt-8 font-display text-xl md:text-2xl italic text-chrome/90 leading-relaxed">
+            MILEWORLD es el universo de Mile: un mundo pensado con lugares,
+            experiencias e inspiraciones propias, creado para una sola noche.
           </p>
-          <p className="mt-6 text-sm text-muted-foreground leading-relaxed">
-            Cada rincón, cada mesa, cada luz forma parte de un mismo relato.
-            Lo que verás allí no existe en ningún otro lugar — y no volverá
-            a existir.
+          <p className="mt-6 font-display text-base md:text-lg text-muted-foreground italic leading-relaxed">
+            Cada espacio tiene su propia atmósfera. Cada escena, su intención.
+            Los detalles se revelarán cuando abran las puertas.
           </p>
         </Reveal>
 
         <Reveal delay={0.5}>
           <div className="mt-14 grid grid-cols-2 gap-3 text-left">
             {[
-              "Escenas ocultas",
-              "Personajes secundarios",
-              "Momentos sin guion",
-              "Un final reservado",
-            ].map((t, i) => (
+              "Lugares",
+              "Experiencias",
+              "Inspiración",
+              "Atmósfera",
+            ].map((t) => (
               <motion.div
                 key={t}
                 whileHover={{ y: -4 }}
-                className="glass-panel rounded-xl p-4"
+                className="glass-panel rounded-xl p-5"
               >
-                <p className="text-[8px] tracking-cinema text-chrome-soft/60">
-                  Escena {String(i + 1).padStart(2, "0")}
-                </p>
-                <p className="mt-2 font-display text-base text-chrome">{t}</p>
+                <p className="font-display text-lg text-chrome italic">{t}</p>
               </motion.div>
             ))}
           </div>
