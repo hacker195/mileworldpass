@@ -345,13 +345,32 @@ function Inicio() {
       ref={ref}
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-6"
     >
-      <motion.img
-        src={heroImg}
-        alt=""
-        style={{ y }}
-        className="absolute inset-0 h-full w-full object-cover opacity-40"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[oklch(0.06_0.03_260/0.6)] to-[oklch(0.05_0.02_260)]" />
+      {/* Subtle cinematic backdrop — distant premiere lights, no obvious scenery */}
+      <motion.div style={{ y }} className="absolute inset-0 overflow-hidden">
+        <img
+          src={heroImg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.18] scale-110"
+          style={{ filter: "blur(2px) saturate(0.7)" }}
+        />
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.14_258/0.25),transparent_70%)]" />
+        {/* distant city / premiere light specks */}
+        {Array.from({ length: 40 }).map((_, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full bg-chrome/60"
+            style={{
+              left: `${(i * 37) % 100}%`,
+              top: `${55 + ((i * 13) % 35)}%`,
+              width: 1 + (i % 3),
+              height: 1 + (i % 3),
+              opacity: 0.15 + ((i % 5) / 10),
+              filter: "blur(0.5px)",
+            }}
+          />
+        ))}
+      </motion.div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.05_0.02_260/0.4)] via-[oklch(0.06_0.03_260/0.7)] to-[oklch(0.05_0.02_260)]" />
       <motion.div style={{ opacity }} className="relative z-10 text-center max-w-2xl">
         <SectionLabel>Inicio</SectionLabel>
         <img
@@ -360,10 +379,10 @@ function Inicio() {
           className="mx-auto my-8 w-72 md:w-96 opacity-95 drop-shadow-[0_0_60px_oklch(0.55_0.18_258/0.5)]"
         />
         <Reveal delay={0.3}>
-          <p className="font-display text-xl md:text-2xl italic text-chrome/90 leading-relaxed">
+          <p className="font-display text-2xl md:text-3xl italic text-chrome/95 leading-relaxed tracking-wide">
             Bienvenido al universo de Mile.
           </p>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="mt-4 text-sm text-muted-foreground font-display italic">
             Las luces se atenúan. La función está por comenzar.
           </p>
         </Reveal>
@@ -387,35 +406,38 @@ function Produccion() {
     <section className="relative px-6 py-32">
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
-          <SectionLabel>Capítulo I</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome">
+          <SectionLabel>MILEWORLD</SectionLabel>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
             La Producción
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <div className="mt-8 h-px w-24 mx-auto bg-gradient-to-r from-transparent via-chrome-soft to-transparent" />
-          <p className="mt-8 font-display text-xl md:text-2xl italic leading-relaxed text-chrome/85">
-            "Milewood no es un evento. Es una producción."
+          <p className="mt-8 font-display text-xl md:text-2xl italic leading-relaxed text-chrome/90">
+            MILEWORLD no es simplemente una celebración. Es una producción
+            creada para una noche especial.
           </p>
-          <p className="mt-6 text-sm md:text-base leading-relaxed text-muted-foreground">
-            Cada detalle de esta noche fue pensado como una escena. Cada
-            invitado, parte del reparto. Lo que verás es solo el tráiler —
-            la película se estrena el 01 de enero de 2027.
+          <p className="mt-6 font-display text-base md:text-lg leading-relaxed text-muted-foreground">
+            Cada detalle de esta noche fue pensado como parte de una escena.
+            Como invitado, formas parte del reparto. Por ahora solo conocerás
+            el tráiler. La historia completa será revelada al abrirse las
+            puertas de MILEWORLD.
           </p>
         </Reveal>
 
         <Reveal delay={0.4}>
-          <div className="mt-14 grid grid-cols-3 gap-4 text-center">
+          <div className="mt-14 grid grid-cols-2 gap-4 text-center">
             {[
-              { k: "Dirección", v: "Milewood" },
-              { k: "Protagonista", v: "Mile" },
+              { k: "Protagonista", v: "Milena Montiel Chaparro" },
               { k: "Género", v: "Reservado" },
             ].map((c) => (
-              <div key={c.k} className="glass-panel rounded-xl px-2 py-4">
-                <p className="text-[8px] tracking-cinema text-chrome-soft/60">
+              <div key={c.k} className="glass-panel rounded-xl px-4 py-5">
+                <p className="text-[9px] tracking-cinema text-chrome-soft/70">
                   {c.k}
                 </p>
-                <p className="mt-2 font-display text-sm text-chrome">{c.v}</p>
+                <p className="mt-2 font-display text-base text-chrome leading-tight">
+                  {c.v}
+                </p>
               </div>
             ))}
           </div>
