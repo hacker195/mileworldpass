@@ -81,9 +81,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Una producción de MILEWORLD. Invitación privada a la premiere de Milena Montiel — 01 · 01 · 2027." },
       { name: "author", content: "MILEWORLD" },
       { property: "og:title", content: "MILEWORLD — Milena Montiel" },
-      { property: "og:description", content: "Una producción de MILEWORLD. 01 · 01 · 2027." },
+      { property: "og:description", content: "Una producción de MILEWORLD. Invitación privada a la premiere de Milena Montiel — 01 · 01 · 2027." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "MILEWORLD — Milena Montiel" },
+      { name: "twitter:description", content: "Una producción de MILEWORLD. Invitación privada a la premiere de Milena Montiel — 01 · 01 · 2027." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/uXHdd0loPhX0OajJHkvUjfKaGuH2/social-images/social-1784110937024-SAVE_THE_DATE_(Presentación).webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/uXHdd0loPhX0OajJHkvUjfKaGuH2/social-images/social-1784110937024-SAVE_THE_DATE_(Presentación).webp" },
     ],
     links: [
       {
