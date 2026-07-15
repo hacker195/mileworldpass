@@ -5,7 +5,6 @@ import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark.png.asset.json";
 import heroImg from "@/assets/mileworld-hero.jpg";
 import chromeImg from "@/assets/mileworld-chrome.jpg";
-import carpetImg from "@/assets/mileworld-carpet.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -15,16 +14,17 @@ type Stage = "intro" | "access" | "experience";
 
 interface GuestData {
   nombre: string;
-  invitacionPara: string;
 }
 
 const EVENT_DATE = new Date("2027-01-01T20:30:00-03:00");
 const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Oga+Guasu+Salon+de+Eventos";
+const WHATSAPP_NUMBER = "19313275485";
+const GIFT_ALIAS = "CI 3.510.962";
 
 function Index() {
   const [stage, setStage] = useState<Stage>("intro");
-  const [guest, setGuest] = useState<GuestData>({ nombre: "", invitacionPara: "" });
+  const [guest, setGuest] = useState<GuestData>({ nombre: "" });
 
   return (
     <main className="relative min-h-screen bg-midnight text-foreground overflow-hidden font-sans">
@@ -69,6 +69,20 @@ function AmbientBackground() {
         className="spotlight right-[-10vw] top-[10vh]"
         style={{ animationDelay: "-6s" }}
       />
+      {/* Signature save-the-date orb — large soft bubble */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 3 }}
+        className="absolute left-1/2 top-1/2 h-[70vw] w-[70vw] max-h-[520px] max-w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle at 35% 30%, oklch(0.85 0.05 258 / 0.18), oklch(0.55 0.14 258 / 0.08) 45%, transparent 70%)",
+          filter: "blur(30px)",
+          animation: "float-particle 14s ease-in-out infinite",
+        }}
+      />
       {particles.map((p) => (
         <span
           key={p.id}
@@ -111,15 +125,15 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
           transition={{ duration: 2.5, delay: 0.3 }}
           className="text-[10px] tracking-cinema text-chrome-soft mb-8"
         >
-          Una producción de Milewood
+          Una producción de MILEWORLD
         </motion.p>
 
         <motion.img
           src={mLogo.url}
-          alt="MILEWOOD"
-          width={220}
-          height={220}
-          className="w-40 h-40 md:w-52 md:h-52 object-contain opacity-90 drop-shadow-[0_0_40px_oklch(0.55_0.18_258/0.6)]"
+          alt="M"
+          width={340}
+          height={340}
+          className="w-64 h-64 md:w-80 md:h-80 object-contain opacity-95 drop-shadow-[0_0_60px_oklch(0.55_0.18_258/0.7)]"
           initial={{ scale: 0.6, opacity: 0, rotate: -8 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ duration: 2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -132,17 +146,17 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
           className="mt-10 flex flex-col items-center"
         >
           <h1 className="font-display text-chrome text-4xl md:text-6xl leading-none tracking-wide">
-            MILEWOOD
+            MILEWORLD
           </h1>
-          <div className="my-5 flex items-center gap-3 opacity-70">
+          <div className="my-6 flex items-center gap-3 opacity-70">
             <span className="h-px w-10 bg-chrome-soft/60" />
-            <span className="text-[10px] tracking-cinema text-chrome-soft">
-              presenta
-            </span>
             <span className="h-px w-10 bg-chrome-soft/60" />
           </div>
-          <p className="font-display italic text-2xl md:text-3xl text-chrome/90">
-            Los XV de Mile
+          <p
+            className="text-chrome/95 text-4xl md:text-5xl leading-none"
+            style={{ fontFamily: 'var(--font-signature)' }}
+          >
+            Milena Montiel
           </p>
         </motion.div>
       </motion.div>
@@ -176,14 +190,12 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
 
 function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
   const [nombre, setNombre] = useState("");
-  const [invitacionPara, setInvitacionPara] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const n = nombre.trim().slice(0, 80);
-    const i = invitacionPara.trim().slice(0, 200);
     if (!n) return;
-    onSubmit({ nombre: n, invitacionPara: i || n });
+    onSubmit({ nombre: n });
   };
 
   return (
@@ -203,14 +215,11 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
       >
         <div className="mb-8 text-center">
           <p className="text-[9px] tracking-cinema text-chrome-soft/70">
-            Milewood · Control de Acceso
+            MILEWORLD · Control de Acceso
           </p>
           <h2 className="mt-3 font-display text-2xl text-chrome md:text-3xl">
             Identifica tu acceso
           </h2>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Ingresa los datos de tu invitación para desbloquear la experiencia.
-          </p>
         </div>
 
         <div className="space-y-5">
@@ -222,13 +231,6 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
             maxLength={80}
             required
           />
-          <Field
-            label="Invitación válida para"
-            value={invitacionPara}
-            onChange={setInvitacionPara}
-            placeholder="Personas incluidas en tu invitación"
-            maxLength={200}
-          />
         </div>
 
         <button
@@ -238,10 +240,6 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
         >
           Continuar
         </button>
-
-        <p className="mt-6 text-center text-[9px] tracking-cinema text-chrome-soft/50">
-          Acceso exclusivo · No compartir
-        </p>
       </motion.form>
     </motion.section>
   );
@@ -295,10 +293,12 @@ function Experience({ guest }: { guest: GuestData }) {
       <PaseAcceso guest={guest} />
       <AlfombraAzul />
       <CodigoVestimenta />
+      <DetallesParaMile />
       <MileworldSection />
       <ArchivoRestringido />
       <CuentaRegresiva />
       <ConfirmarAcceso guest={guest} />
+      <FirmaFinal />
       <Footer />
     </motion.div>
   );
@@ -345,13 +345,32 @@ function Inicio() {
       ref={ref}
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-6"
     >
-      <motion.img
-        src={heroImg}
-        alt=""
-        style={{ y }}
-        className="absolute inset-0 h-full w-full object-cover opacity-40"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[oklch(0.06_0.03_260/0.6)] to-[oklch(0.05_0.02_260)]" />
+      {/* Subtle cinematic backdrop — distant premiere lights, no obvious scenery */}
+      <motion.div style={{ y }} className="absolute inset-0 overflow-hidden">
+        <img
+          src={heroImg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.18] scale-110"
+          style={{ filter: "blur(2px) saturate(0.7)" }}
+        />
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.14_258/0.25),transparent_70%)]" />
+        {/* distant city / premiere light specks */}
+        {Array.from({ length: 40 }).map((_, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full bg-chrome/60"
+            style={{
+              left: `${(i * 37) % 100}%`,
+              top: `${55 + ((i * 13) % 35)}%`,
+              width: 1 + (i % 3),
+              height: 1 + (i % 3),
+              opacity: 0.15 + ((i % 5) / 10),
+              filter: "blur(0.5px)",
+            }}
+          />
+        ))}
+      </motion.div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.05_0.02_260/0.4)] via-[oklch(0.06_0.03_260/0.7)] to-[oklch(0.05_0.02_260)]" />
       <motion.div style={{ opacity }} className="relative z-10 text-center max-w-2xl">
         <SectionLabel>Inicio</SectionLabel>
         <img
@@ -360,10 +379,10 @@ function Inicio() {
           className="mx-auto my-8 w-72 md:w-96 opacity-95 drop-shadow-[0_0_60px_oklch(0.55_0.18_258/0.5)]"
         />
         <Reveal delay={0.3}>
-          <p className="font-display text-xl md:text-2xl italic text-chrome/90 leading-relaxed">
+          <p className="font-display text-2xl md:text-3xl italic text-chrome/95 leading-relaxed tracking-wide">
             Bienvenido al universo de Mile.
           </p>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="mt-4 text-sm text-muted-foreground font-display italic">
             Las luces se atenúan. La función está por comenzar.
           </p>
         </Reveal>
@@ -387,35 +406,38 @@ function Produccion() {
     <section className="relative px-6 py-32">
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
-          <SectionLabel>Capítulo I</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome">
+          <SectionLabel>MILEWORLD</SectionLabel>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
             La Producción
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <div className="mt-8 h-px w-24 mx-auto bg-gradient-to-r from-transparent via-chrome-soft to-transparent" />
-          <p className="mt-8 font-display text-xl md:text-2xl italic leading-relaxed text-chrome/85">
-            "Milewood no es un evento. Es una producción."
+          <p className="mt-8 font-display text-xl md:text-2xl italic leading-relaxed text-chrome/90">
+            MILEWORLD no es simplemente una celebración. Es una producción
+            creada para una noche especial.
           </p>
-          <p className="mt-6 text-sm md:text-base leading-relaxed text-muted-foreground">
-            Cada detalle de esta noche fue pensado como una escena. Cada
-            invitado, parte del reparto. Lo que verás es solo el tráiler —
-            la película se estrena el 01 de enero de 2027.
+          <p className="mt-6 font-display text-base md:text-lg leading-relaxed text-muted-foreground">
+            Cada detalle de esta noche fue pensado como parte de una escena.
+            Como invitado, formas parte del reparto. Por ahora solo conocerás
+            el tráiler. La historia completa será revelada al abrirse las
+            puertas de MILEWORLD.
           </p>
         </Reveal>
 
         <Reveal delay={0.4}>
-          <div className="mt-14 grid grid-cols-3 gap-4 text-center">
+          <div className="mt-14 grid grid-cols-2 gap-4 text-center">
             {[
-              { k: "Dirección", v: "Milewood" },
-              { k: "Protagonista", v: "Mile" },
+              { k: "Protagonista", v: "Milena Montiel Chaparro" },
               { k: "Género", v: "Reservado" },
             ].map((c) => (
-              <div key={c.k} className="glass-panel rounded-xl px-2 py-4">
-                <p className="text-[8px] tracking-cinema text-chrome-soft/60">
+              <div key={c.k} className="glass-panel rounded-xl px-4 py-5">
+                <p className="text-[9px] tracking-cinema text-chrome-soft/70">
                   {c.k}
                 </p>
-                <p className="mt-2 font-display text-sm text-chrome">{c.v}</p>
+                <p className="mt-2 font-display text-base text-chrome leading-tight">
+                  {c.v}
+                </p>
               </div>
             ))}
           </div>
@@ -461,7 +483,6 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
               <div className="my-8 h-px bg-gradient-to-r from-transparent via-chrome-soft/40 to-transparent" />
 
               <PassRow label="Invitado" value={guest.nombre || "—"} />
-              <PassRow label="Invitación válida para" value={guest.invitacionPara || "—"} />
               <PassRow label="Fecha" value="01 · 01 · 2027" />
               <PassRow label="Hora" value="20:30 hs" />
               <PassRow label="Lugar" value="Oga Guasu · Salón de Eventos" />
@@ -470,12 +491,12 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
 
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-[8px] tracking-cinema text-chrome-soft/60">Producción</p>
-                  <p className="font-display text-sm text-chrome">Los XV de Mile</p>
+                  <p className="text-[9px] tracking-cinema text-chrome-soft/70">Producción</p>
+                  <p className="font-display text-base text-chrome">MILEWORLD</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[8px] tracking-cinema text-chrome-soft/60">Acceso</p>
-                  <p className="font-mono text-xs text-chrome">
+                  <p className="text-[9px] tracking-cinema text-chrome-soft/70">Acceso</p>
+                  <p className="font-mono text-sm text-chrome">
                     #{hashCode(guest.nombre || "MILE")}
                   </p>
                 </div>
@@ -500,9 +521,11 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
 
 function PassRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="mb-3">
-      <p className="text-[8px] tracking-cinema text-chrome-soft/60">{label}</p>
-      <p className="mt-1 font-display text-base text-chrome">{value}</p>
+    <div className="mb-4">
+      <p className="text-[10px] tracking-cinema text-chrome-soft/70">{label}</p>
+      <p className="mt-1.5 font-display text-lg md:text-xl text-chrome leading-tight">
+        {value}
+      </p>
     </div>
   );
 }
@@ -517,24 +540,41 @@ function hashCode(str: string) {
 function AlfombraAzul() {
   return (
     <section className="relative min-h-[90vh] px-6 py-32">
+      {/* subtle premiere ambience — light beams, no literal carpet */}
       <div className="absolute inset-0 overflow-hidden">
-        <img src={carpetImg} alt="" className="h-full w-full object-cover opacity-50" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.05_0.02_260)] via-transparent to-[oklch(0.05_0.02_260)]" />
+        <div className="absolute left-1/2 top-0 h-full w-[60%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.14_258/0.35),transparent_60%)]" />
+        <div
+          className="absolute left-[10%] top-[-10%] h-[120%] w-[30%] rotate-[8deg] opacity-40"
+          style={{
+            background:
+              "linear-gradient(to bottom, oklch(0.7 0.14 258 / 0.25), transparent 70%)",
+            filter: "blur(30px)",
+          }}
+        />
+        <div
+          className="absolute right-[10%] top-[-10%] h-[120%] w-[30%] -rotate-[8deg] opacity-40"
+          style={{
+            background:
+              "linear-gradient(to bottom, oklch(0.7 0.14 258 / 0.25), transparent 70%)",
+            filter: "blur(30px)",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[oklch(0.05_0.02_260/0.4)] to-[oklch(0.05_0.02_260)]" />
       </div>
       <div className="relative mx-auto max-w-2xl text-center">
         <Reveal>
-          <SectionLabel>Capítulo II</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome">
+          <SectionLabel>MILEWORLD · Entrada</SectionLabel>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
             Alfombra Azul
           </h2>
         </Reveal>
         <Reveal delay={0.3}>
           <p className="mt-10 font-display text-xl md:text-2xl italic leading-relaxed text-chrome/90">
-            "Antes de que las luces se enciendan, comienza el primer momento
-            de la experiencia."
+            Antes de que las luces se enciendan, comienza el primer momento
+            de la experiencia.
           </p>
-          <p className="mt-6 text-sm text-muted-foreground">
-            Tu llegada es parte del guión. Camina despacio. Todos están mirando.
+          <p className="mt-6 font-display text-base md:text-lg text-muted-foreground italic">
+            Tu llegada también forma parte del guion.
           </p>
         </Reveal>
       </div>
@@ -549,32 +589,58 @@ function CodigoVestimenta() {
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
           <SectionLabel>Dress Code</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome">
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
             Código de Vestimenta
           </h2>
         </Reveal>
         <Reveal delay={0.3}>
-          <div className="glass-panel chrome-border mt-12 rounded-2xl p-10">
-            <p className="text-[10px] tracking-cinema text-chrome-soft/70">Tema</p>
-            <p className="mt-4 font-display text-3xl md:text-5xl text-chrome italic">
-              Noche de Estreno
+          <div className="glass-panel chrome-border mt-12 rounded-2xl p-10 md:p-12">
+            <p className="font-display text-2xl md:text-3xl italic text-chrome/90 leading-relaxed">
+              Una noche especial merece una presencia especial.
             </p>
             <div className="my-8 h-px bg-gradient-to-r from-transparent via-chrome-soft/40 to-transparent" />
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-              Elegancia cinematográfica. Tonos oscuros, metálicos y cromados.
-              Vístete como si esta noche fuera tu premiere.
+            <p className="font-display text-base md:text-lg text-muted-foreground italic">
+              Vístete para una premiere.
             </p>
-            <div className="mt-8 flex justify-center gap-3">
-              {["oklch(0.08 0.03 260)", "oklch(0.18 0.05 262)", "oklch(0.55 0.14 258)", "oklch(0.92 0.008 250)"].map(
-                (c) => (
-                  <div
-                    key={c}
-                    className="h-10 w-10 rounded-full border border-chrome-soft/30 shadow-lg"
-                    style={{ background: c }}
-                  />
-                ),
-              )}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* 5b. DETALLES PARA MILE */
+function DetallesParaMile() {
+  return (
+    <section className="relative px-6 py-32">
+      <div className="mx-auto max-w-2xl text-center">
+        <Reveal>
+          <SectionLabel>Un gesto</SectionLabel>
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic">
+            Detalles para Mile
+          </h2>
+        </Reveal>
+        <Reveal delay={0.3}>
+          <div className="glass-panel chrome-border mt-12 rounded-2xl p-10">
+            <p className="font-display text-lg md:text-xl italic text-chrome/90 leading-relaxed">
+              Para quienes deseen acompañar la noche con un regalo, dejamos
+              disponible el alias para transferencia.
+            </p>
+            <div className="mt-8">
+              <p className="text-[10px] tracking-cinema text-chrome-soft/70">Alias</p>
+              <p className="mt-2 font-mono text-xl md:text-2xl text-chrome tracking-wider">
+                {GIFT_ALIAS}
+              </p>
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard?.writeText(GIFT_ALIAS).catch(() => {});
+              }}
+              className="mt-8 inline-flex items-center justify-center rounded-full border border-chrome-soft/40 bg-[oklch(1_0_0/0.04)] px-8 py-3.5 text-[11px] tracking-cinema text-chrome transition-all hover:bg-[oklch(1_0_0/0.08)] hover:border-chrome/60"
+            >
+              Realizar Regalo
+            </button>
           </div>
         </Reveal>
       </div>
@@ -589,38 +655,35 @@ function MileworldSection() {
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
           <SectionLabel>El Universo</SectionLabel>
-          <h2 className="mt-4 font-display text-5xl md:text-7xl text-chrome tracking-wide">
-            Mileworld
+          <h2 className="mt-4 font-display text-4xl md:text-6xl text-chrome italic tracking-wide">
+            El Universo MILEWORLD
           </h2>
         </Reveal>
         <Reveal delay={0.3}>
-          <p className="mt-8 font-display text-xl md:text-2xl italic text-chrome/85">
-            No es un lugar. Es un mundo que existe una sola noche.
+          <p className="mt-8 font-display text-xl md:text-2xl italic text-chrome/90 leading-relaxed">
+            MILEWORLD es el universo de Mile: un mundo pensado con lugares,
+            experiencias e inspiraciones propias, creado para una sola noche.
           </p>
-          <p className="mt-6 text-sm text-muted-foreground leading-relaxed">
-            Cada rincón, cada mesa, cada luz forma parte de un mismo relato.
-            Lo que verás allí no existe en ningún otro lugar — y no volverá
-            a existir.
+          <p className="mt-6 font-display text-base md:text-lg text-muted-foreground italic leading-relaxed">
+            Cada espacio tiene su propia atmósfera. Cada escena, su intención.
+            Los detalles se revelarán cuando abran las puertas.
           </p>
         </Reveal>
 
         <Reveal delay={0.5}>
           <div className="mt-14 grid grid-cols-2 gap-3 text-left">
             {[
-              "Escenas ocultas",
-              "Personajes secundarios",
-              "Momentos sin guion",
-              "Un final reservado",
-            ].map((t, i) => (
+              "Lugares",
+              "Experiencias",
+              "Inspiración",
+              "Atmósfera",
+            ].map((t) => (
               <motion.div
                 key={t}
                 whileHover={{ y: -4 }}
-                className="glass-panel rounded-xl p-4"
+                className="glass-panel rounded-xl p-5"
               >
-                <p className="text-[8px] tracking-cinema text-chrome-soft/60">
-                  Escena {String(i + 1).padStart(2, "0")}
-                </p>
-                <p className="mt-2 font-display text-base text-chrome">{t}</p>
+                <p className="font-display text-lg text-chrome italic">{t}</p>
               </motion.div>
             ))}
           </div>
@@ -756,17 +819,17 @@ function diff(target: Date) {
 function ConfirmarAcceso({ guest }: { guest: GuestData }) {
   const [confirmed, setConfirmed] = useState(false);
   const whatsappText = encodeURIComponent(
-    `Confirmo mi acceso a MILEWOOD — Los XV de Mile. Invitado: ${guest.nombre}. Invitación válida para: ${guest.invitacionPara}.`,
+    `Confirmo mi acceso a MILEWORLD. Invitado: ${guest.nombre}.`,
   );
   return (
     <section className="relative px-6 py-32">
       <div className="mx-auto max-w-md text-center">
         <Reveal>
           <SectionLabel>Confirmación</SectionLabel>
-          <h2 className="mt-4 font-display text-4xl md:text-5xl text-chrome">
+          <h2 className="mt-4 font-display text-4xl md:text-5xl text-chrome italic">
             Confirmar Acceso
           </h2>
-          <p className="mt-6 text-sm text-muted-foreground">
+          <p className="mt-6 font-display text-base md:text-lg text-muted-foreground italic">
             Activa tu invitación privada. Sin confirmación, tu asiento no
             estará reservado en la sala.
           </p>
@@ -775,14 +838,14 @@ function ConfirmarAcceso({ guest }: { guest: GuestData }) {
         <Reveal delay={0.3}>
           <div className="mt-10 flex flex-col gap-3">
             <a
-              href={`https://wa.me/?text=${whatsappText}`}
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappText}`}
               target="_blank"
               rel="noreferrer"
               onClick={() => setConfirmed(true)}
               className="group relative overflow-hidden rounded-full border border-chrome/40 bg-[oklch(1_0_0/0.05)] py-4 text-[11px] tracking-cinema text-chrome transition-all hover:bg-[oklch(1_0_0/0.1)] hover:border-chrome"
             >
               <span className="relative z-10">
-                {confirmed ? "Acceso Activado ✓" : "Confirmar Acceso"}
+                {confirmed ? "Acceso Activado ✓" : "Confirmar Acceso por WhatsApp"}
               </span>
               <span className="shimmer absolute inset-0" />
             </a>
@@ -801,20 +864,46 @@ function ConfirmarAcceso({ guest }: { guest: GuestData }) {
   );
 }
 
+/* 9b. FIRMA FINAL */
+function FirmaFinal() {
+  return (
+    <section className="relative px-6 py-24">
+      <div className="mx-auto max-w-md text-center">
+        <Reveal>
+          <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-chrome-soft/50 to-transparent" />
+          <p className="mt-8 text-[10px] tracking-cinema text-chrome-soft/70">
+            Con cariño,
+          </p>
+          <p
+            className="mt-4 text-chrome text-5xl md:text-6xl leading-none"
+            style={{ fontFamily: "var(--font-signature)" }}
+          >
+            Milena
+          </p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
-    <footer className="relative px-6 pb-16 pt-24 text-center">
-      <div className="mx-auto max-w-md">
-        <img src={mLogo.url} alt="M" className="mx-auto h-16 w-16 opacity-70" />
-        <p className="mt-6 font-display text-lg italic text-chrome/80">
-          Los XV de Mile
+    <footer className="relative px-6 pb-16 pt-16 text-center">
+      <div className="mx-auto max-w-md space-y-5">
+        <p
+          className="font-display text-5xl text-chrome/90"
+          style={{ letterSpacing: "0.1em" }}
+        >
+          M
         </p>
-        <p className="mt-2 text-[10px] tracking-cinema text-chrome-soft/60">
-          Una producción de Milewood
+        <p className="text-[10px] tracking-cinema text-chrome-soft/70">
+          Una producción MILEWORLD
         </p>
-        <div className="mt-8 h-px bg-gradient-to-r from-transparent via-chrome-soft/30 to-transparent" />
-        <p className="mt-6 text-[9px] tracking-cinema text-chrome-soft/40">
-          © MMXXVII · All Access Reserved
+        <p className="text-[9px] tracking-cinema text-chrome-soft/50">
+          Access Reserved
+        </p>
+        <p className="text-[9px] tracking-cinema text-chrome-soft/40">
+          MMXXV
         </p>
       </div>
     </footer>
