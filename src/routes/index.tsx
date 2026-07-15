@@ -5,7 +5,6 @@ import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark.png.asset.json";
 import heroImg from "@/assets/mileworld-hero.jpg";
 import chromeImg from "@/assets/mileworld-chrome.jpg";
-import carpetImg from "@/assets/mileworld-carpet.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -15,16 +14,17 @@ type Stage = "intro" | "access" | "experience";
 
 interface GuestData {
   nombre: string;
-  invitacionPara: string;
 }
 
 const EVENT_DATE = new Date("2027-01-01T20:30:00-03:00");
 const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Oga+Guasu+Salon+de+Eventos";
+const WHATSAPP_NUMBER = "19313275485";
+const GIFT_ALIAS = "CI 3.510.962";
 
 function Index() {
   const [stage, setStage] = useState<Stage>("intro");
-  const [guest, setGuest] = useState<GuestData>({ nombre: "", invitacionPara: "" });
+  const [guest, setGuest] = useState<GuestData>({ nombre: "" });
 
   return (
     <main className="relative min-h-screen bg-midnight text-foreground overflow-hidden font-sans">
@@ -69,6 +69,20 @@ function AmbientBackground() {
         className="spotlight right-[-10vw] top-[10vh]"
         style={{ animationDelay: "-6s" }}
       />
+      {/* Signature save-the-date orb — large soft bubble */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 3 }}
+        className="absolute left-1/2 top-1/2 h-[70vw] w-[70vw] max-h-[520px] max-w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle at 35% 30%, oklch(0.85 0.05 258 / 0.18), oklch(0.55 0.14 258 / 0.08) 45%, transparent 70%)",
+          filter: "blur(30px)",
+          animation: "float-particle 14s ease-in-out infinite",
+        }}
+      />
       {particles.map((p) => (
         <span
           key={p.id}
@@ -111,15 +125,15 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
           transition={{ duration: 2.5, delay: 0.3 }}
           className="text-[10px] tracking-cinema text-chrome-soft mb-8"
         >
-          Una producción de Milewood
+          Una producción de MILEWORLD
         </motion.p>
 
         <motion.img
           src={mLogo.url}
-          alt="MILEWOOD"
-          width={220}
-          height={220}
-          className="w-40 h-40 md:w-52 md:h-52 object-contain opacity-90 drop-shadow-[0_0_40px_oklch(0.55_0.18_258/0.6)]"
+          alt="M"
+          width={340}
+          height={340}
+          className="w-64 h-64 md:w-80 md:h-80 object-contain opacity-95 drop-shadow-[0_0_60px_oklch(0.55_0.18_258/0.7)]"
           initial={{ scale: 0.6, opacity: 0, rotate: -8 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ duration: 2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -132,17 +146,17 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
           className="mt-10 flex flex-col items-center"
         >
           <h1 className="font-display text-chrome text-4xl md:text-6xl leading-none tracking-wide">
-            MILEWOOD
+            MILEWORLD
           </h1>
-          <div className="my-5 flex items-center gap-3 opacity-70">
+          <div className="my-6 flex items-center gap-3 opacity-70">
             <span className="h-px w-10 bg-chrome-soft/60" />
-            <span className="text-[10px] tracking-cinema text-chrome-soft">
-              presenta
-            </span>
             <span className="h-px w-10 bg-chrome-soft/60" />
           </div>
-          <p className="font-display italic text-2xl md:text-3xl text-chrome/90">
-            Los XV de Mile
+          <p
+            className="text-chrome/95 text-4xl md:text-5xl leading-none"
+            style={{ fontFamily: 'var(--font-signature)' }}
+          >
+            Milena Montiel
           </p>
         </motion.div>
       </motion.div>
@@ -176,14 +190,12 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
 
 function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
   const [nombre, setNombre] = useState("");
-  const [invitacionPara, setInvitacionPara] = useState("");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const n = nombre.trim().slice(0, 80);
-    const i = invitacionPara.trim().slice(0, 200);
     if (!n) return;
-    onSubmit({ nombre: n, invitacionPara: i || n });
+    onSubmit({ nombre: n });
   };
 
   return (
@@ -203,14 +215,11 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
       >
         <div className="mb-8 text-center">
           <p className="text-[9px] tracking-cinema text-chrome-soft/70">
-            Milewood · Control de Acceso
+            MILEWORLD · Control de Acceso
           </p>
           <h2 className="mt-3 font-display text-2xl text-chrome md:text-3xl">
             Identifica tu acceso
           </h2>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Ingresa los datos de tu invitación para desbloquear la experiencia.
-          </p>
         </div>
 
         <div className="space-y-5">
@@ -222,13 +231,6 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
             maxLength={80}
             required
           />
-          <Field
-            label="Invitación válida para"
-            value={invitacionPara}
-            onChange={setInvitacionPara}
-            placeholder="Personas incluidas en tu invitación"
-            maxLength={200}
-          />
         </div>
 
         <button
@@ -238,10 +240,6 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
         >
           Continuar
         </button>
-
-        <p className="mt-6 text-center text-[9px] tracking-cinema text-chrome-soft/50">
-          Acceso exclusivo · No compartir
-        </p>
       </motion.form>
     </motion.section>
   );
