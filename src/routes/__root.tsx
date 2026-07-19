@@ -86,8 +86,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "MILEWORLD — Milena Montiel" },
       { name: "twitter:description", content: "Una producción de MILEWORLD. Invitación privada a la premiere de Milena Montiel — 01 · 01 · 2027." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/uXHdd0loPhX0OajJHkvUjfKaGuH2/social-images/social-1784110937024-SAVE_THE_DATE_(Presentación).webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/uXHdd0loPhX0OajJHkvUjfKaGuH2/social-images/social-1784110937024-SAVE_THE_DATE_(Presentación).webp" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f99fb21-33fb-4863-8088-12efd4e031b9/id-preview-69ef55f6--d704c12b-7ef6-4fd3-a6b6-265a3ddce6a8.lovable.app-1784453894828.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6f99fb21-33fb-4863-8088-12efd4e031b9/id-preview-69ef55f6--d704c12b-7ef6-4fd3-a6b6-265a3ddce6a8.lovable.app-1784453894828.png" },
     ],
     links: [
       {
