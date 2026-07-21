@@ -32,7 +32,7 @@ function Index() {
 
   useEffect(() => {
     if (stage === "experience" && !musicEnabled) {
-      const t = setTimeout(() => setShowMusicPrompt(true), 1500);
+      const t = setTimeout(() => setShowMusicPrompt(true), 1600);
       return () => clearTimeout(t);
     }
   }, [stage, musicEnabled]);
@@ -47,6 +47,7 @@ function Index() {
           setMusicEnabled(true);
           setShowMusicPrompt(false);
         }}
+        onDisable={() => setMusicEnabled(false)}
       />
       {showMusicPrompt && stage === "experience" && (
         <MusicPrompt
@@ -78,38 +79,93 @@ function Index() {
 }
 
 /* ------------------------------- BACKGROUND ------------------------------- */
-
+/* Continuous cinematic environment — no reset per section. Blue lighting,
+ * brushed metal wash, drifting chrome sheens, subtle grain. Never pure black.
+ */
 function AmbientBackground() {
   const particles = useMemo(
     () =>
-      Array.from({ length: 22 }, (_, i) => ({
+      Array.from({ length: 26 }, (_, i) => ({
         id: i,
         x: (i * 53) % 100,
         y: (i * 37) % 100,
-        d: 2 + ((i * 7) % 5),
+        d: 1.5 + ((i * 7) % 4),
         s: 0.6 + ((i * 11) % 10) / 10,
       })),
     [],
   );
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10">
-      {/* richer midnight base — less pure black */}
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      {/* base — layered midnight to sapphire, never flat black */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at 20% 10%, oklch(0.24 0.09 262) 0%, oklch(0.12 0.05 260) 40%, oklch(0.08 0.03 260) 100%)",
+            "radial-gradient(ellipse at 15% 0%, oklch(0.28 0.10 262) 0%, oklch(0.13 0.05 260) 42%, oklch(0.09 0.035 260) 100%)",
         }}
       />
       <div
-        className="absolute inset-0 opacity-70"
+        className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at 80% 90%, oklch(0.28 0.11 258 / 0.55), transparent 55%)",
+            "radial-gradient(ellipse at 85% 100%, oklch(0.30 0.13 258 / 0.75), transparent 55%)",
         }}
       />
-      <div className="spotlight left-[-20vw] top-[-20vh]" />
-      <div className="spotlight right-[-20vw] top-[20vh]" style={{ animationDelay: "-6s" }} />
+      {/* brushed-metal chrome sheen — slow drift, screen blend */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0.18, backgroundPosition: "0% 0%" }}
+        animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
+        transition={{ duration: 60, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
+        className="absolute inset-0 mix-blend-screen opacity-[0.10]"
+        style={{
+          backgroundImage: `url(${chromeImg.url})`,
+          backgroundSize: "200% 200%",
+          filter: "blur(2px) saturate(1.1)",
+        }}
+      />
+      {/* drifting sapphire spotlights */}
+      <motion.div
+        aria-hidden
+        initial={{ x: "-15%", y: "-20%" }}
+        animate={{ x: ["-15%", "10%", "-15%"], y: ["-20%", "10%", "-20%"] }}
+        transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute h-[80vh] w-[80vw]"
+        style={{
+          background:
+            "radial-gradient(circle, oklch(0.6 0.18 258 / 0.30), transparent 60%)",
+          filter: "blur(40px)",
+        }}
+      />
+      <motion.div
+        aria-hidden
+        initial={{ x: "60%", y: "60%" }}
+        animate={{ x: ["60%", "40%", "60%"], y: ["60%", "40%", "60%"] }}
+        transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute h-[70vh] w-[70vw]"
+        style={{
+          background:
+            "radial-gradient(circle, oklch(0.55 0.18 262 / 0.28), transparent 60%)",
+          filter: "blur(50px)",
+        }}
+      />
+      {/* horizontal chrome bands — extremely subtle brushed feel */}
+      <div
+        className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(180deg, oklch(0.95 0.01 250 / 0.6) 0 1px, transparent 1px 3px)",
+        }}
+      />
+      {/* fine chrome grid */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "linear-gradient(oklch(0.9 0.01 250) 1px, transparent 1px), linear-gradient(90deg, oklch(0.9 0.01 250) 1px, transparent 1px)",
+          backgroundSize: "120px 120px",
+        }}
+      />
       {particles.map((p) => (
         <span
           key={p.id}
@@ -119,29 +175,20 @@ function AmbientBackground() {
             top: `${p.y}%`,
             width: p.d,
             height: p.d,
-            filter: "blur(0.5px)",
-            animation: `float-particle ${9 + p.s * 6}s ease-in-out ${p.s * -2}s infinite`,
+            filter: "blur(0.6px)",
+            animation: `float-particle ${10 + p.s * 7}s ease-in-out ${p.s * -2}s infinite`,
             background: "oklch(0.92 0.008 250 / 0.35)",
           }}
         />
       ))}
-      {/* Chrome grid lines — subtle */}
+      {/* soft vignette — never sinks to pure black */}
       <div
-        className="absolute inset-0 opacity-[0.035]"
+        className="absolute inset-0"
         style={{
-          backgroundImage:
-            "linear-gradient(oklch(0.9 0.01 250) 1px, transparent 1px), linear-gradient(90deg, oklch(0.9 0.01 250) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
+          background:
+            "radial-gradient(ellipse at 50% 50%, transparent 55%, oklch(0.06 0.03 260 / 0.55) 100%)",
         }}
       />
-      {/* Giant embossed M watermark */}
-      <img
-        src={mLogo.url}
-        alt=""
-        aria-hidden
-        className="absolute left-1/2 top-1/2 w-[130vw] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.025] mix-blend-screen"
-      />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,transparent_50%,oklch(0.05_0.02_260/0.85)_100%)]" />
     </div>
   );
 }
@@ -153,11 +200,11 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
     <motion.section
       key="intro"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, filter: "blur(24px)", scale: 1.1 }}
+      exit={{ opacity: 0, filter: "blur(24px)", scale: 1.08 }}
       transition={{ duration: 1.2, ease: [0.7, 0, 0.3, 1] }}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-12"
     >
-      {/* Cinematic spotlights sweeping the emblem */}
+      {/* Cinematic spotlights — travel across the surface, no square glow */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -165,28 +212,27 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
         className="pointer-events-none absolute inset-0"
       >
         <motion.div
-          initial={{ x: "-40%", rotate: -18, opacity: 0 }}
-          animate={{ x: "10%", rotate: -8, opacity: 0.55 }}
-          transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ x: "-45%", rotate: -22, opacity: 0 }}
+          animate={{ x: "8%", rotate: -8, opacity: 0.55 }}
+          transition={{ duration: 3.2, ease: [0.16, 1, 0.3, 1] }}
           className="absolute -top-[30%] left-1/2 h-[140vh] w-[35vw] origin-top"
           style={{
             background:
-              "linear-gradient(to bottom, oklch(0.85 0.12 258 / 0.45), oklch(0.6 0.16 258 / 0.15) 40%, transparent 75%)",
-            filter: "blur(30px)",
+              "linear-gradient(to bottom, oklch(0.85 0.12 258 / 0.5), oklch(0.6 0.16 258 / 0.15) 40%, transparent 78%)",
+            filter: "blur(34px)",
           }}
         />
         <motion.div
-          initial={{ x: "40%", rotate: 18, opacity: 0 }}
-          animate={{ x: "-10%", rotate: 8, opacity: 0.55 }}
-          transition={{ duration: 3, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ x: "45%", rotate: 22, opacity: 0 }}
+          animate={{ x: "-8%", rotate: 8, opacity: 0.55 }}
+          transition={{ duration: 3.2, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
           className="absolute -top-[30%] right-1/2 h-[140vh] w-[35vw] origin-top"
           style={{
             background:
-              "linear-gradient(to bottom, oklch(0.9 0.08 250 / 0.4), oklch(0.6 0.16 258 / 0.15) 40%, transparent 75%)",
-            filter: "blur(30px)",
+              "linear-gradient(to bottom, oklch(0.9 0.08 250 / 0.42), oklch(0.6 0.16 258 / 0.15) 40%, transparent 78%)",
+            filter: "blur(34px)",
           }}
         />
-        {/* horizon glow */}
         <div
           className="absolute inset-x-0 bottom-0 h-[45vh]"
           style={{
@@ -196,7 +242,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
         />
       </motion.div>
 
-      {/* Subtle camera-move on the emblem */}
+      {/* Emblem — chrome, reflections not glow */}
       <motion.div
         initial={{ scale: 1.15, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -205,19 +251,19 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
         className="relative"
       >
         <motion.div
-          animate={{ rotateY: [0, 6, -6, 0], rotateX: [0, -2, 2, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ rotateY: [0, 5, -5, 0], rotateX: [0, -2, 2, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           style={{ transformStyle: "preserve-3d" }}
           className="relative"
         >
-          {/* base chrome halo — soft radial, not a box */}
+          {/* soft round chrome pool — radial, never a square */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
               background:
-                "radial-gradient(circle, oklch(0.7 0.14 258 / 0.35), oklch(0.5 0.16 258 / 0.15) 45%, transparent 70%)",
-              filter: "blur(40px)",
+                "radial-gradient(circle, oklch(0.7 0.14 258 / 0.30), oklch(0.5 0.16 258 / 0.12) 42%, transparent 72%)",
+              filter: "blur(44px)",
             }}
           />
           <img
@@ -228,19 +274,19 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
             className="relative w-[72vw] max-w-[440px] h-auto object-contain"
             style={{
               filter:
-                "drop-shadow(0 20px 60px oklch(0.4 0.15 258 / 0.55)) drop-shadow(0 0 30px oklch(0.85 0.08 250 / 0.35))",
+                "drop-shadow(0 22px 60px oklch(0.4 0.15 258 / 0.55)) drop-shadow(0 0 24px oklch(0.85 0.08 250 / 0.30))",
             }}
           />
-          {/* Chrome highlight sweep across the emblem itself */}
+          {/* Reflection travelling across the metallic surface (masked to logo) */}
           <motion.div
             aria-hidden
-            initial={{ x: "-120%" }}
-            animate={{ x: "120%" }}
-            transition={{ duration: 3.5, delay: 1.2, ease: [0.7, 0, 0.3, 1] }}
+            initial={{ x: "-130%" }}
+            animate={{ x: "130%" }}
+            transition={{ duration: 3.8, delay: 1.2, ease: [0.65, 0, 0.35, 1] }}
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "linear-gradient(105deg, transparent 40%, oklch(1 0 0 / 0.35) 50%, transparent 60%)",
+                "linear-gradient(105deg, transparent 42%, oklch(1 0 0 / 0.38) 50%, transparent 58%)",
               mixBlendMode: "screen",
               WebkitMaskImage: `url(${mLogo.url})`,
               maskImage: `url(${mLogo.url})`,
@@ -257,7 +303,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
 
       <motion.p
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
+        animate={{ opacity: 0.75 }}
         transition={{ duration: 1.4, delay: 2.4 }}
         className="mt-10 text-[10px] tracking-cinema text-chrome-soft/80"
       >
@@ -273,7 +319,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
         whileTap={{ scale: 0.97 }}
         className="mt-10 group relative overflow-hidden rounded-full border border-chrome-soft/40 px-12 py-4 text-[11px] tracking-cinema text-chrome-soft transition-colors hover:text-chrome"
       >
-        <span className="relative z-10">Iniciar Experiencia</span>
+        <span className="relative z-10">Iniciar experiencia</span>
         <span className="shimmer absolute inset-0" />
       </motion.button>
 
@@ -331,19 +377,14 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
         transition={{ duration: 1, delay: 0.3 }}
         className="glass-panel chrome-border relative w-full max-w-md rounded-2xl p-7 md:p-9"
       >
-        <img
-          src={mLogo.url}
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute right-3 top-3 h-16 w-16 opacity-[0.06]"
-        />
         <div className="mb-6 text-center">
           <p className="text-[9px] tracking-cinema text-chrome-soft/70">
-            MILE WORLD · Control de Acceso
+            MILE WORLD · Control de acceso
           </p>
-          <h2 className="mt-2 font-display text-2xl text-chrome md:text-3xl">
+          <h2 className="mt-3 font-display text-2xl text-chrome md:text-3xl tracking-wide">
             Identifica tu acceso
           </h2>
+          <div className="mx-auto mt-3 h-px w-16 bg-gradient-to-r from-transparent via-chrome-soft/60 to-transparent" />
         </div>
 
         <div className="space-y-4">
@@ -364,7 +405,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
               <select
                 value={validFor}
                 onChange={(e) => setValidFor(Number(e.target.value))}
-                className="w-full appearance-none rounded-lg border border-chrome-soft/20 bg-[oklch(0.05_0.02_260/0.6)] px-4 py-3 text-sm text-chrome outline-none transition-colors focus:border-chrome/60"
+                className="w-full appearance-none rounded-lg border border-chrome-soft/20 bg-[oklch(0.05_0.02_260/0.55)] px-4 py-3 text-sm text-chrome outline-none transition-colors focus:border-chrome/60"
               >
                 {[1, 2, 3, 4].map((n) => (
                   <option key={n} value={n} className="bg-[oklch(0.08_0.03_262)]">
@@ -443,8 +484,8 @@ function Field({
         maxLength={maxLength}
         required={required}
         autoCapitalize="characters"
-        style={{ textTransform: "uppercase", fontFamily: "var(--font-display)", letterSpacing: "0.14em" }}
-        className="w-full rounded-lg border border-chrome-soft/20 bg-[oklch(0.05_0.02_260/0.6)] px-4 py-3 text-base text-chrome placeholder:text-chrome-soft/30 outline-none transition-colors focus:border-chrome/60 focus:bg-[oklch(0.08_0.03_262/0.8)]"
+        style={{ textTransform: "uppercase", fontFamily: "var(--font-display)", letterSpacing: "0.16em" }}
+        className="w-full rounded-lg border border-chrome-soft/20 bg-[oklch(0.05_0.02_260/0.55)] px-4 py-3 text-base text-chrome placeholder:text-chrome-soft/30 outline-none transition-colors focus:border-chrome/60 focus:bg-[oklch(0.08_0.03_262/0.75)]"
       />
     </label>
   );
@@ -462,7 +503,6 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
       transition={{ duration: 1 }}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 text-center"
     >
-      {/* soft chrome vignette */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-40"
@@ -470,12 +510,6 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
           background:
             "radial-gradient(ellipse at 50% 30%, oklch(0.6 0.16 258 / 0.35), transparent 60%)",
         }}
-      />
-      <img
-        src={mLogo.url}
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 w-[95vw] max-w-[520px] -translate-x-1/2 -translate-y-1/2 opacity-[0.04]"
       />
 
       <div className="relative max-w-xl">
@@ -521,16 +555,14 @@ function Experience({ guest }: { guest: GuestData }) {
       className="relative"
     >
       <Hero />
-      <PhotoPlaceholder id="portrait-1" label="Escena 01" />
       <Produccion />
       <PaseAcceso guest={guest} />
       <CodigoVestimenta />
-      <PhotoPlaceholder id="portrait-2" label="Escena 02" />
       <GiftSection />
       <ArchivoRestringido />
       <CuentaRegresiva />
       <ConfirmarAcceso guest={guest} />
-      <FirmaFinal />
+      <ClosingCurtain />
       <Footer />
     </motion.div>
   );
@@ -559,9 +591,32 @@ function Reveal({
   );
 }
 
+/* Slow chrome band that rides between sections to keep the continuous
+ * atmosphere. Never a hard boundary. */
+function SectionBridge() {
+  return (
+    <div aria-hidden className="relative h-24 w-full overflow-hidden">
+      <div
+        className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, oklch(0.85 0.06 258 / 0.35), transparent)",
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 50%, oklch(0.55 0.16 258 / 0.12), transparent 60%)",
+        }}
+      />
+    </div>
+  );
+}
+
 function ChromeDivider() {
   return (
-    <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-chrome-soft/40 to-transparent" />
+    <div className="my-6 h-px w-full bg-gradient-to-r from-transparent via-chrome-soft/40 to-transparent" />
   );
 }
 
@@ -575,36 +630,34 @@ function Hero() {
   return (
     <section
       ref={ref}
-      className="relative flex min-h-[95vh] items-center justify-center overflow-hidden px-6"
+      className="relative flex min-h-[100vh] items-center justify-center overflow-hidden px-6 pb-24 pt-20"
     >
-      {/* metallic backdrop */}
+      {/* metallic backdrop layered on top of ambient */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 h-full w-[80%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.16_258/0.45),transparent_65%)]" />
+        <div className="absolute left-1/2 top-0 h-full w-[85%] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.16_258/0.45),transparent_65%)]" />
         <img
           src={chromeImg.url}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-[0.32] mix-blend-screen"
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.22] mix-blend-screen"
           style={{ filter: "blur(1px) saturate(1.15)" }}
         />
-        {/* light beams */}
         <div
-          className="absolute left-[10%] top-[-20%] h-[140%] w-[25%] rotate-[10deg] opacity-40"
+          className="absolute left-[8%] top-[-20%] h-[140%] w-[26%] rotate-[10deg] opacity-40"
           style={{
             background:
               "linear-gradient(to bottom, oklch(0.85 0.1 258 / 0.32), transparent 65%)",
-            filter: "blur(30px)",
+            filter: "blur(32px)",
           }}
         />
         <div
-          className="absolute right-[10%] top-[-20%] h-[140%] w-[25%] -rotate-[10deg] opacity-40"
+          className="absolute right-[8%] top-[-20%] h-[140%] w-[26%] -rotate-[10deg] opacity-40"
           style={{
             background:
               "linear-gradient(to bottom, oklch(0.85 0.1 258 / 0.32), transparent 65%)",
-            filter: "blur(30px)",
+            filter: "blur(32px)",
           }}
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[oklch(0.06_0.03_260/0.25)] to-[oklch(0.06_0.03_260)]" />
 
       <motion.div style={{ y, opacity }} className="relative z-10 flex flex-col items-center text-center max-w-2xl">
         <motion.img
@@ -613,21 +666,20 @@ function Hero() {
           initial={{ scale: 0.7, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="w-40 h-40 sm:w-48 sm:h-48 object-contain"
+          className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
           style={{
             filter:
               "drop-shadow(0 15px 40px oklch(0.5 0.16 258 / 0.55)) drop-shadow(0 0 20px oklch(0.85 0.08 250 / 0.3))",
           }}
         />
 
-        {/* Official wordmark image (MILE WORLD / The Mile Experience / A Milewood Production) */}
         <motion.img
           src={wordmark.url}
           alt="MILE WORLD — The Mile Experience — A Milewood Production"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.6, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-6 w-[88vw] max-w-[520px] h-auto"
+          className="mt-5 w-[86vw] max-w-[480px] h-auto"
           style={{ filter: "drop-shadow(0 0 30px oklch(0.7 0.14 258 / 0.35))" }}
         />
 
@@ -635,14 +687,14 @@ function Hero() {
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ duration: 1.6, delay: 1.8 }}
-          className="mt-8 h-px w-32 bg-gradient-to-r from-transparent via-chrome-soft/70 to-transparent"
+          className="mt-8 h-px w-24 bg-gradient-to-r from-transparent via-chrome-soft/70 to-transparent"
         />
 
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.4, delay: 2 }}
-          className="mt-6 text-chrome text-3xl md:text-4xl leading-[1.1]"
+          className="mt-5 text-chrome text-3xl md:text-4xl leading-[1.05]"
           style={{ fontFamily: "var(--font-signature)" }}
         >
           Milena Anahí
@@ -651,7 +703,6 @@ function Hero() {
         </motion.p>
       </motion.div>
 
-      {/* scroll cue */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.6, y: [0, 8, 0] }}
@@ -665,58 +716,17 @@ function Hero() {
   );
 }
 
-/* PHOTO PLACEHOLDER */
-function PhotoPlaceholder({ id, label }: { id: string; label: string }) {
-  return (
-    <section className="relative px-6 py-14">
-      <div className="mx-auto max-w-3xl">
-        <Reveal>
-          <div
-            id={id}
-            className="glass-panel chrome-border relative overflow-hidden rounded-2xl aspect-[4/5] md:aspect-[16/9]"
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.55_0.14_258/0.2),transparent_70%)]" />
-            <img
-              src={mLogo.url}
-              alt=""
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 w-3/5 -translate-x-1/2 -translate-y-1/2 opacity-[0.06]"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-chrome-soft/30">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="text-chrome-soft/70">
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              </div>
-              <p className="mt-4 text-[9px] tracking-cinema text-chrome-soft/60">{label}</p>
-            </div>
-            <span className="shimmer absolute inset-0 opacity-40" />
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* 2. LA PRODUCCIÓN */
+/* 2. LA PRODUCCIÓN — editorial, no info cards */
 function Produccion() {
-  const cards = [
-    { k: "World Tour", v: "Stop #01" },
-    { k: "VIP Invitation", v: "Reparto" },
-    { k: "Premiere Access", v: "Confidencial" },
-    { k: "Special Guest", v: "Reservado" },
-    { k: "Blue Carpet", v: "Entry Only" },
-    { k: "Exclusive", v: "MILEWOOD" },
-  ];
   return (
-    <section className="relative px-6 py-20">
-      <div className="mx-auto max-w-3xl text-center">
+    <section className="relative px-6 pt-8 pb-20">
+      <div className="mx-auto max-w-2xl">
         <Reveal>
-          <p className="text-[10px] tracking-cinema text-chrome-soft/70">MILEWOOD</p>
+          <p className="text-[10px] tracking-cinema text-chrome-soft/70 text-center">MILEWOOD</p>
+          <div className="mx-auto mt-3 h-px w-16 bg-gradient-to-r from-transparent via-chrome-soft/60 to-transparent" />
         </Reveal>
         <Reveal delay={0.15}>
-          <div className="mt-6 space-y-5 font-display text-lg md:text-xl italic leading-relaxed text-chrome/90">
+          <div className="mt-8 space-y-6 font-display text-lg md:text-xl italic leading-relaxed text-chrome/90 text-center">
             <p>
               Cada detalle de esta noche fue pensado para llevarnos más allá
               de lo habitual y hacernos sentir como verdaderas celebridades.
@@ -727,36 +737,13 @@ function Produccion() {
             </p>
             <p>
               Hoy solo conocerás el tráiler. La historia completa será
-              revelada cuando se abran las puertas de <span className="text-chrome">MILE WORLD</span>.
+              revelada cuando se abran las puertas de{" "}
+              <span className="text-chrome not-italic tracking-[0.18em] text-base md:text-lg">MILE WORLD</span>.
             </p>
           </div>
         </Reveal>
-
-        <Reveal delay={0.3}>
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-3">
-            {cards.map((c) => (
-              <motion.div
-                key={c.k}
-                whileHover={{ y: -4 }}
-                className="glass-panel chrome-border relative overflow-hidden rounded-xl p-4 md:p-5 text-left"
-              >
-                <img
-                  src={mLogo.url}
-                  alt=""
-                  aria-hidden
-                  className="pointer-events-none absolute -right-3 -bottom-3 h-16 w-16 opacity-[0.05]"
-                />
-                <p className="text-[9px] tracking-cinema text-chrome-soft/70">
-                  {c.k}
-                </p>
-                <p className="mt-2 font-display text-base md:text-lg text-chrome italic leading-tight">
-                  {c.v}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </Reveal>
       </div>
+      <SectionBridge />
     </section>
   );
 }
@@ -765,13 +752,15 @@ function Produccion() {
 function PaseAcceso({ guest }: { guest: GuestData }) {
   const guestList = [guest.nombre, ...guest.companions].filter(Boolean);
   return (
-    <section className="relative px-6 py-20">
-      <div className="mx-auto max-w-md text-center">
+    <section className="relative px-6 py-16">
+      <div className="mx-auto max-w-md">
         <Reveal>
-          <p className="text-[10px] tracking-cinema text-chrome-soft/70">Credencial</p>
-          <h2 className="mt-3 font-display text-3xl md:text-5xl text-chrome tracking-wide">
-            PASE DE ACCESO
-          </h2>
+          <div className="text-center">
+            <p className="text-[10px] tracking-cinema text-chrome-soft/70">Credencial</p>
+            <h2 className="mt-3 font-display text-3xl md:text-5xl text-chrome tracking-[0.18em]">
+              PASE DE ACCESO
+            </h2>
+          </div>
         </Reveal>
 
         <Reveal delay={0.2} y={50}>
@@ -782,44 +771,52 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
             className="glass-panel chrome-border relative mt-10 overflow-hidden rounded-2xl p-6 text-left"
           >
             {/* Rich chrome background */}
-            <div className="absolute inset-0 opacity-60">
+            <div className="absolute inset-0 opacity-55">
               <img src={chromeImg.url} alt="" className="h-full w-full object-cover" loading="lazy" />
             </div>
             <div
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(135deg, oklch(0.14 0.06 262 / 0.85) 0%, oklch(0.08 0.04 260 / 0.9) 55%, oklch(0.18 0.09 262 / 0.7) 100%)",
+                  "linear-gradient(135deg, oklch(0.14 0.06 262 / 0.88) 0%, oklch(0.08 0.04 260 / 0.92) 55%, oklch(0.18 0.09 262 / 0.75) 100%)",
               }}
             />
-            {/* Holographic reflection */}
-            <motion.div
+            {/* Abstract premium texture — soft chromatic wisps, no repeated logos */}
+            <div
               aria-hidden
-              initial={{ x: "-100%" }}
-              animate={{ x: "120%" }}
-              transition={{ duration: 6, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
-              className="pointer-events-none absolute inset-0"
+              className="pointer-events-none absolute inset-0 opacity-40"
               style={{
                 background:
-                  "linear-gradient(105deg, transparent 40%, oklch(0.85 0.12 200 / 0.18) 46%, oklch(0.9 0.18 320 / 0.15) 52%, transparent 60%)",
+                  "radial-gradient(ellipse at 20% 15%, oklch(0.7 0.14 258 / 0.30), transparent 55%), radial-gradient(ellipse at 85% 85%, oklch(0.75 0.16 320 / 0.18), transparent 55%)",
+              }}
+            />
+            {/* Guilloché-style security lines — subtle diagonal filaments */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.10] mix-blend-overlay"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(45deg, oklch(0.9 0.02 250 / 0.9) 0 1px, transparent 1px 6px), repeating-linear-gradient(-45deg, oklch(0.9 0.02 250 / 0.9) 0 1px, transparent 1px 9px)",
+              }}
+            />
+            {/* Holographic reflection — full-width sweep, natural travel */}
+            <motion.div
+              aria-hidden
+              initial={{ x: "-120%" }}
+              animate={{ x: "220%" }}
+              transition={{ duration: 5.5, repeat: Infinity, repeatDelay: 2.5, ease: [0.5, 0, 0.5, 1] }}
+              className="pointer-events-none absolute inset-y-0 w-[220%] -left-full"
+              style={{
+                background:
+                  "linear-gradient(105deg, transparent 42%, oklch(0.85 0.12 200 / 0.22) 47%, oklch(0.95 0.05 250 / 0.28) 50%, oklch(0.9 0.18 320 / 0.20) 53%, transparent 58%)",
                 mixBlendMode: "screen",
               }}
             />
-            {/* Security pattern — embossed M grid */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.06]"
-              style={{
-                backgroundImage: `url(${mLogo.url})`,
-                backgroundSize: "60px 60px",
-                backgroundRepeat: "repeat",
-              }}
-            />
             {/* Corner ticks */}
-            <span className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l border-t border-chrome/60" />
-            <span className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r border-t border-chrome/60" />
-            <span className="pointer-events-none absolute left-3 bottom-3 h-3 w-3 border-l border-b border-chrome/60" />
-            <span className="pointer-events-none absolute right-3 bottom-3 h-3 w-3 border-r border-b border-chrome/60" />
+            <span className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l border-t border-chrome/70" />
+            <span className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r border-t border-chrome/70" />
+            <span className="pointer-events-none absolute left-3 bottom-3 h-3 w-3 border-l border-b border-chrome/70" />
+            <span className="pointer-events-none absolute right-3 bottom-3 h-3 w-3 border-r border-b border-chrome/70" />
 
             <div className="relative">
               <div className="flex items-center justify-between">
@@ -836,7 +833,7 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
               <div className="mt-2 space-y-1.5">
                 {guestList.length ? (
                   guestList.map((n, i) => (
-                    <p key={i} className="font-display text-lg md:text-xl text-chrome leading-tight tracking-[0.12em]">
+                    <p key={i} className="font-display text-lg md:text-xl text-chrome leading-tight tracking-[0.14em]">
                       {n}
                     </p>
                   ))
@@ -866,22 +863,22 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
                 </div>
               </div>
 
-              {/* Translucent barcode */}
-              <div className="mt-6">
-                <div className="flex h-7 items-end gap-[1.5px] opacity-80">
-                  {Array.from({ length: 56 }).map((_, i) => (
+              {/* Barcode — clearly visible, still elegant */}
+              <div className="mt-6 rounded-md bg-[oklch(0.06_0.02_260/0.55)] px-3 py-3">
+                <div className="flex h-9 items-end gap-[2px]">
+                  {Array.from({ length: 52 }).map((_, i) => (
                     <span
                       key={i}
                       className="bg-chrome"
                       style={{
                         width: `${1 + ((i * 7) % 3)}px`,
-                        height: `${60 + ((i * 13) % 40)}%`,
-                        opacity: 0.35 + ((i % 5) / 10),
+                        height: `${55 + ((i * 13) % 45)}%`,
+                        opacity: 0.75 + ((i % 4) / 15),
                       }}
                     />
                   ))}
                 </div>
-                <p className="mt-2 font-mono text-[8px] tracking-[0.4em] text-chrome-soft/60">
+                <p className="mt-2 font-mono text-[9px] tracking-[0.42em] text-chrome/80">
                   MW · {hashCode(guest.nombre || "MILE")} · 2027
                 </p>
               </div>
@@ -889,6 +886,7 @@ function PaseAcceso({ guest }: { guest: GuestData }) {
           </motion.div>
         </Reveal>
       </div>
+      <SectionBridge />
     </section>
   );
 }
@@ -913,55 +911,48 @@ function hashCode(str: string) {
 /* 5. CÓDIGO DE VESTIMENTA */
 function CodigoVestimenta() {
   return (
-    <section className="relative px-6 py-20">
-      <div className="mx-auto max-w-2xl text-center">
+    <section className="relative px-6 py-16">
+      <div className="mx-auto max-w-2xl">
         <Reveal>
-          <h2 className="font-display text-4xl md:text-6xl text-chrome tracking-wide">
-            CÓDIGO DE VESTIMENTA
+          <p className="text-center text-[10px] tracking-cinema text-chrome-soft/70">
+            Código de vestimenta
+          </p>
+          <h2 className="mt-3 text-center font-display text-3xl md:text-5xl text-chrome tracking-[0.16em]">
+            TENIDA ELEGANTE
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
-          <div className="glass-panel chrome-border relative mt-10 overflow-hidden rounded-2xl p-8 md:p-12">
-            <img
-              src={mLogo.url}
-              alt=""
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[85%] -translate-x-1/2 -translate-y-1/2 opacity-[0.04]"
-            />
-            <p className="font-display text-lg md:text-xl italic text-chrome/90 leading-relaxed">
-              Una noche especial merece una presencia especial.
-            </p>
-
-            <div className="mt-8 flex items-end justify-center gap-8 md:gap-14">
-              <TuxSilhouette />
-              <div className="h-32 w-px self-center bg-gradient-to-b from-transparent via-chrome-soft/40 to-transparent" />
-              <GownSilhouette />
+          <div className="glass-panel chrome-border relative mt-8 overflow-hidden rounded-2xl px-6 py-8 md:px-10 md:py-10">
+            <div className="grid grid-cols-2 items-end gap-6 md:gap-10">
+              <div className="flex flex-col items-center gap-3">
+                <TuxSilhouette />
+                <p className="text-[9px] tracking-cinema text-chrome-soft/80">Caballero</p>
+              </div>
+              <div className="flex flex-col items-center gap-3">
+                <GownSilhouette />
+                <p className="text-[9px] tracking-cinema text-chrome-soft/80">Dama</p>
+              </div>
             </div>
-
-            <p className="mt-6 font-display text-2xl md:text-4xl text-chrome tracking-[0.28em]">
-              TENIDA ELEGANTE
+            <div className="mx-auto my-6 h-px w-16 bg-gradient-to-r from-transparent via-chrome-soft/50 to-transparent" />
+            <p className="text-center font-display text-base md:text-lg italic text-chrome/85 leading-relaxed">
+              Una noche especial merece una presencia especial.
             </p>
           </div>
         </Reveal>
       </div>
+      <SectionBridge />
     </section>
   );
 }
 
 function TuxSilhouette() {
   return (
-    <svg viewBox="0 0 80 160" width="70" height="140" className="text-chrome" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round">
-      {/* head */}
+    <svg viewBox="0 0 80 160" width="72" height="150" className="text-chrome" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round">
       <circle cx="40" cy="14" r="8" />
-      {/* shoulders / jacket */}
       <path d="M22 34 Q40 26 58 34 L64 60 L58 62 L58 130 L22 130 L22 62 L16 60 Z" />
-      {/* lapel */}
       <path d="M40 34 L32 62 L40 80 L48 62 Z" fill="currentColor" fillOpacity="0.15" />
-      {/* bowtie */}
       <path d="M35 36 L40 40 L45 36 L45 40 L40 40 L35 40 Z" fill="currentColor" />
-      {/* legs */}
       <path d="M28 130 L26 158 M52 130 L54 158" />
-      {/* buttons */}
       <circle cx="40" cy="80" r="0.9" fill="currentColor" />
       <circle cx="40" cy="92" r="0.9" fill="currentColor" />
     </svg>
@@ -970,13 +961,10 @@ function TuxSilhouette() {
 
 function GownSilhouette() {
   return (
-    <svg viewBox="0 0 80 160" width="70" height="140" className="text-chrome" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round">
+    <svg viewBox="0 0 80 160" width="72" height="150" className="text-chrome" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round">
       <circle cx="40" cy="14" r="8" />
-      {/* bodice */}
       <path d="M26 34 Q40 28 54 34 L52 66 Q40 70 28 66 Z" />
-      {/* long gown */}
       <path d="M28 66 Q40 70 52 66 L64 158 L16 158 Z" />
-      {/* shimmer line */}
       <path d="M32 90 L44 156" opacity="0.4" />
       <path d="M48 90 L38 156" opacity="0.3" />
     </svg>
@@ -996,11 +984,11 @@ function GiftSection() {
   };
 
   return (
-    <section className="relative px-6 py-20">
+    <section className="relative px-6 py-16">
       <div className="mx-auto max-w-xl text-center">
         <Reveal>
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-chrome-soft/30">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" className="text-chrome">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-chrome-soft/40 bg-[oklch(1_0_0/0.04)]">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="text-chrome">
               <rect x="3" y="8" width="18" height="4" rx="1" />
               <path d="M12 8v13M5 12v9h14v-9M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5" />
             </svg>
@@ -1008,7 +996,7 @@ function GiftSection() {
           <p className="mt-6 font-display text-lg md:text-xl italic text-chrome/90 leading-relaxed">
             Lo más valioso para mí será tu presencia.
           </p>
-          <p className="mt-3 font-display text-base md:text-lg italic text-muted-foreground leading-relaxed">
+          <p className="mt-3 font-display text-base md:text-lg italic text-chrome-soft/80 leading-relaxed">
             Pero si deseas hacer un detalle en efectivo, habilitamos esta cuenta para transferencias.
           </p>
         </Reveal>
@@ -1054,6 +1042,7 @@ function GiftSection() {
           </div>
         </Reveal>
       </div>
+      <SectionBridge />
     </section>
   );
 }
@@ -1069,34 +1058,29 @@ function ArchivoRestringido() {
   };
 
   return (
-    <section className="relative px-6 py-20">
+    <section className="relative px-6 py-16">
       <div className="mx-auto max-w-md">
         <Reveal>
-          <h3 className="mb-6 text-center font-display text-2xl md:text-3xl italic text-chrome tracking-wide">
-            Ver todos los detalles<br />de la fiesta
-          </h3>
-          <div className="glass-panel chrome-border relative overflow-hidden rounded-2xl p-8 text-center">
-            {/* classified paper grain */}
+          <p className="text-center text-[10px] tracking-cinema text-chrome-soft/70">
+            Ver todos los detalles de la fiesta
+          </p>
+          <div className="glass-panel chrome-border relative mt-6 overflow-hidden rounded-2xl p-8 text-center">
+            {/* subtle sapphire wash — no horizontal paper lines */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.05]"
+              className="pointer-events-none absolute inset-0 opacity-70"
               style={{
-                backgroundImage:
-                  "repeating-linear-gradient(0deg, oklch(0.95 0.02 250) 0 1px, transparent 1px 3px)",
+                background:
+                  "radial-gradient(ellipse at 50% 0%, oklch(0.4 0.14 258 / 0.30), transparent 60%)",
               }}
             />
-            <img
-              src={mLogo.url}
-              alt=""
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[90%] -translate-x-1/2 -translate-y-1/2 opacity-[0.04]"
-            />
-            <div className="absolute right-4 top-4 flex items-center gap-1.5 text-[8px] tracking-cinema text-destructive/80">
-              <span className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse" />
-              CONFIDENCIAL
-            </div>
-            <div className="absolute left-4 top-4 text-[8px] tracking-cinema text-chrome-soft/60">
-              CLASIFICADO · 001
+            {/* header — CLASIFICADO + confidential badge */}
+            <div className="relative flex items-center justify-between text-[8px] tracking-cinema">
+              <span className="text-chrome-soft/60">CLASIFICADO · 001</span>
+              <span className="flex items-center gap-1.5 text-destructive/85">
+                <span className="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse" />
+                CONFIDENCIAL
+              </span>
             </div>
 
             <AnimatePresence mode="wait">
@@ -1108,12 +1092,12 @@ function ArchivoRestringido() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="mx-auto flex flex-col items-center py-6 outline-none"
+                  className="mx-auto mt-8 flex flex-col items-center py-4 outline-none"
                 >
-                  <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-chrome-soft/30">
+                  <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-chrome-soft/30 bg-[oklch(0.06_0.02_260/0.4)]">
                     <Fingerprint />
                   </div>
-                  <p className="mt-5 text-xs text-muted-foreground">
+                  <p className="mt-5 text-[10px] tracking-cinema text-chrome-soft/70">
                     Toca la huella para intentar acceder
                   </p>
                 </motion.button>
@@ -1125,18 +1109,17 @@ function ArchivoRestringido() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="py-6"
+                  className="mt-8 py-4"
                 >
-                  <div className="relative mx-auto h-24 w-24">
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full border border-chrome/60">
+                  <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-full border border-chrome/60 bg-[oklch(0.06_0.02_260/0.4)]">
+                    <div className="absolute inset-0 flex items-center justify-center">
                       <Fingerprint glowing />
                     </div>
-                    {/* laser scan */}
                     <motion.div
                       initial={{ top: 0 }}
                       animate={{ top: "100%" }}
                       transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
-                      className="absolute left-0 right-0 h-[2px] rounded-full"
+                      className="absolute left-0 right-0 h-[2px]"
                       style={{
                         background:
                           "linear-gradient(to right, transparent, oklch(0.72 0.19 258 / 0.95), transparent)",
@@ -1144,7 +1127,6 @@ function ArchivoRestringido() {
                           "0 0 12px oklch(0.72 0.19 258 / 0.9), 0 0 24px oklch(0.6 0.2 258 / 0.6)",
                       }}
                     />
-                    {/* mask to circle */}
                     <div
                       aria-hidden
                       className="absolute inset-0 rounded-full"
@@ -1163,40 +1145,38 @@ function ArchivoRestringido() {
               {state === "denied" && (
                 <motion.div
                   key="denied"
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="py-3"
+                  className="mt-6 py-2"
                 >
+                  {/* Status */}
                   <motion.p
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 1, 0.4, 1] }}
+                    animate={{ opacity: [0, 1, 0.5, 1] }}
                     transition={{ duration: 0.9 }}
-                    className="font-mono text-base md:text-lg tracking-[0.4em] text-destructive"
+                    className="font-mono text-[11px] tracking-[0.42em] text-destructive"
                   >
                     ACCESO DENEGADO
                   </motion.p>
-                  <div className="my-5 h-px bg-gradient-to-r from-transparent via-destructive/50 to-transparent" />
+                  {/* Headline */}
                   <p
-                    className="font-display text-3xl md:text-4xl text-chrome tracking-[0.32em]"
-                    style={{
-                      textShadow: "0 0 20px oklch(0.7 0.15 258 / 0.4)",
-                    }}
+                    className="mt-6 font-display text-xl md:text-2xl text-chrome tracking-[0.32em]"
+                    style={{ textShadow: "0 0 20px oklch(0.7 0.15 258 / 0.35)" }}
                   >
                     ARCHIVO
                     <br />
                     RESTRINGIDO
                   </p>
-                  <p className="mt-5 font-display text-base italic text-chrome/85 leading-relaxed">
+                  {/* Description */}
+                  <p className="mx-auto mt-5 max-w-xs font-display text-sm italic text-chrome-soft/85 leading-relaxed">
                     Algunos detalles de esta producción permanecen reservados
                     hasta la noche del evento.
                   </p>
-                  <ChromeDivider />
+                  <div className="my-6 h-px bg-gradient-to-r from-transparent via-chrome-soft/30 to-transparent" />
+                  {/* Metadata line */}
                   <div className="flex items-center justify-between text-[9px] tracking-cinema text-chrome-soft/70">
-                    <div className="flex items-center gap-2">
-                      <img src={mLogo.url} alt="MILE WORLD" className="h-5 w-5 object-contain" />
-                      <span className="text-chrome">MILE WORLD</span>
-                    </div>
-                    <span>NIVEL · <span className="text-destructive">ALTO</span></span>
+                    <span>MILE WORLD</span>
+                    <span>NIVEL DE SEGURIDAD · <span className="text-destructive">ALTO</span></span>
                   </div>
                 </motion.div>
               )}
@@ -1204,6 +1184,7 @@ function ArchivoRestringido() {
           </div>
         </Reveal>
       </div>
+      <SectionBridge />
     </section>
   );
 }
@@ -1238,7 +1219,7 @@ function CuentaRegresiva() {
     return () => clearInterval(t);
   }, []);
   return (
-    <section className="relative px-6 py-20">
+    <section className="relative px-6 py-16">
       <div className="mx-auto max-w-2xl text-center">
         <Reveal>
           <h2 className="font-display text-2xl md:text-4xl italic text-chrome/90 tracking-wide">
@@ -1246,7 +1227,7 @@ function CuentaRegresiva() {
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
-          <div className="mt-10 grid grid-cols-4 gap-2 md:gap-4">
+          <div className="mt-8 grid grid-cols-4 gap-2 md:gap-4">
             {[
               { k: "Días", v: time.d },
               { k: "Horas", v: time.h },
@@ -1271,6 +1252,7 @@ function CuentaRegresiva() {
           </p>
         </Reveal>
       </div>
+      <SectionBridge />
     </section>
   );
 }
@@ -1292,16 +1274,16 @@ function ConfirmarAcceso({ guest }: { guest: GuestData }) {
     `Confirmo mi acceso a MILE WORLD. Invitados: ${allNames}.`,
   );
   return (
-    <section className="relative px-6 py-20">
+    <section className="relative px-6 py-16">
       <div className="mx-auto max-w-lg text-center">
         <Reveal>
-          <h2 className="font-display text-5xl md:text-6xl text-chrome tracking-wide">
+          <h2 className="font-display text-5xl md:text-6xl text-chrome tracking-[0.14em]">
             CONFIRMAR<br />ACCESO
           </h2>
           <p className="mt-6 font-display text-lg md:text-xl italic text-chrome/85 leading-relaxed">
             Activa tu invitación privada.
           </p>
-          <p className="mt-2 font-display text-base md:text-lg italic text-muted-foreground">
+          <p className="mt-2 font-display text-base md:text-lg italic text-chrome-soft/75">
             Sin confirmación tu asiento no estará reservado en la sala.
           </p>
         </Reveal>
@@ -1334,26 +1316,58 @@ function ConfirmarAcceso({ guest }: { guest: GuestData }) {
           </div>
         </Reveal>
       </div>
+      <SectionBridge />
     </section>
   );
 }
 
-/* FIRMA FINAL */
-function FirmaFinal() {
+/* CLOSING CURTAIN — emotional finale mirroring the opening */
+function ClosingCurtain() {
   return (
-    <section className="relative px-6 py-20">
-      <div className="mx-auto max-w-md text-center">
+    <section className="relative overflow-hidden px-6 pt-20 pb-24">
+      {/* mirror spotlight from top-back to bottom-front */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 2 }}
+        className="pointer-events-none absolute inset-0"
+      >
+        <div
+          className="absolute inset-x-0 top-0 h-[60%]"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 0%, oklch(0.55 0.18 258 / 0.45), transparent 65%)",
+          }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-[45%]"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 100%, oklch(0.5 0.18 258 / 0.35), transparent 65%)",
+          }}
+        />
+      </motion.div>
+
+      <div className="relative mx-auto max-w-xl text-center">
         <Reveal>
-          <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-chrome-soft/50 to-transparent" />
-          <p className="mt-6 text-[10px] tracking-cinema text-chrome-soft/70">
-            Con cariño,
+          <p className="font-display text-xl md:text-2xl italic text-chrome/85 leading-relaxed">
+            Se apagan las luces.
           </p>
+          <p className="mt-3 font-display text-lg md:text-xl italic text-chrome-soft/80 leading-relaxed">
+            El telón está a punto de subir.
+          </p>
+        </Reveal>
+        <Reveal delay={0.25}>
+          <div className="mx-auto my-8 h-px w-24 bg-gradient-to-r from-transparent via-chrome-soft/60 to-transparent" />
+          <p className="text-[10px] tracking-cinema text-chrome-soft/70">Con cariño,</p>
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-4 text-chrome text-6xl md:text-7xl leading-none"
+            className="mt-3 text-chrome text-6xl md:text-7xl leading-none"
             style={{
               fontFamily: "var(--font-signature)",
               textShadow: "0 0 30px oklch(0.7 0.15 258 / 0.4)",
@@ -1362,6 +1376,11 @@ function FirmaFinal() {
             Milena
           </motion.p>
         </Reveal>
+        <Reveal delay={0.45}>
+          <p className="mt-10 text-[10px] tracking-[0.5em] text-chrome-soft/70">
+            NOS VEMOS EN LA PREMIERE
+          </p>
+        </Reveal>
       </div>
     </section>
   );
@@ -1369,9 +1388,9 @@ function FirmaFinal() {
 
 function Footer() {
   return (
-    <footer className="relative px-6 pb-14 pt-10 text-center">
-      <div className="mx-auto max-w-md space-y-4">
-        <img src={mLogo.url} alt="M" className="mx-auto h-14 w-14 object-contain opacity-80" />
+    <footer className="relative px-6 pb-14 pt-6 text-center">
+      <div className="mx-auto max-w-md space-y-3">
+        <div className="mx-auto h-px w-16 bg-gradient-to-r from-transparent via-chrome-soft/40 to-transparent" />
         <p className="text-[10px] tracking-cinema text-chrome-soft/70">
           Una producción MILEWOOD
         </p>
@@ -1391,7 +1410,7 @@ function MusicPrompt({ onAccept, onDismiss }: { onAccept: () => void; onDismiss:
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 30 }}
-      className="fixed bottom-24 right-5 z-50 max-w-[280px] glass-panel chrome-border rounded-2xl p-4"
+      className="fixed bottom-24 left-5 z-50 max-w-[280px] glass-panel chrome-border rounded-2xl p-4"
     >
       <p className="text-xs text-chrome flex items-center gap-2">
         <span>♪</span>
@@ -1424,23 +1443,41 @@ function MusicPlayer({
   active,
   enabled,
   onEnable,
+  onDisable,
 }: {
   active: boolean;
   enabled: boolean;
   onEnable: () => void;
+  onDisable: () => void;
 }) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const autoStartedRef = useRef(false);
 
+  // Auto-start once when the user first enables the soundtrack. Never
+  // re-trigger after the user manually pauses.
   useEffect(() => {
-    if (enabled && audioRef.current && !playing) {
-      audioRef.current.volume = 0.4;
-      audioRef.current
-        .play()
-        .then(() => setPlaying(true))
-        .catch(() => setPlaying(false));
+    if (!enabled) {
+      autoStartedRef.current = false;
+      return;
     }
-  }, [enabled, playing]);
+    if (autoStartedRef.current) return;
+    const el = audioRef.current;
+    if (!el) return;
+    autoStartedRef.current = true;
+    el.volume = 0.4;
+    el.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+  }, [enabled]);
+
+  // Stop and reset if the experience ends (user rewinds to intro etc.)
+  useEffect(() => {
+    if (active) return;
+    const el = audioRef.current;
+    if (!el) return;
+    el.pause();
+    el.currentTime = 0;
+    setPlaying(false);
+  }, [active]);
 
   const toggle = async () => {
     const el = audioRef.current;
@@ -1448,6 +1485,7 @@ function MusicPlayer({
     if (playing) {
       el.pause();
       setPlaying(false);
+      onDisable();
     } else {
       try {
         el.volume = 0.4;
@@ -1465,11 +1503,11 @@ function MusicPlayer({
   return (
     <>
       <audio ref={audioRef} src={soundtrack.url} loop preload="auto" />
-      <div className="fixed bottom-5 right-5 z-50">
+      <div className="fixed bottom-5 left-5 z-50">
         <button
           onClick={toggle}
           aria-label={playing ? "Pausar música" : "Reproducir música"}
-          className="relative flex h-14 w-14 items-center justify-center rounded-full border border-chrome-soft/40 backdrop-blur-xl text-chrome transition-all hover:scale-110 hover:border-chrome/70"
+          className="relative flex h-12 w-12 items-center justify-center rounded-full border border-chrome-soft/40 backdrop-blur-xl text-chrome transition-all hover:scale-110 hover:border-chrome/70"
           style={{
             background:
               "radial-gradient(circle at 30% 25%, oklch(0.3 0.09 260 / 0.75), oklch(0.08 0.03 260 / 0.85) 70%)",
@@ -1478,7 +1516,7 @@ function MusicPlayer({
           }}
         >
           {playing ? (
-            <div className="flex items-end gap-[3px] h-5">
+            <div className="flex items-end gap-[3px] h-4">
               {[0, 1, 2, 3].map((i) => (
                 <motion.span
                   key={i}
@@ -1489,12 +1527,9 @@ function MusicPlayer({
               ))}
             </div>
           ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M8 5v14l11-7z" />
             </svg>
-          )}
-          {playing && (
-            <span className="pointer-events-none absolute inset-0 rounded-full border border-chrome/30 animate-ping" />
           )}
         </button>
       </div>
