@@ -43,6 +43,7 @@ function Index() {
       <MusicPlayer
         active={stage === "experience"}
         enabled={musicEnabled}
+        onDisable={() => setMusicEnabled(false)}
         onEnable={() => {
           setMusicEnabled(true);
           setShowMusicPrompt(false);
