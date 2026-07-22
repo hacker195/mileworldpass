@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
 import soundtrack from "@/assets/genesis-soundtrack.mp3.asset.json";
