@@ -4,11 +4,15 @@ import { AnimatePresence, motion } from "motion/react";
 import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
 import soundtrack from "@/assets/genesis-soundtrack.mp3.asset.json";
-import editorial1 from "@/assets/editorial-1.jpg.asset.json";
-import editorial2 from "@/assets/editorial-2.jpg.asset.json";
-import editorial3 from "@/assets/editorial-3.jpg.asset.json";
-import groupIll from "@/assets/mile-group-illustration.png.asset.json";
 import giftIll from "@/assets/gift-illustration.png.asset.json";
+import {
+  searchGuests,
+  visibleMembers,
+  titleCase,
+  welcomeGreeting,
+  findReservationByGuestName,
+  type GuestMember,
+} from "@/lib/guests";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -23,7 +27,7 @@ export const Route = createFileRoute("/")({
 });
 
 type Stage = "intro" | "access" | "validating" | "welcome" | "experience";
-interface GuestData { nombre: string; validFor: number; companions: string[] }
+interface GuestData { nombre: string; rol: "adulto" | "joven" }
 
 const EVENT_DATE = new Date("2027-01-01T20:30:00-03:00");
 const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Oga+Guasu+Salon+de+Eventos";
@@ -35,7 +39,7 @@ const GIFT_ALIAS = "CI.3.510.962";
 /* ============================================================ */
 function Index() {
   const [stage, setStage] = useState<Stage>("intro");
-  const [guest, setGuest] = useState<GuestData>({ nombre: "", validFor: 1, companions: [] });
+  const [guest, setGuest] = useState<GuestData>({ nombre: "", rol: "adulto" });
   const [muted, setMuted] = useState(false);
 
   // Autoplay after user gesture on "VALIDAR ACCESO"
@@ -67,7 +71,7 @@ function Index() {
       <AnimatePresence mode="wait">
         {stage === "intro" && <IntroScreen key="intro" onEnter={() => setStage("access")} />}
         {stage === "access" && (
-          <AccessScreen key="access" onSubmit={(d) => { setGuest(d); setStage("validating"); }} />
+          <AccessScreen key="access" onSubmit={(m) => { setGuest({ nombre: m.nombre, rol: m.rol }); setStage("validating"); }} />
         )}
         {stage === "validating" && (
           <ValidatingScreen key="val" onDone={() => setStage("welcome")} />
@@ -265,102 +269,130 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
 /* ============================================================ */
 /*  ACCESS — guest validation                                   */
 /* ============================================================ */
-function AccessScreen({ onSubmit }: { onSubmit: (d: GuestData) => void }) {
-  const [nombre, setNombre] = useState("");
-  const [validFor, setValidFor] = useState(1);
-  const [companions, setCompanions] = useState<string[]>([]);
+function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<GuestMember | null>(null);
+  const [active, setActive] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const setCompanion = (i: number, v: string) => {
-    const next = [...companions]; next[i] = v.toUpperCase(); setCompanions(next);
+  const results = useMemo(() => (selected ? [] : searchGuests(query, 6)), [query, selected]);
+
+  const choose = (m: GuestMember) => {
+    setSelected(m);
+    setQuery(titleCase(m.nombre));
+    setOpen(false);
+    setError(null);
   };
 
-  const canSubmit = nombre.trim().length > 1 &&
-    Array.from({ length: validFor - 1 }).every((_, i) => (companions[i] || "").trim().length > 1);
+  const submit = () => {
+    if (selected) return onSubmit(selected);
+    if (results.length === 1) return onSubmit(results[0]);
+    setError("Seleccioná tu nombre de la lista.");
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!open || !results.length) return;
+    if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => (a + 1) % results.length); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => (a - 1 + results.length) % results.length); }
+    else if (e.key === "Enter") { e.preventDefault(); choose(results[active]); }
+    else if (e.key === "Escape") { setOpen(false); }
+  };
 
   return (
     <motion.section
       className="relative min-h-screen flex items-center justify-center px-6 py-16"
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.8 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
     >
       <div className="relative w-full max-w-md">
-        {/* Panel */}
         <div className="glass-panel rounded-2xl px-7 py-9 relative overflow-hidden">
           <div className="text-center">
-            <div className="tracking-cinema text-[10px] mb-3" style={{ color: "oklch(0.68 0.03 255)", letterSpacing: "0.5em" }}>
-              Access Verification
+            <div className="tracking-cinema text-[10px] mb-4" style={{ color: "oklch(0.68 0.03 255)", letterSpacing: "0.5em" }}>
+              MILE WORLD
             </div>
-            <div className="font-display text-3xl leading-tight text-chrome">Validación</div>
-            <div className="mx-auto mt-4 h-px w-16" style={{ background: "linear-gradient(90deg, transparent, oklch(0.9 0.02 250 / 0.6), transparent)" }} />
-            <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "oklch(0.72 0.03 255)" }}>
-              Ingresá tu nombre para activar tu invitación personalizada.
+            <div className="font-display text-[26px] leading-[1.15] text-chrome">VERIFICACIÓN DE ACCESO</div>
+            <div className="mx-auto mt-5 h-px w-16" style={{ background: "linear-gradient(90deg, transparent, oklch(0.9 0.02 250 / 0.6), transparent)" }} />
+            <p className="mt-5 text-[13px] font-semibold leading-relaxed" style={{ color: "oklch(0.92 0.01 250)" }}>
+              Ingresa tu nombre para continuar
             </p>
           </div>
 
           <form
-            className="mt-8 space-y-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!canSubmit) return;
-              onSubmit({ nombre: nombre.trim(), validFor, companions: companions.slice(0, validFor - 1).map((c) => c.trim()) });
-            }}
+            className="mt-8"
+            onSubmit={(e) => { e.preventDefault(); submit(); }}
           >
-            <Field label="NOMBRE DEL INVITADO">
+            <Field label="NOMBRE">
               <input
-                required autoFocus value={nombre}
-                onChange={(e) => setNombre(e.target.value.toUpperCase())}
-                placeholder="TU NOMBRE"
-                className="w-full bg-transparent outline-none text-[15px] tracking-[0.15em] py-2"
+                required autoFocus
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSelected(null); setActive(0); setOpen(true); setError(null);
+                }}
+                onFocus={() => setOpen(true)}
+                onBlur={() => setTimeout(() => setOpen(false), 120)}
+                onKeyDown={onKeyDown}
+                placeholder="Buscá tu nombre"
+                autoComplete="off"
+                className="w-full bg-transparent outline-none text-[15px] tracking-[0.05em] py-2"
                 style={{ color: "oklch(0.96 0.01 250)" }}
               />
             </Field>
 
-            <Field label="VÁLIDO PARA">
-              <div className="flex gap-2">
-                {[1, 2, 3, 4].map((n) => (
-                  <button
-                    type="button" key={n}
-                    onClick={() => { setValidFor(n); setCompanions((c) => c.slice(0, n - 1)); }}
-                    className="flex-1 py-2 text-[12px] tracking-[0.2em] transition-colors"
+            <div className="relative">
+              <AnimatePresence>
+                {open && results.length > 0 && (
+                  <motion.ul
+                    initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    className="absolute left-0 right-0 mt-2 rounded-xl overflow-hidden z-20"
                     style={{
-                      background: validFor === n ? "oklch(0.55 0.14 258 / 0.35)" : "oklch(1 0 0 / 0.04)",
-                      border: `1px solid ${validFor === n ? "oklch(0.7 0.15 258 / 0.6)" : "oklch(1 0 0 / 0.12)"}`,
-                      color: "oklch(0.94 0.01 250)",
+                      background: "oklch(0.1 0.03 262 / 0.92)",
+                      backdropFilter: "blur(24px) saturate(140%)",
+                      border: "1px solid oklch(1 0 0 / 0.12)",
+                      boxShadow: "0 24px 48px -12px oklch(0 0 0 / 0.6)",
                     }}
                   >
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </Field>
+                    {results.map((m, i) => (
+                      <li key={m.nombre + i}>
+                        <button
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => choose(m)}
+                          onMouseEnter={() => setActive(i)}
+                          className="w-full text-left px-4 py-3 text-[13px] transition-colors"
+                          style={{
+                            color: "oklch(0.96 0.01 250)",
+                            background: i === active ? "oklch(0.55 0.14 258 / 0.22)" : "transparent",
+                            letterSpacing: "0.04em",
+                          }}
+                        >
+                          {titleCase(m.nombre)}
+                        </button>
+                      </li>
+                    ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </div>
 
-            <AnimatePresence>
-              {Array.from({ length: validFor - 1 }).map((_, i) => (
-                <motion.div key={i} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-                  <Field label={`ACOMPAÑANTE ${i + 1}`}>
-                    <input
-                      value={companions[i] || ""}
-                      onChange={(e) => setCompanion(i, e.target.value)}
-                      placeholder="NOMBRE"
-                      className="w-full bg-transparent outline-none text-[14px] tracking-[0.15em] py-2"
-                      style={{ color: "oklch(0.96 0.01 250)" }}
-                    />
-                  </Field>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {error && (
+              <div className="mt-3 text-[11px] tracking-[0.2em]" style={{ color: "oklch(0.75 0.14 25)" }}>{error}</div>
+            )}
 
             <button
-              type="submit" disabled={!canSubmit}
-              className="w-full mt-2 py-3.5 text-[11px] tracking-cinema relative overflow-hidden"
+              type="submit" disabled={!selected}
+              className="w-full mt-6 py-3.5 text-[11px] relative overflow-hidden transition-opacity"
               style={{
                 letterSpacing: "0.4em",
                 color: "oklch(0.98 0.01 250)",
-                background: canSubmit
-                  ? "linear-gradient(180deg, oklch(0.55 0.16 258 / 0.5), oklch(0.35 0.12 258 / 0.4))"
+                background: selected
+                  ? "linear-gradient(180deg, oklch(0.55 0.16 258 / 0.55), oklch(0.32 0.12 258 / 0.4))"
                   : "oklch(1 0 0 / 0.04)",
-                border: `1px solid ${canSubmit ? "oklch(0.7 0.15 258 / 0.6)" : "oklch(1 0 0 / 0.1)"}`,
-                opacity: canSubmit ? 1 : 0.5,
-                cursor: canSubmit ? "pointer" : "not-allowed",
+                border: `1px solid ${selected ? "oklch(0.72 0.15 258 / 0.65)" : "oklch(1 0 0 / 0.1)"}`,
+                opacity: selected ? 1 : 0.5,
+                cursor: selected ? "pointer" : "not-allowed",
+                boxShadow: selected ? "0 18px 40px -14px oklch(0.55 0.18 258 / 0.6)" : "none",
               }}
             >
               VALIDAR ACCESO
@@ -385,7 +417,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 /*  VALIDATING → ACCESS AUTHORIZED (2s auto-continue)           */
 /* ============================================================ */
 function ValidatingScreen({ onDone }: { onDone: () => void }) {
-  useEffect(() => { const t = setTimeout(onDone, 2600); return () => clearTimeout(t); }, [onDone]);
+  useEffect(() => { const t = setTimeout(onDone, 3600); return () => clearTimeout(t); }, [onDone]);
 
   return (
     <motion.section
@@ -399,8 +431,8 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
 
       <div className="relative text-center">
         <motion.div
-          initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+          initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.1, ease: [0.16, 0.84, 0.24, 1] }}
           className="mx-auto w-20 h-20 rounded-full grid place-items-center relative"
           style={{
             background: "linear-gradient(180deg, oklch(0.7 0.16 258 / 0.35), oklch(0.35 0.12 258 / 0.15))",
@@ -409,23 +441,23 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
           }}
         >
           <motion.svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.4, duration: 0.6 }}
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.7, duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
             style={{ color: "oklch(0.98 0.01 250)" }}
           >
             <motion.path d="m5 12 5 5L20 7" strokeLinecap="round" strokeLinejoin="round"
-              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.35, duration: 0.7 }}
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.7, duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
             />
           </motion.svg>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.7 }}
-          className="mt-8 tracking-cinema text-[11px]" style={{ letterSpacing: "0.5em", color: "oklch(0.85 0.05 258)" }}
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
+          className="mt-8 font-display text-[18px]" style={{ letterSpacing: "0.02em", color: "oklch(0.94 0.03 258)" }}
         >
-          ACCESS AUTHORIZED
+          Acceso autorizado
         </motion.div>
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3, duration: 0.7 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.1, duration: 0.9 }}
           className="mt-3 text-[12px]" style={{ color: "oklch(0.68 0.03 255)" }}
         >
           Tu invitación personalizada ha sido activada.
@@ -439,7 +471,8 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
 /*  WELCOME                                                     */
 /* ============================================================ */
 function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: () => void }) {
-  const first = guest.nombre.split(" ")[0];
+  const displayName = titleCase(guest.nombre);
+  const greeting = welcomeGreeting(guest.nombre);
   return (
     <motion.section
       className="relative min-h-screen flex items-center justify-center px-6 py-20"
@@ -447,35 +480,36 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
     >
       <div className="relative max-w-lg text-center">
         <motion.div
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 1 }}
-          className="font-signature text-5xl md:text-6xl"
+          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
+          className="text-[11px] tracking-cinema" style={{ letterSpacing: "0.5em", color: "oklch(0.72 0.03 255)" }}
+        >
+          {greeting}
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
+          className="mt-5 font-signature italic text-[44px] md:text-6xl leading-[1.05]"
           style={{ color: "oklch(0.96 0.01 250)" }}
         >
-          {first},
+          {displayName}
         </motion.div>
         <motion.p
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }}
-          className="mt-8 font-display text-2xl md:text-3xl leading-snug text-chrome"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }}
+          className="mt-10 font-display font-semibold text-3xl md:text-4xl leading-tight text-chrome"
         >
-          Bienvenido a MILEWOOD.
+          Prepárate para brillar
         </motion.p>
         <motion.p
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 1 }}
-          className="mt-5 text-[13px] leading-relaxed" style={{ color: "oklch(0.75 0.03 255)" }}
-        >
-          Donde las historias más extraordinarias cobran vida.
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2, duration: 1 }}
-          className="mt-8 font-display text-xl md:text-2xl tracking-[0.15em]"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.1, duration: 1 }}
+          className="mt-8 font-display text-xl md:text-2xl tracking-[0.08em]"
           style={{ color: "oklch(0.94 0.01 250)" }}
         >
-          Esta noche comienza <span className="text-chrome">MILE WORLD</span>.
+          Te invitamos a conocer{" "}
+          <span className="text-chrome whitespace-nowrap">MILE WORLD</span>
         </motion.p>
 
         <motion.button
           onClick={onContinue}
-          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.9, duration: 0.9 }}
+          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.8, duration: 0.9 }}
           className="mt-14 px-10 py-3 text-[11px] relative overflow-hidden"
           style={{
             letterSpacing: "0.4em",
@@ -498,13 +532,13 @@ function Experience({ guest }: { guest: GuestData }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}>
       <Hero />
-      <EditorialGallery />
+      <StoryPlaceholders />
       <VipPass guest={guest} />
       <Countdown />
       <DressCode />
       <GiftSection />
       <Restricted />
-      <Rsvp />
+      <Rsvp guest={guest} />
       <ClosingCredits />
     </motion.div>
   );
@@ -541,69 +575,85 @@ function Hero() {
   );
 }
 
-/* ---------- EDITORIAL GALLERY ---------- */
-function EditorialGallery() {
-  const items = [
-    { img: editorial1.url, kicker: "CAPÍTULO 01", title: "El Universo", copy: "Un mundo de seda azul, chrome y luz." },
-    { img: editorial2.url, kicker: "CAPÍTULO 02", title: "El Origen", copy: "Toda historia extraordinaria comienza con un instante." },
-    { img: editorial3.url, kicker: "CAPÍTULO 03", title: "La Entrada", copy: "Un corredor de luz hacia la premiere." },
-  ];
+/* ---------- STORY PLACEHOLDERS ---------- */
+function StoryPlaceholders() {
   return (
-    <section className="relative">
-      {items.map((it, i) => (
-        <div key={i} className="relative min-h-[100svh] flex items-end justify-start overflow-hidden">
-          <motion.div className="absolute inset-0"
-            initial={{ scale: 1.08, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true, margin: "-20%" }} transition={{ duration: 1.6 }}
-          >
-            <img src={it.img} alt="" className="w-full h-full object-cover" loading="lazy" />
-            <div className="absolute inset-0" style={{
-              background: "linear-gradient(180deg, oklch(0.05 0.02 260 / 0.55) 0%, transparent 40%, oklch(0.05 0.02 260 / 0.9) 100%)",
-            }} />
-          </motion.div>
+    <section className="relative py-24 px-6">
+      <div className="mx-auto max-w-4xl grid gap-8 md:grid-cols-2">
+        {[0, 1].map((i) => (
           <motion.div
-            className="relative z-10 px-8 pb-24 max-w-lg"
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-15%" }} transition={{ delay: 0.4, duration: 1 }}
+            key={i}
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 1.1, delay: i * 0.15, ease: [0.22, 0.9, 0.3, 1] }}
+            whileHover={{ y: -4 }}
+            className="relative aspect-[3/4] rounded-2xl overflow-hidden group"
+            style={{
+              background:
+                "linear-gradient(160deg, oklch(0.16 0.05 262) 0%, oklch(0.09 0.03 260) 60%, oklch(0.14 0.05 262) 100%)",
+              border: "1px solid oklch(1 0 0 / 0.1)",
+              boxShadow: "0 40px 80px -30px oklch(0 0 0 / 0.6)",
+            }}
           >
-            <div className="tracking-cinema text-[10px]" style={{ letterSpacing: "0.5em", color: "oklch(0.8 0.03 255)" }}>{it.kicker}</div>
-            <div className="mt-3 font-display text-4xl md:text-5xl text-chrome">{it.title}</div>
-            <div className="mt-3 text-[13px] max-w-sm" style={{ color: "oklch(0.85 0.02 255)" }}>{it.copy}</div>
+            <div aria-hidden className="absolute inset-0" style={{
+              background: "radial-gradient(ellipse at 30% 20%, oklch(0.55 0.16 258 / 0.28), transparent 60%)",
+            }} />
+            <div aria-hidden className="absolute inset-0 opacity-40 mix-blend-screen" style={{
+              background: "radial-gradient(ellipse at 80% 90%, oklch(0.9 0.02 250 / 0.3), transparent 55%)",
+            }} />
+            <motion.div
+              aria-hidden className="absolute inset-y-0 -left-1/2 w-1/2 pointer-events-none"
+              style={{ background: "linear-gradient(105deg, transparent 40%, oklch(1 0 0 / 0.15) 50%, transparent 60%)" }}
+              animate={{ x: ["-40%", "260%"] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", repeatDelay: 3 + i * 1.5 }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center px-8">
+              <img src={wordmark.url} alt="MILE WORLD" className="w-2/3 opacity-60" />
+            </div>
           </motion.div>
-        </div>
-      ))}
+        ))}
+      </div>
     </section>
   );
 }
 
 /* ---------- VIP PASS ---------- */
 function VipPass({ guest }: { guest: GuestData }) {
+  const members = useMemo(() => visibleMembers(guest.nombre), [guest.nombre]);
   const code = useMemo(() => {
-    const seed = guest.nombre || "MILEWORLD";
+    const res = findReservationByGuestName(guest.nombre);
+    const seed = (res ? "R" + res.id + "-" : "") + (guest.nombre || "MILEWORLD");
     let h = 0; for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) & 0xffffff;
     return "MW-" + h.toString(16).toUpperCase().padStart(6, "0");
   }, [guest.nombre]);
 
   return (
-    <section className="relative py-28 px-6">
+    <section className="relative py-24 px-6">
       <SectionKicker>Access Credential</SectionKicker>
       <SectionTitle>Pase de Acceso</SectionTitle>
 
+      {/* Environmental lighting around the pass */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-1/3 h-[60vh]" style={{
+        background:
+          "radial-gradient(ellipse at 30% 40%, oklch(0.55 0.18 258 / 0.22), transparent 55%), radial-gradient(ellipse at 70% 60%, oklch(0.9 0.02 250 / 0.08), transparent 60%)",
+        filter: "blur(20px)",
+      }} />
+
       <motion.div
-        className="mt-14 mx-auto max-w-sm relative rounded-2xl overflow-hidden"
+        className="mt-12 mx-auto max-w-sm relative rounded-[22px] overflow-hidden"
         style={{
           background:
-            "linear-gradient(160deg, oklch(0.20 0.06 262) 0%, oklch(0.11 0.04 262) 45%, oklch(0.15 0.05 262) 100%)",
+            "linear-gradient(160deg, oklch(0.22 0.06 262) 0%, oklch(0.11 0.04 262) 45%, oklch(0.16 0.05 262) 100%)",
           border: "1px solid oklch(1 0 0 / 0.14)",
-          boxShadow: "0 40px 90px -20px oklch(0.55 0.18 258 / 0.4), inset 0 1px 0 oklch(1 0 0 / 0.15)",
+          boxShadow:
+            "0 50px 100px -24px oklch(0.55 0.18 258 / 0.5), inset 0 1px 0 oklch(1 0 0 / 0.18), 0 0 0 1px oklch(0 0 0 / 0.2)",
         }}
-        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1 }}
+        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
-        {/* Abstract chrome texture overlay */}
         <div aria-hidden className="absolute inset-0 opacity-30 mix-blend-screen" style={{
           background:
             "radial-gradient(ellipse at 20% 10%, oklch(0.9 0.03 250 / 0.4), transparent 50%), radial-gradient(ellipse at 90% 80%, oklch(0.65 0.16 258 / 0.35), transparent 55%)",
         }} />
 
-        {/* Holographic reflection — full sweep */}
         <motion.div
           aria-hidden className="absolute inset-0 pointer-events-none"
           style={{
@@ -611,57 +661,59 @@ function VipPass({ guest }: { guest: GuestData }) {
               "linear-gradient(115deg, transparent 25%, oklch(1 0 0 / 0.22) 45%, oklch(0.75 0.15 258 / 0.3) 50%, oklch(1 0 0 / 0.22) 55%, transparent 75%)",
             mixBlendMode: "screen",
           }}
-          initial={{ x: "-120%" }} animate={{ x: "120%" }}
-          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+          initial={{ x: "-130%" }} animate={{ x: "130%" }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatDelay: 2.5 }}
         />
 
-        <div className="relative p-6">
+        <div className="relative p-7">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-[9px] tracking-[0.4em]" style={{ color: "oklch(0.7 0.03 255)" }}>MILE WORLD</div>
-              <div className="mt-1 font-display text-lg text-chrome">Access Pass</div>
+              <div className="text-[9px] tracking-[0.45em]" style={{ color: "oklch(0.72 0.03 255)" }}>MILE WORLD</div>
+              <div className="mt-1.5 font-display text-[19px] leading-none text-chrome">Access Pass</div>
             </div>
-            <img src={mLogo.url} alt="" className="w-10 h-10 opacity-90" style={{ filter: "drop-shadow(0 0 12px oklch(0.7 0.15 258 / 0.4))" }} />
+            <img src={mLogo.url} alt="" className="w-11 h-11 opacity-90" style={{ filter: "drop-shadow(0 0 14px oklch(0.7 0.15 258 / 0.45))" }} />
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-5">
-            <PassRow label="Invitado" value={guest.nombre} />
-            <PassRow label="Válido para" value={String(guest.validFor)} />
+          <div className="mt-7">
+            <div className="text-[9px] tracking-[0.35em]" style={{ color: "oklch(0.62 0.03 255)" }}>
+              {members.length > 1 ? "INVITADOS" : "INVITADO"}
+            </div>
+            <div className="mt-2 space-y-1.5">
+              {members.map((m) => (
+                <div key={m.nombre} className="font-display text-[17px] leading-tight" style={{ color: "oklch(0.97 0.01 250)", letterSpacing: "0.01em" }}>
+                  {titleCase(m.nombre)}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-4">
             <PassRow label="Fecha" value="01 · 01 · 2027" />
             <PassRow label="Apertura" value="20:30 hs" />
             <PassRow label="Lugar" value="Oga Guasu · Salón de Eventos" wide />
             <PassRow label="Código" value={code} wide mono />
           </div>
 
-          {/* Elegant translucent barcode */}
-          <div className="mt-6 pt-4" style={{ borderTop: "1px dashed oklch(1 0 0 / 0.15)" }}>
-            <div className="flex items-end gap-[2px] h-10">
-              {Array.from({ length: 56 }).map((_, i) => (
-                <div key={i} className="flex-1"
-                  style={{
-                    background: "oklch(1 0 0 / 0.85)",
-                    opacity: 0.35 + ((i * 37) % 55) / 100,
-                    height: `${40 + ((i * 53) % 60)}%`,
-                  }}
-                />
-              ))}
+          {/* Classic premium barcode — white, semi-transparent, uniform-thin bars */}
+          <div className="mt-7 pt-5" style={{ borderTop: "1px solid oklch(1 0 0 / 0.08)" }}>
+            <div className="flex items-end gap-[1.5px] h-9">
+              {Array.from({ length: 72 }).map((_, i) => {
+                const wide = i % 7 === 0 || i % 11 === 0;
+                return (
+                  <div key={i}
+                    style={{
+                      width: wide ? 3 : 1.5,
+                      height: "100%",
+                      background: "oklch(0.98 0.005 250 / 0.78)",
+                    }}
+                  />
+                );
+              })}
             </div>
-            <div className="mt-2 text-center text-[9px] tracking-[0.4em]" style={{ color: "oklch(0.65 0.03 255)" }}>
-              {code} · MW-XV
+            <div className="mt-2.5 text-center text-[9px] tracking-[0.45em]" style={{ color: "oklch(0.62 0.03 255)" }}>
+              {code}
             </div>
           </div>
-
-          {/* Corner ticks */}
-          {["top-2 left-2", "top-2 right-2", "bottom-2 left-2", "bottom-2 right-2"].map((c) => (
-            <div key={c} className={`absolute ${c} w-3 h-3`} style={{
-              borderColor: "oklch(0.9 0.02 250 / 0.5)",
-              borderStyle: "solid",
-              borderTopWidth: c.includes("top") ? 1 : 0,
-              borderBottomWidth: c.includes("bottom") ? 1 : 0,
-              borderLeftWidth: c.includes("left") ? 1 : 0,
-              borderRightWidth: c.includes("right") ? 1 : 0,
-            }} />
-          ))}
         </div>
       </motion.div>
     </section>
@@ -670,8 +722,8 @@ function VipPass({ guest }: { guest: GuestData }) {
 function PassRow({ label, value, wide, mono }: { label: string; value: string; wide?: boolean; mono?: boolean }) {
   return (
     <div className={wide ? "col-span-2" : ""}>
-      <div className="text-[9px] tracking-[0.3em]" style={{ color: "oklch(0.6 0.03 255)" }}>{label.toUpperCase()}</div>
-      <div className={`mt-1 text-[13px] ${mono ? "font-mono" : ""}`} style={{ color: "oklch(0.96 0.01 250)", letterSpacing: mono ? "0.1em" : "0.05em" }}>{value}</div>
+      <div className="text-[9px] tracking-[0.35em]" style={{ color: "oklch(0.6 0.03 255)" }}>{label.toUpperCase()}</div>
+      <div className={`mt-1 text-[13px] ${mono ? "font-mono" : ""}`} style={{ color: "oklch(0.96 0.01 250)", letterSpacing: mono ? "0.12em" : "0.04em" }}>{value}</div>
     </div>
   );
 }
@@ -707,26 +759,21 @@ function Countdown() {
 /* ---------- DRESS CODE ---------- */
 function DressCode() {
   return (
-    <section className="relative py-28 px-6">
+    <section className="relative py-24 px-6">
       <SectionKicker>Dress Code</SectionKicker>
-      <SectionTitle>Tenida Elegante</SectionTitle>
-      <motion.div
-        className="mt-12 mx-auto max-w-md relative rounded-2xl overflow-hidden glass-panel p-6"
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }}
+      <SectionTitle>Tenida elegante</SectionTitle>
+      <motion.p
+        className="mt-10 mx-auto max-w-md text-center font-display italic text-[22px] md:text-[26px] leading-snug"
+        style={{ color: "oklch(0.94 0.01 250)" }}
+        initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
-        <div className="relative flex items-center justify-center py-4">
-          {/* Soft light halo behind the illustration */}
-          <div aria-hidden className="absolute inset-0" style={{
-            background: "radial-gradient(ellipse at center, oklch(0.65 0.15 258 / 0.25), transparent 65%)",
-          }} />
-          <img src={groupIll.url} alt="Grupo elegante — inspiración de vestimenta" className="relative w-full max-w-xs invert opacity-95"
-            style={{ mixBlendMode: "screen" }} loading="lazy" />
-        </div>
-        <div className="mt-6 text-center text-[12px] leading-relaxed" style={{ color: "oklch(0.78 0.02 255)" }}>
-          Inspiración editorial para una noche de premiere.
-          <br />Colores oscuros, texturas nobles.
-        </div>
-      </motion.div>
+        Una noche especial merece una presencia especial.
+      </motion.p>
+      <motion.div
+        className="mx-auto mt-10 h-px w-20"
+        style={{ background: "linear-gradient(90deg, transparent, oklch(0.9 0.02 250 / 0.6), transparent)" }}
+        initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}
+      />
     </section>
   );
 }
@@ -736,35 +783,40 @@ function GiftSection() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   return (
-    <section className="relative py-28 px-6">
-      <SectionKicker>Detalles para Mile</SectionKicker>
-      <SectionTitle>Un gesto elegante</SectionTitle>
-
+    <section className="relative py-24 px-6">
       <motion.div
-        className="mt-10 mx-auto max-w-md"
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }}
+        className="mx-auto max-w-md"
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
-        <div className="relative flex justify-center py-4">
+        <div className="relative flex justify-center pt-4 pb-2">
           <div aria-hidden className="absolute inset-0" style={{
-            background: "radial-gradient(ellipse at center, oklch(0.65 0.15 258 / 0.2), transparent 60%)",
+            background: "radial-gradient(ellipse at center, oklch(0.65 0.15 258 / 0.28), transparent 60%)",
           }} />
-          <img src={giftIll.url} alt="Regalo" className="relative w-40 invert opacity-95" style={{ mixBlendMode: "screen" }} loading="lazy" />
+          <img
+            src={giftIll.url}
+            alt="Regalo"
+            className="relative w-44"
+            style={{ filter: "brightness(0) invert(1) drop-shadow(0 12px 32px oklch(0.55 0.18 258 / 0.4))", opacity: 0.95 }}
+            loading="lazy"
+          />
         </div>
 
-        <p className="mt-6 text-center text-[12.5px] leading-relaxed" style={{ color: "oklch(0.78 0.02 255)" }}>
-          Tu presencia es el mejor regalo. Si querés hacer un detalle a Mile,
-          podés colaborar con el viaje que dará continuidad a esta historia.
+        <p className="mt-6 text-center text-[13px] leading-[1.7] max-w-sm mx-auto" style={{ color: "oklch(0.85 0.02 255)" }}>
+          Tu presencia es el mejor regalo.
+          <br />
+          <span style={{ color: "oklch(0.72 0.02 255)" }}>Sin embargo, habilitamos esta cuenta por si deseas realizar tu obsequio en efectivo.</span>
         </p>
 
-        <div className="mt-8">
+        <div className="mt-7">
           <button
             onClick={() => setOpen((o) => !o)}
-            className="w-full py-3 text-[11px] tracking-cinema relative"
+            className="w-full py-3.5 text-[11px] tracking-cinema relative transition-colors"
             style={{
               letterSpacing: "0.4em",
               color: "oklch(0.98 0.01 250)",
-              background: "linear-gradient(180deg, oklch(1 0 0 / 0.05), transparent)",
-              border: "1px solid oklch(1 0 0 / 0.2)",
+              background: "linear-gradient(180deg, oklch(1 0 0 / 0.06), oklch(1 0 0 / 0.02))",
+              border: "1px solid oklch(1 0 0 / 0.22)",
+              boxShadow: "0 12px 24px -12px oklch(0 0 0 / 0.5)",
             }}
           >
             {open ? "OCULTAR ALIAS" : "VER ALIAS"}
@@ -799,22 +851,22 @@ function GiftSection() {
 /* ---------- RESTRICTED ---------- */
 function Restricted() {
   const [scanning, setScanning] = useState(false);
-  const [unlocked, setUnlocked] = useState(false);
+  const [denied, setDenied] = useState(false);
 
   const start = () => {
-    if (scanning || unlocked) return;
+    if (scanning || denied) return;
     setScanning(true);
-    setTimeout(() => { setScanning(false); setUnlocked(true); }, 2200);
+    setTimeout(() => { setScanning(false); setDenied(true); }, 2400);
   };
 
   return (
-    <section className="relative py-28 px-6">
-      <SectionKicker>Restricted File</SectionKicker>
-      <SectionTitle>Archivo Restringido</SectionTitle>
+    <section className="relative py-24 px-6">
+      <SectionKicker>Archivo Restringido</SectionKicker>
+      <SectionTitle>Accede a todos los detalles de la fiesta</SectionTitle>
 
       <motion.div
-        className="mt-12 mx-auto max-w-md glass-panel rounded-2xl p-8"
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }}
+        className="mt-10 mx-auto max-w-md glass-panel rounded-2xl p-8"
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
         <div className="flex items-center justify-between text-[9px] tracking-[0.35em]" style={{ color: "oklch(0.6 0.03 255)" }}>
           <span>CLASSIFIED</span>
@@ -827,12 +879,17 @@ function Restricted() {
             className="relative w-32 h-32 rounded-full grid place-items-center"
             style={{
               background: "radial-gradient(circle at 30% 30%, oklch(0.25 0.06 262), oklch(0.12 0.04 262))",
-              border: "1px solid oklch(0.7 0.15 258 / 0.4)",
-              boxShadow: "0 0 40px oklch(0.6 0.18 258 / 0.35)",
+              border: `1px solid ${denied ? "oklch(0.7 0.18 25 / 0.6)" : "oklch(0.7 0.15 258 / 0.4)"}`,
+              boxShadow: denied
+                ? "0 0 50px oklch(0.6 0.22 25 / 0.4)"
+                : "0 0 40px oklch(0.6 0.18 258 / 0.35)",
+              transition: "border 400ms ease, box-shadow 400ms ease",
             }}
             aria-label="Escanear huella"
           >
-            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" style={{ color: unlocked ? "oklch(0.85 0.1 258)" : "oklch(0.7 0.05 258)" }}>
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"
+              style={{ color: denied ? "oklch(0.75 0.18 25)" : "oklch(0.7 0.05 258)", transition: "color 400ms ease" }}
+            >
               <path d="M12 11a2 2 0 0 0-2 2v1a6 6 0 0 0 6 6" />
               <path d="M12 7a5 5 0 0 0-5 5v2a10 10 0 0 0 3.5 7.6" />
               <path d="M15 22a10 10 0 0 1-5-8.7v-.7a2 2 0 1 1 4 0v.9a6 6 0 0 0 2 4.6" />
@@ -840,17 +897,18 @@ function Restricted() {
               <path d="M3 12a8.9 8.9 0 0 1 1.5-5" />
             </svg>
 
-            {/* Laser scan */}
             <AnimatePresence>
               {scanning && (
                 <motion.div
                   className="absolute inset-0 overflow-hidden rounded-full"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
                   <motion.div
-                    className="absolute inset-x-0 h-[2px]"
-                    style={{ background: "linear-gradient(90deg, transparent, oklch(0.85 0.18 258), transparent)", boxShadow: "0 0 20px oklch(0.75 0.2 258)" }}
-                    initial={{ y: "0%" }} animate={{ y: ["0%", "100%", "0%"] }} transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-x-0 top-0 h-[2px]"
+                    style={{ background: "linear-gradient(90deg, transparent, oklch(0.9 0.18 258), transparent)", boxShadow: "0 0 24px oklch(0.75 0.2 258)" }}
+                    animate={{ y: [0, 128, 0] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
                   />
                   <div className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle, oklch(0.65 0.18 258 / 0.2), transparent 70%)" }} />
                 </motion.div>
@@ -860,7 +918,7 @@ function Restricted() {
 
           <div className="mt-6 h-6 text-center">
             <AnimatePresence mode="wait">
-              {!scanning && !unlocked && (
+              {!scanning && !denied && (
                 <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-[10px] tracking-[0.35em]" style={{ color: "oklch(0.65 0.03 255)" }}>
                   PRESIONÁ PARA ESCANEAR
                 </motion.div>
@@ -870,81 +928,83 @@ function Restricted() {
                   ESCANEANDO...
                 </motion.div>
               )}
-              {unlocked && (
-                <motion.div key="ok" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] tracking-[0.35em]" style={{ color: "oklch(0.85 0.1 258)" }}>
-                  ACCESO CONCEDIDO ✓
+              {denied && (
+                <motion.div key="deny" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[11px] tracking-[0.35em]" style={{ color: "oklch(0.78 0.16 25)" }}>
+                  ACCESO DENEGADO
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </div>
 
-        <div className="mt-8" style={{ borderTop: "1px solid oklch(1 0 0 / 0.08)" }} />
-
-        <AnimatePresence>
-          {unlocked ? (
-            <motion.div key="content" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="mt-6">
-              <div className="text-[9px] tracking-[0.35em]" style={{ color: "oklch(0.6 0.03 255)" }}>ARCHIVO · 001</div>
-              <div className="mt-1 font-display text-2xl text-chrome">Ver todos los detalles del evento</div>
-              <ul className="mt-4 space-y-2 text-[12.5px]" style={{ color: "oklch(0.82 0.02 255)" }}>
-                <li>· Apertura de puertas: 20:30 hs</li>
-                <li>· Lugar: Oga Guasu, Salón de Eventos</li>
-                <li>· Fecha: 01 · 01 · 2027</li>
-                <li>· Dress code: Tenida elegante</li>
-              </ul>
-            </motion.div>
+        <div className="mt-8 pt-6 text-center text-[11px] leading-relaxed" style={{ borderTop: "1px solid oklch(1 0 0 / 0.08)", color: "oklch(0.62 0.03 255)" }}>
+          {denied ? (
+            <span>Este archivo permanece clasificado.<br />Los detalles se revelarán la noche del evento.</span>
           ) : (
-            <motion.div key="locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 text-center text-[11px]" style={{ color: "oklch(0.6 0.03 255)" }}>
-              Este archivo contiene información sensible del evento.
-              <br />Validá tu huella para continuar.
-            </motion.div>
+            <span>Contiene información sensible de la producción.<br />Validá tu huella para continuar.</span>
           )}
-        </AnimatePresence>
+        </div>
       </motion.div>
     </section>
   );
 }
 
 /* ---------- RSVP ---------- */
-function Rsvp() {
+function Rsvp({ guest }: { guest: GuestData }) {
   const [confirmed, setConfirmed] = useState(false);
-  const text = encodeURIComponent("Hola Mile — confirmo mi asistencia a MILE WORLD · 01 · 01 · 2027.");
+  const message = useMemo(() => {
+    const members = visibleMembers(guest.nombre);
+    const list = members.map((m) => `• ${titleCase(m.nombre)}`).join("\n");
+    return `Hola.\nConfirmo mi presencia a MILE WORLD.\n\nInvitados:\n${list}`;
+  }, [guest.nombre]);
+  const text = encodeURIComponent(message);
 
   return (
-    <section className="relative py-28 px-6">
+    <section className="relative py-24 px-6">
       <SectionKicker>Confirmación</SectionKicker>
-      <SectionTitle>Confirmá tu acceso</SectionTitle>
+      <SectionTitle>Confirmá tu presencia</SectionTitle>
 
       <motion.div
-        className="mt-12 mx-auto max-w-md glass-panel rounded-2xl p-7 text-center"
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1 }}
+        className="mt-10 mx-auto max-w-md glass-panel rounded-2xl p-7 text-center"
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
-        <p className="text-[12.5px] leading-relaxed" style={{ color: "oklch(0.8 0.02 255)" }}>
-          Enviá tu confirmación directamente por WhatsApp para reservar tu lugar en la premiere.
+        <p className="text-[13px] leading-relaxed" style={{ color: "oklch(0.85 0.02 255)" }}>
+          Enviá tu confirmación directamente por WhatsApp para reservar tu lugar.
         </p>
 
         <a
           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`}
           target="_blank" rel="noreferrer"
           onClick={() => setConfirmed(true)}
-          className="mt-6 inline-block w-full py-3.5 text-[11px]"
+          className="mt-6 inline-block w-full py-3.5 text-[11px] transition-transform active:scale-[0.98]"
           style={{
             letterSpacing: "0.35em",
             color: "oklch(0.98 0.01 250)",
             background: "linear-gradient(180deg, oklch(0.55 0.16 258 / 0.55), oklch(0.35 0.12 258 / 0.4))",
             border: "1px solid oklch(0.75 0.15 258 / 0.65)",
-            boxShadow: "0 20px 40px -10px oklch(0.55 0.18 258 / 0.5)",
+            boxShadow: "0 22px 44px -12px oklch(0.55 0.18 258 / 0.55)",
           }}
         >
           {confirmed ? "ACCESO ACTIVADO ✓" : "CONFIRMAR POR WHATSAPP"}
         </a>
 
-        <div className="mt-8 pt-6 text-left" style={{ borderTop: "1px solid oklch(1 0 0 / 0.08)" }}>
-          <div className="text-[9px] tracking-[0.35em]" style={{ color: "oklch(0.6 0.03 255)" }}>LUGAR</div>
-          <div className="mt-1 text-[13px]" style={{ color: "oklch(0.94 0.01 250)" }}>Oga Guasu · Salón de Eventos</div>
-          <a href={MAPS_URL} target="_blank" rel="noreferrer" className="mt-2 inline-block text-[11px] underline underline-offset-4" style={{ color: "oklch(0.75 0.12 258)" }}>
-            Ver ubicación
-          </a>
+        <div className="mt-8 pt-6 flex items-start gap-3 text-left" style={{ borderTop: "1px solid oklch(1 0 0 / 0.08)" }}>
+          <div className="mt-0.5 w-9 h-9 rounded-full grid place-items-center shrink-0"
+            style={{ background: "oklch(0.55 0.14 258 / 0.18)", border: "1px solid oklch(0.7 0.15 258 / 0.35)" }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "oklch(0.9 0.05 258)" }}>
+              <path d="M12 22s-8-7.5-8-13a8 8 0 1 1 16 0c0 5.5-8 13-8 13Z" />
+              <circle cx="12" cy="9" r="2.5" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <div className="text-[9px] tracking-[0.4em]" style={{ color: "oklch(0.62 0.03 255)" }}>LUGAR</div>
+            <div className="mt-1 font-display text-[16px] leading-tight" style={{ color: "oklch(0.96 0.01 250)" }}>Oga Guasu</div>
+            <div className="text-[12px]" style={{ color: "oklch(0.75 0.02 255)" }}>Salón de Eventos</div>
+            <a href={MAPS_URL} target="_blank" rel="noreferrer" className="mt-2 inline-block text-[11px] underline underline-offset-4" style={{ color: "oklch(0.75 0.12 258)" }}>
+              Ver ubicación
+            </a>
+          </div>
         </div>
       </motion.div>
     </section>
@@ -955,15 +1015,17 @@ function Rsvp() {
 function ClosingCredits() {
   return (
     <section className="relative min-h-[90svh] flex flex-col items-center justify-center px-6 py-24 overflow-hidden">
-      {/* Fabric-like closing curtain */}
       <div aria-hidden className="absolute inset-0" style={{
         background:
           "radial-gradient(ellipse at 50% 30%, oklch(0.28 0.1 262 / 0.9), oklch(0.06 0.02 260) 70%)",
       }} />
-      <motion.img
-        src={editorial1.url} alt="" aria-hidden
-        className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-screen"
-        initial={{ scale: 1.1 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ duration: 4 }}
+      <motion.div aria-hidden className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at 20% 20%, oklch(0.55 0.18 258 / 0.35), transparent 55%), radial-gradient(ellipse at 80% 80%, oklch(0.9 0.02 250 / 0.15), transparent 55%)",
+          filter: "blur(30px)",
+        }}
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 3 }}
       />
       <div className="absolute inset-0" style={{
         background: "linear-gradient(180deg, oklch(0.05 0.02 260 / 0.85) 0%, transparent 40%, oklch(0.05 0.02 260 / 0.95) 100%)",
@@ -977,7 +1039,7 @@ function ClosingCredits() {
         />
         <motion.div
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.8, duration: 1.4 }}
-          className="mt-10 font-signature text-4xl" style={{ color: "oklch(0.94 0.01 250)" }}
+          className="mt-10 font-signature italic text-4xl" style={{ color: "oklch(0.94 0.01 250)" }}
         >
           Nos vemos en la premiere
         </motion.div>
