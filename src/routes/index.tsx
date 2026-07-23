@@ -4,11 +4,15 @@ import { AnimatePresence, motion } from "motion/react";
 import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
 import soundtrack from "@/assets/genesis-soundtrack.mp3.asset.json";
-import editorial1 from "@/assets/editorial-1.jpg.asset.json";
-import editorial2 from "@/assets/editorial-2.jpg.asset.json";
-import editorial3 from "@/assets/editorial-3.jpg.asset.json";
-import groupIll from "@/assets/mile-group-illustration.png.asset.json";
 import giftIll from "@/assets/gift-illustration.png.asset.json";
+import {
+  searchGuests,
+  visibleMembers,
+  titleCase,
+  welcomeGreeting,
+  findReservationByGuestName,
+  type GuestMember,
+} from "@/lib/guests";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -23,7 +27,7 @@ export const Route = createFileRoute("/")({
 });
 
 type Stage = "intro" | "access" | "validating" | "welcome" | "experience";
-interface GuestData { nombre: string; validFor: number; companions: string[] }
+interface GuestData { nombre: string; rol: "adulto" | "joven" }
 
 const EVENT_DATE = new Date("2027-01-01T20:30:00-03:00");
 const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Oga+Guasu+Salon+de+Eventos";
@@ -35,7 +39,7 @@ const GIFT_ALIAS = "CI.3.510.962";
 /* ============================================================ */
 function Index() {
   const [stage, setStage] = useState<Stage>("intro");
-  const [guest, setGuest] = useState<GuestData>({ nombre: "", validFor: 1, companions: [] });
+  const [guest, setGuest] = useState<GuestData>({ nombre: "", rol: "adulto" });
   const [muted, setMuted] = useState(false);
 
   // Autoplay after user gesture on "VALIDAR ACCESO"
@@ -67,7 +71,7 @@ function Index() {
       <AnimatePresence mode="wait">
         {stage === "intro" && <IntroScreen key="intro" onEnter={() => setStage("access")} />}
         {stage === "access" && (
-          <AccessScreen key="access" onSubmit={(d) => { setGuest(d); setStage("validating"); }} />
+          <AccessScreen key="access" onSubmit={(m) => { setGuest({ nombre: m.nombre, rol: m.rol }); setStage("validating"); }} />
         )}
         {stage === "validating" && (
           <ValidatingScreen key="val" onDone={() => setStage("welcome")} />
