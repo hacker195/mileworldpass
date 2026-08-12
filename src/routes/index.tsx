@@ -534,10 +534,9 @@ function Hero() {
         initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 0.95, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.4 }}
       />
       <motion.div
-        className="mt-8 h-px w-24"
+        className="mt-8 h-px w-24 origin-left"
         style={{ background: "linear-gradient(90deg, oklch(0.9 0.02 250 / 0.7), transparent)" }}
         initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ delay: 0.6, duration: 1 }}
-        style-origin="left"
       />
       <motion.div
         className="mt-8 font-editorial text-chrome text-[12.5vw] sm:text-7xl leading-[0.92]"
