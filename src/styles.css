@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-display: "Cormorant Garamond", "Playfair Display", serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bodoni Moda", "Didot", "Bodoni MT", serif;
+  --font-sans: "Sora", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-signature: "Pinyon Script", "Cormorant Garamond", cursive;
 }
@@ -181,8 +181,27 @@
 
 @utility font-display {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-optical-sizing: auto;
+}
+
+/* Editorial Didone hero title: heavy, uppercase, wide tracking */
+@utility font-editorial {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-optical-sizing: auto;
+  line-height: 0.92;
+}
+
+/* Mixed-scale drop letter inside an editorial title */
+@utility drop-letter {
+  font-size: 1.55em;
+  line-height: 0.8;
+  vertical-align: baseline;
+  font-weight: 900;
 }
 
 @utility tracking-cinema {
@@ -199,6 +218,77 @@
   backdrop-filter: blur(24px) saturate(140%);
   border: 1px solid oklch(1 0 0 / 0.08);
   box-shadow: var(--shadow-cinema);
+}
+
+/* Premium button — smooth, refined, never a pill */
+@utility btn-premium {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  overflow: hidden;
+  border-radius: 14px;
+  padding: 0.95rem 1.6rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: oklch(0.98 0.01 250);
+  background:
+    linear-gradient(180deg, oklch(0.62 0.15 258 / 0.5), oklch(0.28 0.1 258 / 0.42));
+  border: 1px solid oklch(0.8 0.1 258 / 0.45);
+  box-shadow:
+    0 18px 40px -18px oklch(0.55 0.18 258 / 0.75),
+    inset 0 1px 0 oklch(1 0 0 / 0.22);
+  transition: transform 320ms cubic-bezier(0.22, 0.9, 0.3, 1),
+    box-shadow 320ms ease, border-color 320ms ease, background 320ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    border-color: oklch(0.9 0.09 258 / 0.7);
+    box-shadow:
+      0 26px 56px -20px oklch(0.6 0.19 258 / 0.85),
+      inset 0 1px 0 oklch(1 0 0 / 0.3);
+  }
+  &:active {
+    transform: translateY(0) scale(0.985);
+    box-shadow:
+      0 10px 24px -16px oklch(0.55 0.18 258 / 0.7),
+      inset 0 2px 6px oklch(0 0 0 / 0.35);
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+@utility btn-ghost {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 14px;
+  padding: 0.9rem 1.5rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: oklch(0.97 0.01 250);
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.09), oklch(1 0 0 / 0.03));
+  border: 1px solid oklch(1 0 0 / 0.22);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 34px -20px oklch(0 0 0 / 0.8), inset 0 1px 0 oklch(1 0 0 / 0.16);
+  transition: transform 320ms cubic-bezier(0.22, 0.9, 0.3, 1),
+    box-shadow 320ms ease, border-color 320ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    border-color: oklch(1 0 0 / 0.38);
+  }
+  &:active { transform: translateY(0) scale(0.985); }
 }
 
 @utility chrome-border {
