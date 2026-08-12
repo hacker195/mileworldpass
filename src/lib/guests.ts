@@ -2,7 +2,7 @@ import guestsData from "@/data/guests.json";
 
 export type Role = "adulto" | "joven";
 export interface GuestMember { nombre: string; rol: Role }
-export interface Reservation { id: number; integrantes: GuestMember[] }
+export interface Reservation { id: number; accessCode: string; integrantes: GuestMember[] }
 
 export const RESERVATIONS: Reservation[] = guestsData as Reservation[];
 
@@ -48,6 +48,24 @@ export function searchGuests(query: string, limit = 8): GuestMember[] {
 export function findReservationByGuestName(name: string): Reservation | undefined {
   const target = normalize(name);
   return RESERVATIONS.find((r) => r.integrantes.some((m) => normalize(m.nombre) === target));
+}
+
+/**
+ * The access code of the group a guest belongs to. This is the single value
+ * encoded in the QR — read live from guests.json, never random or cached.
+ */
+export function accessCodeFor(name: string): string {
+  return findReservationByGuestName(name)?.accessCode ?? "";
+}
+
+/** All members of the guest's group (used for the QR / group identity). */
+export function groupMembers(name: string): GuestMember[] {
+  return findReservationByGuestName(name)?.integrantes ?? [];
+}
+
+/** First name only, Title Cased. */
+export function firstName(fullName: string): string {
+  return titleCase(normalize(fullName).split(" ")[0] || "");
 }
 
 /** Given the authenticated guest, return the members to display on the pass/RSVP. */
