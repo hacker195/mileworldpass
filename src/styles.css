@@ -227,10 +227,32 @@
 
 @utility num-clock {
   font-family: var(--font-numeric);
-  font-weight: 300;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
 }
+
+/* NOIR et BLANC — editorial personality */
+@utility font-noir {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: 0.02em;
+}
+
+/* Manrope Thin — air, clarity, information */
+@utility font-meta {
+  font-family: var(--font-sans);
+  font-weight: 200;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+@utility font-info {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+}
+
 
 @utility tracking-cinema {
   letter-spacing: 0.35em;
