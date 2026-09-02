@@ -17,6 +17,7 @@ export function SceneBg({
   blur = 4,
   saturation = 50,
   duration = 24,
+  tint,
   alt = "",
 }: {
   image: string;
@@ -26,10 +27,12 @@ export function SceneBg({
   blur?: number;
   saturation?: number;
   duration?: number;
+  tint?: string;
   alt?: string;
 }) {
   const reduce = useReducedMotion();
   const anim = (v: Record<string, unknown>) => (reduce ? undefined : v);
+
   return (
     <div
       aria-hidden={alt ? undefined : true}
