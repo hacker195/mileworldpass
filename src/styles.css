@@ -4,13 +4,23 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Space Grotesk", ui-monospace, monospace;
-  --font-numeric: "Space Grotesk", ui-monospace, monospace;
-  --font-signature: "Instrument Serif", Georgia, serif;
+/* NOIR et BLANC Stylish Serif — real family files served from project assets */
+@font-face {
+  font-family: "NoirEtBlanc";
+  src: url("/__l5e/assets-v1/010745a5-a077-4c0f-b88b-564d5c6c2cc5/noir-et-blanc.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
+
+@theme {
+  --font-display: "NoirEtBlanc", "Instrument Serif", Georgia, serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Manrope", ui-monospace, monospace;
+  --font-numeric: "NoirEtBlanc", "Instrument Serif", Georgia, serif;
+  --font-signature: "NoirEtBlanc", "Instrument Serif", Georgia, serif;
+}
+
 
 /*
  * Design system definition.
@@ -217,10 +227,32 @@
 
 @utility num-clock {
   font-family: var(--font-numeric);
-  font-weight: 300;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
 }
+
+/* NOIR et BLANC — editorial personality */
+@utility font-noir {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: 0.02em;
+}
+
+/* Manrope Thin — air, clarity, information */
+@utility font-meta {
+  font-family: var(--font-sans);
+  font-weight: 200;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+@utility font-info {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+}
+
 
 @utility tracking-cinema {
   letter-spacing: 0.35em;

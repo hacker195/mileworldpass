@@ -17,6 +17,7 @@ export function SceneBg({
   blur = 4,
   saturation = 50,
   duration = 24,
+  tint,
   alt = "",
 }: {
   image: string;
@@ -26,10 +27,12 @@ export function SceneBg({
   blur?: number;
   saturation?: number;
   duration?: number;
+  tint?: string;
   alt?: string;
 }) {
   const reduce = useReducedMotion();
   const anim = (v: Record<string, unknown>) => (reduce ? undefined : v);
+
   return (
     <div
       aria-hidden={alt ? undefined : true}
@@ -76,8 +79,9 @@ export function SceneBg({
       />
       <div
         className="absolute inset-0"
-        style={{ background: "oklch(0.11 0.045 262 / 0.52)" }}
+        style={{ background: tint ?? "oklch(0.11 0.045 262 / 0.52)" }}
       />
+
 
       {/* three drifting light layers — 18s / 24s / 30s, never the source itself */}
       <motion.div
