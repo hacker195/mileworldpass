@@ -79,8 +79,9 @@ export function SceneBg({
       />
       <div
         className="absolute inset-0"
-        style={{ background: "oklch(0.11 0.045 262 / 0.52)" }}
+        style={{ background: tint ?? "oklch(0.11 0.045 262 / 0.52)" }}
       />
+
 
       {/* three drifting light layers — 18s / 24s / 30s, never the source itself */}
       <motion.div
