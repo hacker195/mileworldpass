@@ -288,7 +288,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
 
   return (
     <motion.section
-      className="relative min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-6 overflow-hidden"
+      className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}
     >
       <SceneBg image={bgLights.url} opacity={0.44} blur={22} position="50% 30%" tint="oklch(0.13 0.05 262 / 0.62)" duration={30} />
@@ -394,7 +394,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
 
   return (
     <motion.section
-      className="relative min-h-[100svh] flex items-center justify-center px-5 sm:px-6 py-16 overflow-hidden"
+      className="relative isolate min-h-[100svh] flex items-center justify-center px-5 sm:px-6 py-16 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
     >
       <SceneBg image={bgCorridor.url} opacity={0.42} blur={18} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.64)" duration={28} />
@@ -496,7 +496,7 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <motion.section
-      className="relative min-h-[100svh] flex items-center justify-center px-6 overflow-hidden"
+      className="relative isolate min-h-[100svh] flex items-center justify-center px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}
     >
       <SceneBg image={chromeFlow.url} opacity={0.4} blur={20} tint="oklch(0.12 0.05 262 / 0.66)" duration={22} />
@@ -549,7 +549,7 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
   const greeting = welcomeGreeting(guest.nombre);
   return (
     <motion.section
-      className="relative min-h-[100svh] flex items-center px-6 sm:px-10 py-20 overflow-hidden"
+      className="relative isolate min-h-[100svh] flex items-center px-6 sm:px-10 py-20 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 1 }}
     >
       <SceneBg image={silkNavy.url} opacity={0.5} blur={14} position="30% 40%" tint="oklch(0.13 0.05 262 / 0.56)" duration={30} />
@@ -634,7 +634,7 @@ function Hero() {
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "16%"]);
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 py-24 overflow-hidden">
+    <section ref={ref} className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 py-24 overflow-hidden">
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
         <SceneBg image={silkElectric.url} opacity={0.5} blur={12} position="55% 40%" tint="oklch(0.12 0.05 262 / 0.58)" duration={34} />
       </motion.div>
@@ -727,7 +727,7 @@ function VipPass({ guest }: { guest: GuestData }) {
   const reset = () => setTilt({ rx: 0, ry: 0, gx: 50, gy: 50 });
 
   return (
-    <section className="relative py-28 px-5 sm:px-8 overflow-hidden">
+    <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={chromeRipple.url} opacity={0.44} blur={14} position="40% 50%" tint="oklch(0.12 0.05 262 / 0.62)" duration={28} />
 
       <div className="mx-auto max-w-md">
@@ -846,7 +846,7 @@ function Countdown() {
     { l: "Segundos", v: Math.floor((diff / 1000) % 60) },
   ];
   return (
-    <section className="relative py-32 px-5 sm:px-8 overflow-hidden">
+    <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgStage.url} opacity={0.46} blur={16} position="50% 35%" tint="oklch(0.12 0.05 262 / 0.6)" duration={30} />
       <div aria-hidden className="absolute inset-x-0 top-1/3 h-[40vh] pointer-events-none" style={{
         background: "radial-gradient(ellipse 60% 100% at 50% 0%, oklch(0.8 0.12 258 / 0.18), transparent 70%)",
@@ -908,7 +908,7 @@ function Ruleta() {
   };
 
   return (
-    <section className="relative py-28 px-5 sm:px-8 overflow-hidden">
+    <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgSwirl.url} opacity={0.4} blur={18} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.66)" duration={32} />
 
       <div className="mx-auto max-w-xl text-center">
@@ -1012,7 +1012,7 @@ function TenidaElegante() {
   const yB = useTransform(scrollYProgress, [0, 1], ["-4%", "10%"]);
 
   return (
-    <section ref={ref} className="relative py-32 px-5 sm:px-8 overflow-hidden">
+    <section ref={ref} className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={iridescentDrape.url} opacity={0.4} blur={16} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.66)" duration={26} />
 
       <div className="mx-auto max-w-5xl">
@@ -1090,7 +1090,7 @@ function Detalles() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   return (
-    <section className="relative py-28 px-5 sm:px-8 overflow-hidden">
+    <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgSilkGold.url} opacity={0.4} blur={18} position="70% 60%" tint="oklch(0.12 0.05 262 / 0.66)" duration={30} />
 
       <div className="mx-auto max-w-md">
@@ -1166,7 +1166,7 @@ function Rsvp({ guest }: { guest: GuestData }) {
   const text = encodeURIComponent(message);
 
   return (
-    <section className="relative py-28 px-5 sm:px-8 overflow-hidden">
+    <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgIridescent.url} opacity={0.4} blur={18} position="30% 50%" tint="oklch(0.12 0.05 262 / 0.66)" duration={28} />
 
       <div className="mx-auto max-w-xl text-center">
@@ -1206,7 +1206,7 @@ function LocationScene() {
   const opacity = useTransform(scrollYProgress, [0, 0.3], [0.25, 1]);
 
   return (
-    <section ref={ref} className="relative py-28 px-5 sm:px-8 overflow-hidden">
+    <section ref={ref} className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgSilver.url} opacity={0.36} blur={20} position="50% 40%" tint="oklch(0.12 0.05 262 / 0.7)" duration={30} />
 
       <div className="mx-auto max-w-xl">
@@ -1301,7 +1301,7 @@ function ClosingCredits() {
   const fade = useTransform(scrollYProgress, [0.85, 1], [1, 0.15]);
 
   return (
-    <section ref={ref} className="relative min-h-[130svh] flex flex-col items-center justify-center px-6 py-32 overflow-hidden">
+    <section ref={ref} className="relative isolate min-h-[130svh] flex flex-col items-center justify-center px-6 py-32 overflow-hidden">
       <SceneBg image={bgSilk.url} opacity={0.34} blur={26} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.72)" duration={34} />
 
       {/* memorias — formas orgánicas que emergen y desaparecen con el scroll */}
