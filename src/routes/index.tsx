@@ -642,12 +642,12 @@ function Hero() {
       <motion.img
         src={mLogo.url} alt=""
         aria-hidden
-        className="w-14 sm:w-16 opacity-85"
-        initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 0.85, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.2 }}
+        className="w-[64px] h-[64px] object-contain opacity-90"
+        initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 0.9, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.2 }}
       />
 
       <motion.h1
-        className="mt-7 font-noir text-chrome text-center uppercase text-[16vw] sm:text-8xl leading-[0.9]"
+        className="mt-6 font-noir text-chrome text-center uppercase text-[clamp(44px,14vw,104px)] leading-[0.92] w-full"
         style={{ letterSpacing: "0.05em" }}
         initial={{ opacity: 0, y: 22, filter: "blur(10px)" }}
         whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -732,7 +732,7 @@ function VipPass({ guest }: { guest: GuestData }) {
 
       <div className="mx-auto max-w-md">
         <Meta style={{ letterSpacing: "0.45em" }}>Credencial de acceso</Meta>
-        <Title size="text-[16vw] sm:text-6xl" className="mt-3 uppercase">Tu pase</Title>
+        <Title size="text-[clamp(38px,14vw,64px)]" className="mt-3 uppercase">Tu acceso</Title>
       </div>
 
       <div className="mt-12 mx-auto max-w-sm" style={{ perspective: "1200px" }}>
@@ -777,7 +777,7 @@ function VipPass({ guest }: { guest: GuestData }) {
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <div className="font-meta text-[9px]" style={{ letterSpacing: "0.45em", color: "oklch(0.76 0.03 255)" }}>MILE WORLD</div>
-                <div className="mt-2 font-noir text-chrome text-[30px] leading-none uppercase">Pase</div>
+                <div className="mt-2 font-noir text-chrome text-[30px] leading-none uppercase">Acceso</div>
               </div>
               <img src={mLogo.url} alt="" className="w-11 h-11 shrink-0 opacity-90" style={{ filter: "drop-shadow(0 0 14px oklch(0.7 0.15 258 / 0.45))" }} />
             </div>
@@ -855,7 +855,7 @@ function Countdown() {
 
       <div className="mx-auto max-w-2xl text-center">
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Cuenta regresiva</Meta>
-        <Title align="center" size="text-[13vw] sm:text-6xl" className="mt-3 uppercase">La noche se acerca</Title>
+        <Title align="center" size="text-[clamp(30px,10vw,56px)]" className="mt-3 uppercase">La noche se acerca</Title>
       </div>
 
       <div className="mt-16 mx-auto max-w-2xl grid grid-cols-2 sm:grid-cols-4 gap-y-10 gap-x-4">
@@ -866,7 +866,7 @@ function Countdown() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ delay: i * 0.12, duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
           >
-            <div className="num-clock text-chrome text-[18vw] sm:text-[68px] leading-none">
+            <div className="num-clock text-chrome text-[clamp(38px,13vw,68px)] leading-[1.15] pb-1">
               {String(u.v).padStart(2, "0")}
             </div>
             <div className="mt-3 font-meta text-[9px]" style={{ color: "oklch(0.7 0.02 255)" }}>{u.l}</div>
@@ -912,8 +912,7 @@ function Ruleta() {
       <SceneBg image={bgSwirl.url} opacity={0.4} blur={18} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.66)" duration={32} />
 
       <div className="mx-auto max-w-xl text-center">
-        <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Easter egg</Meta>
-        <Title align="center" size="text-[12vw] sm:text-5xl" className="mt-3 uppercase">Tu destino de la noche</Title>
+        <Title align="center" size="text-[clamp(30px,10vw,52px)]" className="uppercase">Tu destino de la noche</Title>
       </div>
 
       <div className="mt-14 mx-auto w-[76vw] max-w-[330px] relative">
@@ -943,13 +942,21 @@ function Ruleta() {
             ).join(", ")})`,
           }} />
           {DESTINOS.map((_, i) => (
-            <div key={i} className="absolute inset-0" style={{ transform: `rotate(${i * seg}deg)` }}>
-              <div className="absolute left-1/2 top-0 h-1/2 w-px" style={{ background: "linear-gradient(180deg, oklch(0.92 0.02 250 / 0.55), transparent)" }} />
+            <div key={i} className="absolute inset-0">
               <div
-                className="absolute left-1/2 -translate-x-1/2 top-[9%] font-noir text-[15px]"
-                style={{ color: "oklch(0.93 0.01 250)", transform: `translateX(-50%) rotate(${seg / 2}deg)`, transformOrigin: "center" }}
+                className="absolute left-1/2 top-0 h-1/2 w-px origin-bottom"
+                style={{ background: "linear-gradient(180deg, oklch(0.92 0.02 250 / 0.55), transparent)", transform: `rotate(${i * seg}deg)` }}
+              />
+              <div
+                className="absolute left-1/2 top-1/2 h-1/2 w-0 origin-top"
+                style={{ transform: `rotate(${180 + i * seg + seg / 2}deg)` }}
               >
-                {String(i + 1).padStart(2, "0")}
+                <div
+                  className="absolute left-0 top-[10%] -translate-x-1/2 font-noir text-[15px]"
+                  style={{ color: "oklch(0.93 0.01 250)", transform: "translateX(-50%) rotate(180deg)" }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
               </div>
             </div>
           ))}
@@ -977,29 +984,32 @@ function Ruleta() {
         </button>
       </div>
 
-      <div className="mt-12 mx-auto max-w-md min-h-[92px] text-center">
-        <AnimatePresence mode="wait">
-          {result ? (
-            <motion.div
-              key={result}
-              initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
-            >
-              <div className="font-meta text-[9px]" style={{ color: "oklch(0.68 0.02 255)" }}>Tu destino</div>
-              <div className="mt-3 font-noir italic text-chrome text-[7vw] sm:text-3xl leading-tight">{result}</div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="font-meta text-[9px]" style={{ color: "oklch(0.62 0.02 255)" }}
-            >
-              {spinning ? "Girando…" : "Girá para descubrir tu destino"}
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className="mt-10 mx-auto max-w-md text-center font-meta text-[9px]" style={{ color: "oklch(0.62 0.02 255)" }}>
+        {spinning ? "Girando…" : "Girá para descubrir tu destino"}
       </div>
+
+      <AnimatePresence>
+        {result && (
+          <motion.div
+            key="destino-popup"
+            className="fixed inset-0 z-[60] grid place-items-center px-6"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="absolute inset-0" style={{ background: "oklch(0.06 0.025 260 / 0.86)", backdropFilter: "blur(14px)" }} />
+            <motion.div
+              className="relative text-center max-w-lg"
+              initial={{ opacity: 0, scale: 0.92, filter: "blur(10px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
+            >
+              <div className="font-meta text-[10px]" style={{ letterSpacing: "0.5em", color: "oklch(0.74 0.02 255)" }}>Tu destino</div>
+              <div className="mt-6 font-noir italic text-chrome text-[clamp(30px,9vw,56px)] leading-[1.1]">{result}</div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
