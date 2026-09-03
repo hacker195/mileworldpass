@@ -291,7 +291,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
       className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}
     >
-      <SceneBg image={bgLights.url} opacity={0.44} blur={22} position="50% 30%" tint="oklch(0.13 0.05 262 / 0.62)" duration={30} />
+      <SceneBg image={bgLights.url} opacity={0.44} blur={7} position="50% 30%" tint="oklch(0.13 0.05 262 / 0.62)" duration={30} />
 
       <motion.div
         aria-hidden className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[70vw] max-w-[520px] h-[140vh]"
@@ -397,7 +397,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
       className="relative isolate min-h-[100svh] flex items-center justify-center px-5 sm:px-6 py-16 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
     >
-      <SceneBg image={bgCorridor.url} opacity={0.42} blur={18} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.64)" duration={28} />
+      <SceneBg image={bgCorridor.url} opacity={0.42} blur={6} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.64)" duration={28} />
 
       <div className="relative w-full max-w-md">
         <div className="glass-panel rounded-[26px] px-6 sm:px-8 py-10 relative overflow-hidden">
@@ -499,7 +499,7 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
       className="relative isolate min-h-[100svh] flex items-center justify-center px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}
     >
-      <SceneBg image={chromeFlow.url} opacity={0.4} blur={20} tint="oklch(0.12 0.05 262 / 0.66)" duration={22} />
+      <SceneBg image={chromeFlow.url} opacity={0.4} blur={6} tint="oklch(0.12 0.05 262 / 0.66)" duration={22} />
       <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-[600px] h-[80vh]" style={{
         background: "radial-gradient(ellipse at top, oklch(0.85 0.15 258 / 0.4), transparent 60%)", mixBlendMode: "screen",
       }} />
@@ -552,7 +552,7 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
       className="relative isolate min-h-[100svh] flex items-center px-6 sm:px-10 py-20 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 1 }}
     >
-      <SceneBg image={silkNavy.url} opacity={0.5} blur={14} position="30% 40%" tint="oklch(0.13 0.05 262 / 0.56)" duration={30} />
+      <SceneBg image={silkNavy.url} opacity={0.5} blur={4} position="30% 40%" tint="oklch(0.13 0.05 262 / 0.56)" duration={30} />
 
       <div className="relative w-full max-w-2xl mx-auto">
         <motion.div
@@ -636,7 +636,7 @@ function Hero() {
   return (
     <section ref={ref} className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 py-24 overflow-hidden">
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
-        <SceneBg image={silkElectric.url} opacity={0.5} blur={12} position="55% 40%" tint="oklch(0.12 0.05 262 / 0.58)" duration={34} />
+        <SceneBg image={silkElectric.url} opacity={0.5} blur={4} position="55% 40%" tint="oklch(0.12 0.05 262 / 0.58)" duration={34} />
       </motion.div>
 
       <motion.img
@@ -728,7 +728,7 @@ function VipPass({ guest }: { guest: GuestData }) {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={chromeRipple.url} opacity={0.44} blur={14} position="40% 50%" tint="oklch(0.12 0.05 262 / 0.62)" duration={28} />
+      <SceneBg image={chromeRipple.url} opacity={0.44} blur={4} position="40% 50%" tint="oklch(0.12 0.05 262 / 0.62)" duration={28} />
 
       <div className="mx-auto max-w-md">
         <Meta style={{ letterSpacing: "0.45em" }}>Credencial de acceso</Meta>
@@ -847,7 +847,7 @@ function Countdown() {
   ];
   return (
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgStage.url} opacity={0.46} blur={16} position="50% 35%" tint="oklch(0.12 0.05 262 / 0.6)" duration={30} />
+      <SceneBg image={bgStage.url} opacity={0.46} blur={5} position="50% 35%" tint="oklch(0.12 0.05 262 / 0.6)" duration={30} />
       <div aria-hidden className="absolute inset-x-0 top-1/3 h-[40vh] pointer-events-none" style={{
         background: "radial-gradient(ellipse 60% 100% at 50% 0%, oklch(0.8 0.12 258 / 0.18), transparent 70%)",
         mixBlendMode: "screen",
@@ -913,7 +913,7 @@ function Ruleta() {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSwirl.url} opacity={0.4} blur={18} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.66)" duration={32} />
+      <SceneBg image={bgSwirl.url} opacity={0.4} blur={6} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.66)" duration={32} />
 
       <div className="mx-auto max-w-xl text-center">
         <Title align="center" size="text-[clamp(30px,10vw,52px)]" className="uppercase">Tu destino de la noche</Title>
@@ -1027,7 +1027,7 @@ function TenidaElegante() {
 
   return (
     <section ref={ref} className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={iridescentDrape.url} opacity={0.4} blur={16} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.66)" duration={26} />
+      <SceneBg image={iridescentDrape.url} opacity={0.4} blur={5} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.66)" duration={26} />
 
       <div className="mx-auto max-w-5xl">
         <div className="flex items-end justify-between gap-6">
@@ -1105,7 +1105,7 @@ function Regalo() {
   const [copied, setCopied] = useState(false);
   return (
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSilkGold.url} opacity={0.44} blur={14} position="70% 60%" tint="oklch(0.12 0.05 262 / 0.6)" duration={30} />
+      <SceneBg image={bgSilkGold.url} opacity={0.44} blur={4} position="70% 60%" tint="oklch(0.12 0.05 262 / 0.6)" duration={30} />
 
       <div className="mx-auto max-w-xl text-center">
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Regalo</Meta>
@@ -1164,7 +1164,7 @@ function Rsvp({ guest }: { guest: GuestData }) {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgIridescent.url} opacity={0.4} blur={18} position="30% 50%" tint="oklch(0.12 0.05 262 / 0.66)" duration={28} />
+      <SceneBg image={bgIridescent.url} opacity={0.4} blur={6} position="30% 50%" tint="oklch(0.12 0.05 262 / 0.66)" duration={28} />
 
       <div className="mx-auto max-w-xl text-center">
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Confirmación</Meta>
@@ -1204,7 +1204,7 @@ function LocationScene() {
 
   return (
     <section ref={ref} className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSilver.url} opacity={0.36} blur={20} position="50% 40%" tint="oklch(0.12 0.05 262 / 0.7)" duration={30} />
+      <SceneBg image={bgSilver.url} opacity={0.36} blur={6} position="50% 40%" tint="oklch(0.12 0.05 262 / 0.7)" duration={30} />
 
       <div className="mx-auto max-w-xl">
         <Meta style={{ letterSpacing: "0.45em" }}>Ubicación</Meta>
@@ -1287,9 +1287,9 @@ function IllustratedMap() {
 
 /* ---------- 11 · CIERRE · MEMORIAS + CRÉDITOS ---------- */
 const MEMORIES = [
-  { src: memory1.url, className: "left-[-8%] top-[6%] w-[66vw] sm:w-[34vw]", range: [0, 0.42] as [number, number], blur: 12, op: 0.42 },
-  { src: memory2.url, className: "right-[-10%] top-[34%] w-[62vw] sm:w-[30vw]", range: [0.2, 0.68] as [number, number], blur: 11, op: 0.38 },
-  { src: memory3.url, className: "left-[8%] bottom-[2%] w-[58vw] sm:w-[26vw]", range: [0.42, 0.92] as [number, number], blur: 13, op: 0.36 },
+  { src: memory1.url, className: "left-[-6%] top-[4%] w-[72vw] sm:w-[34vw]", range: [0, 0.5] as [number, number], blur: 4, op: 0.85 },
+  { src: memory2.url, className: "right-[-8%] top-[32%] w-[68vw] sm:w-[30vw]", range: [0.15, 0.75] as [number, number], blur: 4, op: 0.8 },
+  { src: memory3.url, className: "left-[6%] bottom-[2%] w-[64vw] sm:w-[26vw]", range: [0.35, 1] as [number, number], blur: 5, op: 0.78 },
 ];
 
 function ClosingCredits() {
@@ -1299,7 +1299,7 @@ function ClosingCredits() {
 
   return (
     <section ref={ref} className="relative isolate min-h-[130svh] flex flex-col items-center justify-center px-6 py-32 overflow-hidden">
-      <SceneBg image={bgSilk.url} opacity={0.34} blur={26} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.72)" duration={34} />
+      <SceneBg image={bgSilk.url} opacity={0.34} blur={8} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.72)" duration={34} />
 
       {/* memorias — formas orgánicas que emergen y desaparecen con el scroll */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
@@ -1371,7 +1371,7 @@ function MemoryCloud({
 }) {
   const [a, b] = range;
   const mid = (a + b) / 2;
-  const opacity = useTransform(progress, [a, mid, b], [0, op, 0]);
+  const opacity = useTransform(progress, [a, a + (mid - a) * 0.5, mid, b], [0, op, op, 0]);
   const scale = useTransform(progress, [a, b], [1.12, 0.96]);
   const y = useTransform(progress, [a, b], ["8%", "-10%"]);
 
@@ -1381,15 +1381,14 @@ function MemoryCloud({
       style={{
         opacity, scale, y,
         WebkitMaskImage:
-          "radial-gradient(ellipse 58% 58% at 48% 46%, #000 20%, rgba(0,0,0,0.55) 55%, transparent 80%)",
+          "radial-gradient(ellipse 62% 62% at 50% 50%, #000 45%, rgba(0,0,0,0.6) 70%, transparent 92%)",
         maskImage:
-          "radial-gradient(ellipse 58% 58% at 48% 46%, #000 20%, rgba(0,0,0,0.55) 55%, transparent 80%)",
-        filter: `blur(${blur}px) saturate(75%) brightness(1.08)`,
-        mixBlendMode: "screen",
+          "radial-gradient(ellipse 62% 62% at 50% 50%, #000 45%, rgba(0,0,0,0.6) 70%, transparent 92%)",
+        filter: `blur(${blur}px) saturate(80%) brightness(1.05)`,
       }}
     >
       <video
-        src={src} autoPlay muted loop playsInline preload="metadata"
+        src={src} autoPlay muted loop playsInline preload="auto"
         className="w-full h-full object-cover rounded-full"
         style={{ filter: "sepia(16%) hue-rotate(185deg) saturate(150%) contrast(96%)", animationDelay: `${index * 0.4}s` }}
       />
