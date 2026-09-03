@@ -619,7 +619,7 @@ function Experience({ guest, onLevel }: { guest: GuestData; onLevel: (v: number)
       <VolumeZone level={0.86} onLevel={set}><Countdown /></VolumeZone>
       <VolumeZone level={0.88} onLevel={set}><Ruleta /></VolumeZone>
       <VolumeZone level={0.86} onLevel={set}><TenidaElegante /></VolumeZone>
-      <VolumeZone level={0.86} onLevel={set}><Detalles /></VolumeZone>
+      <VolumeZone level={0.86} onLevel={set}><Regalo /></VolumeZone>
       <VolumeZone level={0.92} onLevel={set}><Rsvp guest={guest} /></VolumeZone>
       <VolumeZone level={0.86} onLevel={set}><LocationScene /></VolumeZone>
       <VolumeZone level={1} onLevel={set}><ClosingCredits /></VolumeZone>
@@ -904,7 +904,11 @@ function Ruleta() {
     const target = 360 * 6 + (360 - idx * seg - seg / 2);
     const next = rotation + target - (rotation % 360);
     setRotation(next);
-    window.setTimeout(() => { setResult(DESTINOS[idx]); setSpinning(false); }, 4300);
+    window.setTimeout(() => {
+      setResult(DESTINOS[idx]);
+      setSpinning(false);
+      window.setTimeout(() => setResult(null), 5000);
+    }, 4300);
   };
 
   return (
@@ -1095,72 +1099,55 @@ function EditorialPlate({ image, ratio }: { image: string; ratio: string }) {
   );
 }
 
-/* ---------- 8 · DETALLES ---------- */
-function Detalles() {
+/* ---------- 8 · REGALO ---------- */
+function Regalo() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   return (
-    <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSilkGold.url} opacity={0.4} blur={18} position="70% 60%" tint="oklch(0.12 0.05 262 / 0.66)" duration={30} />
+    <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
+      <SceneBg image={bgSilkGold.url} opacity={0.44} blur={14} position="70% 60%" tint="oklch(0.12 0.05 262 / 0.6)" duration={30} />
 
-      <div className="mx-auto max-w-md">
-        <Meta style={{ letterSpacing: "0.45em" }}>Información</Meta>
-        <Title size="text-[16vw] sm:text-6xl" className="mt-3 uppercase">Detalles</Title>
+      <div className="mx-auto max-w-xl text-center">
+        <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Regalo</Meta>
+        <Title align="center" size="text-[clamp(40px,15vw,80px)]" className="mt-4 uppercase">El regalo</Title>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
-          className="mt-10 space-y-6"
+          className="mt-10 mx-auto max-w-md font-info text-[clamp(15px,4.2vw,19px)] leading-[1.85]"
+          style={{ color: "oklch(0.9 0.02 255)" }}
         >
-          <DetailRow label="Fecha" value="01 · 01 · 2027" />
-          <DetailRow label="Apertura de puertas" value="20:30 hs" />
-          <DetailRow label="Lugar" value="Oga Guasu · Salón de Eventos" />
-          <DetailRow label="Tenida" value="Elegante · Evitar plateado y blanco" />
-        </motion.div>
+          El mejor regalo es tu presencia. Si igualmente querés tener un gesto con nosotros, dejamos los datos por acá.
+        </motion.p>
 
-        <div className="mt-14 pt-10" style={{ borderTop: "1px solid oklch(1 0 0 / 0.12)" }}>
-          <p className="font-info text-[14px] leading-[1.9] max-w-sm" style={{ color: "oklch(0.88 0.02 255)" }}>
-            El mejor regalo es tu presencia. Si igualmente querés tener un gesto con nosotros, dejamos los datos por acá.
-          </p>
-
-          <div className="mt-8">
-            <button onClick={() => setOpen((o) => !o)} className="btn-ghost">
-              {open ? "Ocultar alias" : "Ver alias"}
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {open && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.5, ease: [0.22, 0.9, 0.3, 1] }}
-                className="overflow-hidden"
-              >
-                <div className="mt-6 glass-panel rounded-2xl p-6">
-                  <div className="font-meta text-[9px]" style={{ letterSpacing: "0.4em", color: "oklch(0.68 0.03 255)" }}>Alias</div>
-                  <div className="mt-3 font-noir text-lg text-chrome" style={{ letterSpacing: "0.12em" }}>{GIFT_ALIAS}</div>
-                  <button
-                    onClick={() => { navigator.clipboard.writeText(GIFT_ALIAS); setCopied(true); setTimeout(() => setCopied(false), 1800); }}
-                    className="btn-ghost mt-6 !py-2.5 !px-5 !text-[10px]"
-                  >
-                    {copied ? "Copiado ✓" : "Copiar"}
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        <div className="mt-10">
+          <button onClick={() => setOpen((o) => !o)} className="btn-premium !px-8 !py-4 !text-[12px]">
+            {open ? "Ocultar alias" : "Ver alias"}
+          </button>
         </div>
+
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5, ease: [0.22, 0.9, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="mt-8 mx-auto max-w-sm glass-panel rounded-2xl p-8">
+                <div className="font-meta text-[9px]" style={{ letterSpacing: "0.4em", color: "oklch(0.68 0.03 255)" }}>Alias</div>
+                <div className="mt-4 font-noir text-chrome text-[clamp(20px,6vw,28px)]" style={{ letterSpacing: "0.1em" }}>{GIFT_ALIAS}</div>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(GIFT_ALIAS); setCopied(true); setTimeout(() => setCopied(false), 1800); }}
+                  className="btn-ghost mt-7 !py-3 !px-6 !text-[10px]"
+                >
+                  {copied ? "Copiado ✓" : "Copiar"}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
-  );
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-6 border-b pb-4" style={{ borderColor: "oklch(1 0 0 / 0.09)" }}>
-      <div className="font-meta text-[9px] shrink-0" style={{ color: "oklch(0.64 0.02 255)" }}>{label}</div>
-      <div className="font-info text-[13px] text-right" style={{ color: "oklch(0.95 0.01 250)" }}>{value}</div>
-    </div>
   );
 }
 
@@ -1342,16 +1329,10 @@ function ClosingCredits() {
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 1.4 }}
             className="font-noir text-chrome uppercase text-[11vw] sm:text-5xl leading-none"
           >
-            Mile Live
+            Mile
           </motion.div>
           <div className="font-meta text-[11px]" style={{ letterSpacing: "0.5em", color: "oklch(0.82 0.02 255)" }}>
             01 · 01 · 2027
-          </div>
-          <div className="font-noir italic text-[5.5vw] sm:text-2xl" style={{ color: "oklch(0.93 0.01 250)" }}>
-            Milena Anahi Montiel Chaparro
-          </div>
-          <div className="font-info text-[14px]" style={{ color: "oklch(0.86 0.02 255)" }}>
-            Gracias por ser parte de esta noche.
           </div>
         </div>
 
