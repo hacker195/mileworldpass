@@ -952,15 +952,14 @@ function Ruleta() {
                 style={{ background: "linear-gradient(180deg, oklch(0.92 0.02 250 / 0.55), transparent)", transform: `rotate(${i * seg}deg)` }}
               />
               <div
-                className="absolute left-1/2 top-1/2 h-1/2 w-0 origin-top"
-                style={{ transform: `rotate(${180 + i * seg + seg / 2}deg)` }}
+                className="absolute left-1/2 top-1/2 font-noir text-[15px] leading-none"
+                style={{
+                  color: "oklch(0.95 0.01 250)",
+                  transform: `translate(-50%, -50%) rotate(${i * seg + seg / 2}deg) translateY(-34%) rotate(${-(i * seg + seg / 2)}deg)`,
+                  transformOrigin: "center",
+                }}
               >
-                <div
-                  className="absolute left-0 top-[10%] -translate-x-1/2 font-noir text-[15px]"
-                  style={{ color: "oklch(0.93 0.01 250)", transform: "translateX(-50%) rotate(180deg)" }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </div>
+                {String(i + 1).padStart(2, "0")}
               </div>
             </div>
           ))}
