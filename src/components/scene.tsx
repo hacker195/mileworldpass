@@ -67,7 +67,7 @@ export function SceneBg({
       {/* DUOTONE — shadows to deep blue, highlights to silver-blue */}
       <div
         className="absolute inset-0"
-        style={{ background: "oklch(0.30 0.10 262)", mixBlendMode: "color", opacity: 0.9 }}
+        style={{ background: "oklch(0.34 0.09 262)", mixBlendMode: "color", opacity: 0.6 }}
       />
       <div
         className="absolute inset-0"
@@ -79,18 +79,18 @@ export function SceneBg({
       />
       <div
         className="absolute inset-0"
-        style={{ background: tint ?? "oklch(0.11 0.045 262 / 0.52)" }}
+        style={{ background: tint ?? "oklch(0.11 0.045 262 / 0.35)" }}
       />
 
 
       {/* three drifting light layers — 18s / 24s / 30s, never the source itself */}
       <motion.div
-        className="absolute -inset-[35%]"
+        className="absolute -inset-[25%]"
         style={{
           background:
             "radial-gradient(45% 40% at 50% 50%, oklch(0.92 0.02 250 / 0.26), transparent 70%)",
           mixBlendMode: "screen",
-          filter: "blur(70px)",
+          filter: "blur(48px)",
           willChange: "transform, opacity",
         }}
         animate={anim({
@@ -101,12 +101,12 @@ export function SceneBg({
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute -inset-[35%]"
+        className="absolute -inset-[25%]"
         style={{
           background:
             "radial-gradient(40% 46% at 50% 50%, oklch(0.66 0.11 258 / 0.22), transparent 72%)",
           mixBlendMode: "soft-light",
-          filter: "blur(80px)",
+          filter: "blur(52px)",
           willChange: "transform, opacity",
         }}
         animate={anim({
@@ -117,12 +117,12 @@ export function SceneBg({
         transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute -inset-[35%]"
+        className="absolute -inset-[25%]"
         style={{
           background:
             "radial-gradient(52% 38% at 50% 50%, oklch(0.80 0.05 252 / 0.18), transparent 74%)",
           mixBlendMode: "screen",
-          filter: "blur(90px)",
+          filter: "blur(56px)",
           willChange: "transform, opacity",
         }}
         animate={anim({
