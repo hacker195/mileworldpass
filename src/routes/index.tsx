@@ -1304,9 +1304,10 @@ function IllustratedMap() {
 
 /* ---------- 11 · CIERRE · MEMORIAS + CRÉDITOS ---------- */
 const MEMORIES = [
-  { src: memory1.url, className: "left-[-6%] top-[4%] w-[72vw] sm:w-[34vw]", range: [0, 0.5] as [number, number], blur: 4, op: 0.85 },
-  { src: memory2.url, className: "right-[-8%] top-[32%] w-[68vw] sm:w-[30vw]", range: [0.15, 0.75] as [number, number], blur: 4, op: 0.8 },
-  { src: memory3.url, className: "left-[6%] bottom-[2%] w-[64vw] sm:w-[26vw]", range: [0.35, 1] as [number, number], blur: 5, op: 0.78 },
+  { src: memory1.url, className: "left-[-4%] top-[3%] w-[70vw] sm:w-[32vw]", range: [0, 0.45] as [number, number], blur: 1, op: 0.95 },
+  { src: memory4.url, className: "right-[-6%] top-[24%] w-[62vw] sm:w-[26vw]", range: [0.1, 0.6] as [number, number], blur: 1, op: 0.95 },
+  { src: memory2.url, className: "right-[-6%] top-[46%] w-[66vw] sm:w-[28vw]", range: [0.3, 0.85] as [number, number], blur: 1, op: 0.92 },
+  { src: memory3.url, className: "left-[6%] bottom-[2%] w-[62vw] sm:w-[25vw]", range: [0.5, 1] as [number, number], blur: 1.5, op: 0.92 },
 ];
 
 function ClosingCredits() {
@@ -1316,7 +1317,7 @@ function ClosingCredits() {
 
   return (
     <section ref={ref} className="relative isolate min-h-[130svh] flex flex-col items-center justify-center px-6 py-32 overflow-hidden">
-      <SceneBg image={bgSilk.url} opacity={0.48} blur={8} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={34} />
+      <SceneBg image={bgSilk.url} opacity={0.6} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.3)" duration={34} />
 
       {/* memorias — formas orgánicas que emergen y desaparecen con el scroll */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
