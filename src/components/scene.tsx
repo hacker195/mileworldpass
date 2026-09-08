@@ -117,7 +117,7 @@ export function SceneBg({
         transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute -inset-[25%]"
+        className="absolute -inset-[25%] hidden sm:block"
         style={{
           background:
             "radial-gradient(52% 38% at 50% 50%, oklch(0.80 0.05 252 / 0.18), transparent 74%)",
