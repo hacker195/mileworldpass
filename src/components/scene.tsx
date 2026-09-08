@@ -31,7 +31,7 @@ export function SceneBg({
   alt?: string;
 }) {
   const reduce = useReducedMotion();
-  const anim = (v: Record<string, unknown>) => (reduce ? undefined : v);
+  const anim = <T,>(v: T) => (reduce ? undefined : v);
 
   return (
     <div
