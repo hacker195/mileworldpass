@@ -1395,20 +1395,20 @@ function MemoryCloud({
 
   return (
     <motion.div
-      className={`absolute ${className} aspect-[4/3]`}
+      className={`absolute ${className} aspect-[3/4]`}
       style={{
         opacity, scale, y,
         WebkitMaskImage:
-          "radial-gradient(ellipse 62% 62% at 50% 50%, #000 45%, rgba(0,0,0,0.6) 70%, transparent 92%)",
+          "radial-gradient(ellipse 68% 66% at 50% 50%, #000 55%, rgba(0,0,0,0.55) 78%, transparent 94%)",
         maskImage:
-          "radial-gradient(ellipse 62% 62% at 50% 50%, #000 45%, rgba(0,0,0,0.6) 70%, transparent 92%)",
-        filter: `blur(${blur}px) saturate(80%) brightness(1.05)`,
+          "radial-gradient(ellipse 68% 66% at 50% 50%, #000 55%, rgba(0,0,0,0.55) 78%, transparent 94%)",
+        filter: `blur(${blur}px)`,
       }}
     >
       <video
-        src={src} autoPlay muted loop playsInline preload="auto"
-        className="w-full h-full object-cover rounded-full"
-        style={{ filter: "sepia(16%) hue-rotate(185deg) saturate(150%) contrast(96%)", animationDelay: `${index * 0.4}s` }}
+        src={src} autoPlay muted loop playsInline preload="metadata"
+        className="w-full h-full object-cover rounded-[46%]"
+        style={{ animationDelay: `${index * 0.4}s` }}
       />
     </motion.div>
   );
