@@ -847,7 +847,7 @@ function Countdown() {
   ];
   return (
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgStage.url} opacity={0.60} blur={5} position="50% 35%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgChrome.url} opacity={0.60} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
       <div aria-hidden className="absolute inset-x-0 top-1/3 h-[40vh] pointer-events-none" style={{
         background: "radial-gradient(ellipse 60% 100% at 50% 0%, oklch(0.8 0.12 258 / 0.18), transparent 70%)",
         mixBlendMode: "screen",
@@ -866,7 +866,7 @@ function Countdown() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ delay: i * 0.12, duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
           >
-            <div className="num-clock text-chrome text-[clamp(38px,13vw,68px)] leading-[1.15] pb-1">
+            <div className="num-clock text-chrome text-[clamp(36px,12vw,64px)] leading-[1.35] pt-2 pb-2">
               {String(u.v).padStart(2, "0")}
             </div>
             <div className="mt-3 font-meta text-[9px]" style={{ color: "oklch(0.7 0.02 255)" }}>{u.l}</div>
