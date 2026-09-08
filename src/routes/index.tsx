@@ -22,6 +22,8 @@ import iridescentDrape from "@/assets/iridescent-drape.webp.asset.json";
 import memory1 from "@/assets/memory-1.webm.asset.json";
 import memory2 from "@/assets/memory-2.webm.asset.json";
 import memory3 from "@/assets/memory-3.webm.asset.json";
+import memory4 from "@/assets/memory-4.webm.asset.json";
+import milePortrait from "@/assets/mile-portrait.jpg.asset.json";
 import { SceneBg } from "@/components/scene";
 import {
   searchGuests,
@@ -291,7 +293,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
       className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}
     >
-      <SceneBg image={bgLights.url} opacity={0.58} blur={7} position="50% 30%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgLights.url} opacity={0.58} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <motion.div
         aria-hidden className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[70vw] max-w-[520px] h-[140vh]"
@@ -397,7 +399,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
       className="relative isolate min-h-[100svh] flex items-center justify-center px-5 sm:px-6 py-16 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
     >
-      <SceneBg image={bgCorridor.url} opacity={0.56} blur={6} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      <SceneBg image={bgCorridor.url} opacity={0.56} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
 
       <div className="relative w-full max-w-md">
         <div className="glass-panel rounded-[26px] px-6 sm:px-8 py-10 relative overflow-hidden">
@@ -499,7 +501,7 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
       className="relative isolate min-h-[100svh] flex items-center justify-center px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}
     >
-      <SceneBg image={chromeFlow.url} opacity={0.54} blur={6} tint="oklch(0.12 0.05 262 / 0.34)" duration={22} />
+      <SceneBg image={chromeFlow.url} opacity={0.54} blur={3} tint="oklch(0.12 0.05 262 / 0.34)" duration={22} />
       <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-[600px] h-[80vh]" style={{
         background: "radial-gradient(ellipse at top, oklch(0.85 0.15 258 / 0.4), transparent 60%)", mixBlendMode: "screen",
       }} />
@@ -552,7 +554,7 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
       className="relative isolate min-h-[100svh] flex items-center px-6 sm:px-10 py-20 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 1 }}
     >
-      <SceneBg image={silkNavy.url} opacity={0.62} blur={4} position="30% 40%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={silkNavy.url} opacity={0.62} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="relative w-full max-w-2xl mx-auto">
         <motion.div
@@ -636,7 +638,7 @@ function Hero() {
   return (
     <section ref={ref} className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 py-24 overflow-hidden">
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
-        <SceneBg image={silkElectric.url} opacity={0.62} blur={4} position="55% 40%" tint="oklch(0.12 0.05 262 / 0.34)" duration={34} />
+        <SceneBg image={silkElectric.url} opacity={0.62} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={34} />
       </motion.div>
 
       <motion.img
@@ -728,7 +730,22 @@ function VipPass({ guest }: { guest: GuestData }) {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={chromeRipple.url} opacity={0.58} blur={4} position="40% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      <SceneBg image={chromeRipple.url} opacity={0.58} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      {/* retrato de Mile — presencia suave y desenfocada detrás del pase */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          backgroundImage: `url(${milePortrait.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "50% 28%",
+          filter: "blur(26px) saturate(55%) brightness(0.85)",
+          opacity: 0.3,
+          maskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
+          mixBlendMode: "luminosity",
+        }}
+      />
 
       <div className="mx-auto max-w-md">
         <Meta style={{ letterSpacing: "0.45em" }}>Credencial de acceso</Meta>
@@ -847,7 +864,7 @@ function Countdown() {
   ];
   return (
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgStage.url} opacity={0.60} blur={5} position="50% 35%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgChrome.url} opacity={0.60} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
       <div aria-hidden className="absolute inset-x-0 top-1/3 h-[40vh] pointer-events-none" style={{
         background: "radial-gradient(ellipse 60% 100% at 50% 0%, oklch(0.8 0.12 258 / 0.18), transparent 70%)",
         mixBlendMode: "screen",
@@ -866,7 +883,7 @@ function Countdown() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ delay: i * 0.12, duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
           >
-            <div className="num-clock text-chrome text-[clamp(38px,13vw,68px)] leading-[1.15] pb-1">
+            <div className="num-clock text-chrome text-[clamp(36px,12vw,64px)] leading-[1.35] pt-2 pb-2">
               {String(u.v).padStart(2, "0")}
             </div>
             <div className="mt-3 font-meta text-[9px]" style={{ color: "oklch(0.7 0.02 255)" }}>{u.l}</div>
@@ -913,7 +930,7 @@ function Ruleta() {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSwirl.url} opacity={0.54} blur={6} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.34)" duration={32} />
+      <SceneBg image={bgSwirl.url} opacity={0.54} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={32} />
 
       <div className="mx-auto max-w-xl text-center">
         <Title align="center" size="text-[clamp(30px,10vw,52px)]" className="uppercase">Tu destino de la noche</Title>
@@ -1027,7 +1044,7 @@ function TenidaElegante() {
 
   return (
     <section ref={ref} className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={iridescentDrape.url} opacity={0.54} blur={5} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={26} />
+      <SceneBg image={iridescentDrape.url} opacity={0.54} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={26} />
 
       <div className="mx-auto max-w-5xl">
         <div className="flex items-end justify-between gap-6">
@@ -1105,7 +1122,7 @@ function Regalo() {
   const [copied, setCopied] = useState(false);
   return (
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSilkGold.url} opacity={0.58} blur={4} position="70% 60%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgSilkGold.url} opacity={0.58} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="mx-auto max-w-xl text-center">
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Regalo</Meta>
@@ -1164,7 +1181,7 @@ function Rsvp({ guest }: { guest: GuestData }) {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgIridescent.url} opacity={0.54} blur={6} position="30% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      <SceneBg image={bgIridescent.url} opacity={0.54} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
 
       <div className="mx-auto max-w-xl text-center">
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Confirmación</Meta>
@@ -1204,7 +1221,7 @@ function LocationScene() {
 
   return (
     <section ref={ref} className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSilver.url} opacity={0.50} blur={6} position="50% 40%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgSilver.url} opacity={0.50} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="mx-auto max-w-xl">
         <Meta style={{ letterSpacing: "0.45em" }}>Ubicación</Meta>
@@ -1287,9 +1304,10 @@ function IllustratedMap() {
 
 /* ---------- 11 · CIERRE · MEMORIAS + CRÉDITOS ---------- */
 const MEMORIES = [
-  { src: memory1.url, className: "left-[-6%] top-[4%] w-[72vw] sm:w-[34vw]", range: [0, 0.5] as [number, number], blur: 4, op: 0.85 },
-  { src: memory2.url, className: "right-[-8%] top-[32%] w-[68vw] sm:w-[30vw]", range: [0.15, 0.75] as [number, number], blur: 4, op: 0.8 },
-  { src: memory3.url, className: "left-[6%] bottom-[2%] w-[64vw] sm:w-[26vw]", range: [0.35, 1] as [number, number], blur: 5, op: 0.78 },
+  { src: memory1.url, className: "left-[-4%] top-[3%] w-[70vw] sm:w-[32vw]", range: [0, 0.45] as [number, number], blur: 1, op: 0.95 },
+  { src: memory4.url, className: "right-[-6%] top-[24%] w-[62vw] sm:w-[26vw]", range: [0.1, 0.6] as [number, number], blur: 1, op: 0.95 },
+  { src: memory2.url, className: "right-[-6%] top-[46%] w-[66vw] sm:w-[28vw]", range: [0.3, 0.85] as [number, number], blur: 1, op: 0.92 },
+  { src: memory3.url, className: "left-[6%] bottom-[2%] w-[62vw] sm:w-[25vw]", range: [0.5, 1] as [number, number], blur: 1.5, op: 0.92 },
 ];
 
 function ClosingCredits() {
@@ -1299,7 +1317,7 @@ function ClosingCredits() {
 
   return (
     <section ref={ref} className="relative isolate min-h-[130svh] flex flex-col items-center justify-center px-6 py-32 overflow-hidden">
-      <SceneBg image={bgSilk.url} opacity={0.48} blur={8} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={34} />
+      <SceneBg image={bgSilk.url} opacity={0.6} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.3)" duration={34} />
 
       {/* memorias — formas orgánicas que emergen y desaparecen con el scroll */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
@@ -1377,20 +1395,20 @@ function MemoryCloud({
 
   return (
     <motion.div
-      className={`absolute ${className} aspect-[4/3]`}
+      className={`absolute ${className} aspect-[3/4]`}
       style={{
         opacity, scale, y,
         WebkitMaskImage:
-          "radial-gradient(ellipse 62% 62% at 50% 50%, #000 45%, rgba(0,0,0,0.6) 70%, transparent 92%)",
+          "radial-gradient(ellipse 68% 66% at 50% 50%, #000 55%, rgba(0,0,0,0.55) 78%, transparent 94%)",
         maskImage:
-          "radial-gradient(ellipse 62% 62% at 50% 50%, #000 45%, rgba(0,0,0,0.6) 70%, transparent 92%)",
-        filter: `blur(${blur}px) saturate(80%) brightness(1.05)`,
+          "radial-gradient(ellipse 68% 66% at 50% 50%, #000 55%, rgba(0,0,0,0.55) 78%, transparent 94%)",
+        filter: `blur(${blur}px)`,
       }}
     >
       <video
-        src={src} autoPlay muted loop playsInline preload="auto"
-        className="w-full h-full object-cover rounded-full"
-        style={{ filter: "sepia(16%) hue-rotate(185deg) saturate(150%) contrast(96%)", animationDelay: `${index * 0.4}s` }}
+        src={src} autoPlay muted loop playsInline preload="metadata"
+        className="w-full h-full object-cover rounded-[46%]"
+        style={{ animationDelay: `${index * 0.4}s` }}
       />
     </motion.div>
   );
