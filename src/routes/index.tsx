@@ -22,6 +22,8 @@ import iridescentDrape from "@/assets/iridescent-drape.webp.asset.json";
 import memory1 from "@/assets/memory-1.webm.asset.json";
 import memory2 from "@/assets/memory-2.webm.asset.json";
 import memory3 from "@/assets/memory-3.webm.asset.json";
+import memory4 from "@/assets/memory-4.webm.asset.json";
+import milePortrait from "@/assets/mile-portrait.jpg.asset.json";
 import { SceneBg } from "@/components/scene";
 import {
   searchGuests,
@@ -728,7 +730,22 @@ function VipPass({ guest }: { guest: GuestData }) {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={chromeRipple.url} opacity={0.58} blur={4} position="40% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      <SceneBg image={chromeRipple.url} opacity={0.58} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      {/* retrato de Mile — presencia suave y desenfocada detrás del pase */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          backgroundImage: `url(${milePortrait.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "50% 28%",
+          filter: "blur(26px) saturate(55%) brightness(0.85)",
+          opacity: 0.3,
+          maskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
+          mixBlendMode: "luminosity",
+        }}
+      />
 
       <div className="mx-auto max-w-md">
         <Meta style={{ letterSpacing: "0.45em" }}>Credencial de acceso</Meta>
