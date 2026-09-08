@@ -293,7 +293,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
       className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}
     >
-      <SceneBg image={bgLights.url} opacity={0.58} blur={7} position="50% 30%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgLights.url} opacity={0.58} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <motion.div
         aria-hidden className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[70vw] max-w-[520px] h-[140vh]"
@@ -399,7 +399,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
       className="relative isolate min-h-[100svh] flex items-center justify-center px-5 sm:px-6 py-16 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
     >
-      <SceneBg image={bgCorridor.url} opacity={0.56} blur={6} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      <SceneBg image={bgCorridor.url} opacity={0.56} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
 
       <div className="relative w-full max-w-md">
         <div className="glass-panel rounded-[26px] px-6 sm:px-8 py-10 relative overflow-hidden">
@@ -501,7 +501,7 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
       className="relative isolate min-h-[100svh] flex items-center justify-center px-6 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}
     >
-      <SceneBg image={chromeFlow.url} opacity={0.54} blur={6} tint="oklch(0.12 0.05 262 / 0.34)" duration={22} />
+      <SceneBg image={chromeFlow.url} opacity={0.54} blur={3} tint="oklch(0.12 0.05 262 / 0.34)" duration={22} />
       <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-[600px] h-[80vh]" style={{
         background: "radial-gradient(ellipse at top, oklch(0.85 0.15 258 / 0.4), transparent 60%)", mixBlendMode: "screen",
       }} />
@@ -554,7 +554,7 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
       className="relative isolate min-h-[100svh] flex items-center px-6 sm:px-10 py-20 overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 1 }}
     >
-      <SceneBg image={silkNavy.url} opacity={0.62} blur={4} position="30% 40%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={silkNavy.url} opacity={0.62} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="relative w-full max-w-2xl mx-auto">
         <motion.div
@@ -638,7 +638,7 @@ function Hero() {
   return (
     <section ref={ref} className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 py-24 overflow-hidden">
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
-        <SceneBg image={silkElectric.url} opacity={0.62} blur={4} position="55% 40%" tint="oklch(0.12 0.05 262 / 0.34)" duration={34} />
+        <SceneBg image={silkElectric.url} opacity={0.62} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={34} />
       </motion.div>
 
       <motion.img
@@ -930,7 +930,7 @@ function Ruleta() {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSwirl.url} opacity={0.54} blur={6} position="50% 45%" tint="oklch(0.12 0.05 262 / 0.34)" duration={32} />
+      <SceneBg image={bgSwirl.url} opacity={0.54} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={32} />
 
       <div className="mx-auto max-w-xl text-center">
         <Title align="center" size="text-[clamp(30px,10vw,52px)]" className="uppercase">Tu destino de la noche</Title>
@@ -1044,7 +1044,7 @@ function TenidaElegante() {
 
   return (
     <section ref={ref} className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={iridescentDrape.url} opacity={0.54} blur={5} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={26} />
+      <SceneBg image={iridescentDrape.url} opacity={0.54} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={26} />
 
       <div className="mx-auto max-w-5xl">
         <div className="flex items-end justify-between gap-6">
@@ -1122,7 +1122,7 @@ function Regalo() {
   const [copied, setCopied] = useState(false);
   return (
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSilkGold.url} opacity={0.58} blur={4} position="70% 60%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgSilkGold.url} opacity={0.58} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="mx-auto max-w-xl text-center">
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Regalo</Meta>
@@ -1181,7 +1181,7 @@ function Rsvp({ guest }: { guest: GuestData }) {
 
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgIridescent.url} opacity={0.54} blur={6} position="30% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
+      <SceneBg image={bgIridescent.url} opacity={0.54} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
 
       <div className="mx-auto max-w-xl text-center">
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Confirmación</Meta>
@@ -1221,7 +1221,7 @@ function LocationScene() {
 
   return (
     <section ref={ref} className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
-      <SceneBg image={bgSilver.url} opacity={0.50} blur={6} position="50% 40%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgSilver.url} opacity={0.50} blur={3} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="mx-auto max-w-xl">
         <Meta style={{ letterSpacing: "0.45em" }}>Ubicación</Meta>
