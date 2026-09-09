@@ -1351,6 +1351,7 @@ function IllustratedMap() {
       <circle cx="210" cy="158" r="70" fill="url(#mapglow)" />
       <motion.circle
         cx="210" cy="158" r="18" fill="none" stroke="oklch(0.95 0.02 250 / 0.6)" strokeWidth="1.5"
+        initial={{ r: 16, opacity: 0.7 }}
         animate={{ r: [16, 34], opacity: [0.7, 0] }}
         transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut" }}
       />
