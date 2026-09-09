@@ -697,6 +697,36 @@ function Hero() {
   );
 }
 
+/** Dos retratos oficiales que se funden lentamente en el mismo marco. */
+function PortraitFade() {
+  const shots = [mile1.url, mile2.url];
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((v) => (v + 1) % shots.length), 6000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="absolute inset-0">
+      {shots.map((src, idx) => (
+        <motion.img
+          key={src}
+          src={src}
+          alt="Milena Anahi Montiel Chaparro"
+          className="absolute inset-0 w-full h-full object-cover"
+          initial={false}
+          animate={{ opacity: i === idx ? 1 : 0 }}
+          transition={{ duration: 2.2, ease: "easeInOut" }}
+          loading="lazy"
+        />
+      ))}
+      <div aria-hidden className="absolute inset-0" style={{
+        background: "linear-gradient(180deg, oklch(0.12 0.05 262 / 0.12), oklch(0.08 0.03 261 / 0.42))",
+      }} />
+    </div>
+  );
+}
+
+
 /* ---------- 4 · TU PASE ---------- */
 function VipPass({ guest }: { guest: GuestData }) {
   const members = useMemo(() => visibleMembers(guest.nombre), [guest.nombre]);
