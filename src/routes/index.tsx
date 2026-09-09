@@ -1116,13 +1116,11 @@ function TenidaElegante() {
         {/* editorial spread */}
         <div className="mt-14 grid grid-cols-12 gap-4 sm:gap-6 items-start">
           <motion.div style={{ y: yA }} className="col-span-7 sm:col-span-5">
-            <EditorialPlate image={silkNavy.url} ratio="aspect-[3/4]" />
-            <div className="mt-3 font-meta text-[9px]" style={{ color: "oklch(0.66 0.02 255)" }}>Look 01 · Midnight</div>
+            <EditorialPlate image={mile3.url} ratio="aspect-[3/4]" />
           </motion.div>
 
           <motion.div style={{ y: yB }} className="col-span-5 sm:col-span-4 mt-16">
-            <EditorialPlate image={chromeFlow.url} ratio="aspect-[4/5]" />
-            <div className="mt-3 font-meta text-[9px]" style={{ color: "oklch(0.66 0.02 255)" }}>Look 02 · Chrome</div>
+            <EditorialPlate image={mile4.url} ratio="aspect-[4/5]" />
           </motion.div>
 
           <div className="col-span-12 sm:col-span-3 sm:mt-24">
