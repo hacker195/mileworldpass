@@ -24,6 +24,10 @@ import memory2 from "@/assets/memory-2.webm.asset.json";
 import memory3 from "@/assets/memory-3.webm.asset.json";
 import memory4 from "@/assets/memory-4.webm.asset.json";
 import milePortrait from "@/assets/mile-portrait.jpg.asset.json";
+import mile1 from "@/assets/mile-1.png.asset.json";
+import mile2 from "@/assets/mile-2.png.asset.json";
+import mile3 from "@/assets/mile-3.png.asset.json";
+import mile4 from "@/assets/mile-4.png.asset.json";
 import { SceneBg } from "@/components/scene";
 import {
   searchGuests,
