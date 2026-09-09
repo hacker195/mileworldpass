@@ -1182,7 +1182,7 @@ function Regalo() {
       <SceneBg image={bgSilkGold.url} opacity={0.58} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="mx-auto max-w-xl text-center">
-        <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Regalo</Meta>
+        
         <Title align="center" size="text-[clamp(40px,15vw,80px)]" className="mt-4 uppercase">El regalo</Title>
 
         <motion.p
