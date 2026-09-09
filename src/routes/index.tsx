@@ -856,6 +856,22 @@ function VipPass({ guest }: { guest: GuestData }) {
           </div>
         </motion.div>
       </div>
+
+      <div className="mt-8 mx-auto max-w-sm text-center">
+        <button
+          type="button"
+          onClick={savePass}
+          disabled={saving}
+          className="btn-lacquer w-full rounded-full px-6 py-4 font-meta text-[11px] disabled:opacity-60"
+          style={{ letterSpacing: "0.32em" }}
+        >
+          {saving ? "GUARDANDO..." : "DESCARGAR PASE"}
+        </button>
+        <div className="mt-3 font-info text-[12px]" style={{ color: "oklch(0.72 0.02 255)" }}>
+          Obligatorio para tu entrada
+        </div>
+      </div>
+
     </section>
   );
 }
