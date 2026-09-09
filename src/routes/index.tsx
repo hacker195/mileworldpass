@@ -1442,38 +1442,31 @@ function ClosingCredits() {
 }
 
 function MemoryCloud({
-  src, className, range, blur, op, progress, index,
+  src, className, active, index,
 }: {
   src: string;
   className: string;
-  range: [number, number];
-  blur: number;
-  op: number;
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  active: boolean;
   index: number;
 }) {
-  const [a, b] = range;
-  const mid = (a + b) / 2;
-  const opacity = useTransform(progress, [a, a + (mid - a) * 0.5, mid, b], [0, op, op, 0]);
-  const scale = useTransform(progress, [a, b], [1.12, 0.96]);
-  const y = useTransform(progress, [a, b], ["8%", "-10%"]);
-
   return (
     <motion.div
       className={`absolute ${className} aspect-[3/4]`}
       style={{
-        opacity, scale, y,
         WebkitMaskImage:
-          "radial-gradient(ellipse 68% 66% at 50% 50%, #000 55%, rgba(0,0,0,0.55) 78%, transparent 94%)",
+          "radial-gradient(ellipse 66% 64% at 50% 50%, #000 45%, rgba(0,0,0,0.45) 72%, transparent 92%)",
         maskImage:
-          "radial-gradient(ellipse 68% 66% at 50% 50%, #000 55%, rgba(0,0,0,0.55) 78%, transparent 94%)",
-        filter: `blur(${blur}px)`,
+          "radial-gradient(ellipse 66% 64% at 50% 50%, #000 45%, rgba(0,0,0,0.45) 72%, transparent 92%)",
+        filter: "blur(2px)",
+        mixBlendMode: "screen",
       }}
+      initial={false}
+      animate={{ opacity: active ? 0.42 : 0, scale: active ? 1 : 1.06 }}
+      transition={{ duration: 2.6, ease: "easeInOut", delay: (index % 2) * 0.5 }}
     >
       <video
         src={src} autoPlay muted loop playsInline preload="metadata"
         className="w-full h-full object-cover rounded-[46%]"
-        style={{ animationDelay: `${index * 0.4}s` }}
       />
     </motion.div>
   );
