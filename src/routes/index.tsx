@@ -642,22 +642,13 @@ function Hero() {
       </motion.div>
 
       <motion.img
-        src={mLogo.url} alt=""
-        aria-hidden
-        className="w-[64px] h-[64px] object-contain opacity-90"
-        initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 0.9, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.2 }}
-      />
-
-      <motion.h1
-        className="mt-6 font-noir text-chrome text-center uppercase text-[clamp(44px,14vw,104px)] leading-[0.92] w-full"
-        style={{ letterSpacing: "0.05em" }}
+        src={wordmark.url} alt="MILE WORLD"
+        className="w-[82vw] max-w-[520px] object-contain"
         initial={{ opacity: 0, y: 22, filter: "blur(10px)" }}
         whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         viewport={{ once: true }}
         transition={{ duration: 1.5, ease: [0.22, 0.9, 0.3, 1] }}
-      >
-        Mile World
-      </motion.h1>
+      />
 
       <motion.div
         className="mt-7 h-px w-24"
@@ -670,10 +661,10 @@ function Hero() {
         style={{ color: "oklch(0.96 0.01 250)" }}
         initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.8, duration: 1.2 }}
       >
-        Milena Anahi<br />Montiel Chaparro
+        <em>Milena Anahi<br />Montiel Chaparro</em>
       </motion.p>
 
-      {/* Único espacio reservado para la futura fotografía oficial de Milena */}
+      {/* Fotografía oficial — dos retratos que se alternan lentamente */}
       <motion.div
         className="mt-12 w-[72vw] max-w-[340px] aspect-[3/4] rounded-[22px] overflow-hidden relative"
         style={{
@@ -683,15 +674,7 @@ function Hero() {
         }}
         initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 1, duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
       >
-        {/* Reemplazar este bloque por <img src={...} /> cuando esté la foto oficial */}
-        <div className="absolute inset-0 grid place-items-center">
-          <div className="text-center">
-            <Mark className="mx-auto" w="w-8" />
-            <div className="mt-4 font-meta text-[9px]" style={{ color: "oklch(0.5 0.02 255)" }}>
-              Fotografía oficial
-            </div>
-          </div>
-        </div>
+        <PortraitFade />
         <motion.div
           aria-hidden className="absolute inset-y-0 -left-1/2 w-1/2 pointer-events-none"
           style={{ background: "linear-gradient(105deg, transparent 40%, oklch(1 0 0 / 0.08) 50%, transparent 60%)" }}
