@@ -745,6 +745,32 @@ function VipPass({ guest }: { guest: GuestData }) {
   };
   const reset = () => setTilt({ rx: 0, ry: 0, gx: 50, gy: 50 });
 
+  const [saving, setSaving] = useState(false);
+  const savePass = async () => {
+    const el = cardRef.current;
+    if (!el || saving) return;
+    setSaving(true);
+    reset();
+    try {
+      await new Promise((r) => setTimeout(r, 350));
+      const { default: html2canvas } = await import("html2canvas-pro");
+      const canvas = await html2canvas(el, { backgroundColor: "#0A0F1E", scale: 3, useCORS: true });
+      const blob: Blob | null = await new Promise((res) => canvas.toBlob(res, "image/png"));
+      if (!blob) return;
+      const file = new File([blob], `MILE-WORLD-${code || "PASE"}.png`, { type: "image/png" });
+      const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
+      if (nav.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "MILE WORLD · Pase de acceso" });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = file.name; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+    } catch { /* silencioso */ }
+    finally { setSaving(false); }
+  };
+
   return (
     <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={chromeRipple.url} opacity={0.58} blur={4} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
