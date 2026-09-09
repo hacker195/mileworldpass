@@ -1360,11 +1360,12 @@ function IllustratedMap() {
 }
 
 /* ---------- 11 · CIERRE · MEMORIAS + CRÉDITOS ---------- */
+/** Cuatro recuerdos, dos por turno, alternando en loop detrás de los créditos. */
 const MEMORIES = [
-  { src: memory1.url, className: "left-[-4%] top-[3%] w-[70vw] sm:w-[32vw]", range: [0, 0.45] as [number, number], blur: 1, op: 0.95 },
-  { src: memory4.url, className: "right-[-6%] top-[24%] w-[62vw] sm:w-[26vw]", range: [0.1, 0.6] as [number, number], blur: 1, op: 0.95 },
-  { src: memory2.url, className: "right-[-6%] top-[46%] w-[66vw] sm:w-[28vw]", range: [0.3, 0.85] as [number, number], blur: 1, op: 0.92 },
-  { src: memory3.url, className: "left-[6%] bottom-[2%] w-[62vw] sm:w-[25vw]", range: [0.5, 1] as [number, number], blur: 1.5, op: 0.92 },
+  { src: memory1.url, className: "left-[-4%] top-[6%] w-[68vw] sm:w-[30vw]", pair: 0 },
+  { src: memory2.url, className: "right-[-6%] bottom-[8%] w-[64vw] sm:w-[27vw]", pair: 0 },
+  { src: memory4.url, className: "right-[-4%] top-[10%] w-[62vw] sm:w-[26vw]", pair: 1 },
+  { src: memory3.url, className: "left-[2%] bottom-[4%] w-[62vw] sm:w-[25vw]", pair: 1 },
 ];
 
 function ClosingCredits() {
@@ -1372,16 +1373,23 @@ function ClosingCredits() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const fade = useTransform(scrollYProgress, [0.85, 1], [1, 0.15]);
 
+  const [turn, setTurn] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setTurn((v) => (v + 1) % 2), 7000);
+    return () => clearInterval(t);
+  }, []);
+
   return (
     <section ref={ref} className="relative isolate min-h-[130svh] flex flex-col items-center justify-center px-6 py-32 overflow-hidden">
       <SceneBg image={bgSilk.url} opacity={0.6} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.3)" duration={34} />
 
-      {/* memorias — formas orgánicas que emergen y desaparecen con el scroll */}
+      {/* memorias — se funden con el fondo, de a dos por turno */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         {MEMORIES.map((m, i) => (
-          <MemoryCloud key={i} {...m} progress={scrollYProgress} index={i} />
+          <MemoryCloud key={i} src={m.src} className={m.className} active={m.pair === turn} index={i} />
         ))}
       </div>
+
 
       <motion.div style={{ opacity: fade }} className="relative z-10 text-center max-w-md">
         <motion.img
