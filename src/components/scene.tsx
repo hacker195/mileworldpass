@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 /**
  * SceneBg — per-section cinematic environment.
@@ -31,7 +31,15 @@ export function SceneBg({
   alt?: string;
 }) {
   const reduce = useReducedMotion();
-  const anim = <T,>(v: T) => (reduce ? undefined : v);
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 639px)");
+    const update = () => setCompact(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  const anim = <T,>(v: T) => (reduce || compact ? undefined : v);
 
   return (
     <div
@@ -57,7 +65,7 @@ export function SceneBg({
           backgroundPosition: position,
           filter: `blur(${blur}px) saturate(${saturation}%) contrast(104%)`,
           opacity,
-          willChange: "transform",
+          willChange: reduce || compact ? "auto" : "transform",
         }}
         initial={{ scale }}
         animate={anim({ scale: [scale, scale * 1.05, scale] })}
@@ -85,7 +93,7 @@ export function SceneBg({
 
       {/* three drifting light layers — 18s / 24s / 30s, never the source itself */}
       <motion.div
-        className="absolute -inset-[25%]"
+        className="absolute -inset-[25%] hidden sm:block"
         style={{
           background:
             "radial-gradient(45% 40% at 50% 50%, oklch(0.92 0.02 250 / 0.26), transparent 70%)",
@@ -101,7 +109,7 @@ export function SceneBg({
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute -inset-[25%]"
+        className="absolute -inset-[25%] hidden md:block"
         style={{
           background:
             "radial-gradient(40% 46% at 50% 50%, oklch(0.66 0.11 258 / 0.22), transparent 72%)",

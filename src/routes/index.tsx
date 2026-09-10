@@ -28,6 +28,7 @@ import mile1 from "@/assets/mile-1.png.asset.json";
 import mile2 from "@/assets/mile-2.png.asset.json";
 import mile3 from "@/assets/mile-3.png.asset.json";
 import mile4 from "@/assets/mile-4.png.asset.json";
+import giftRain from "@/assets/lluvia-de-sobres.mp4.asset.json";
 import { SceneBg } from "@/components/scene";
 import {
   searchGuests,
@@ -239,7 +240,7 @@ function TravellingLight() {
   const reduce = useReducedMotion();
   if (reduce) return null;
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 hidden sm:block overflow-hidden">
       <motion.div
         className="absolute top-[-20%] h-[140vh] w-[46vw]"
         style={{
@@ -661,7 +662,7 @@ function Hero() {
       />
 
       <motion.p
-        className="mt-7 font-noir italic text-center text-[6.5vw] sm:text-3xl leading-tight"
+        className="mt-7 font-noir italic text-center text-[8vw] sm:text-4xl leading-[1.12]"
         style={{ color: "oklch(0.96 0.01 250)" }}
         initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.8, duration: 1.2 }}
       >
@@ -747,14 +748,74 @@ function VipPass({ guest }: { guest: GuestData }) {
 
   const [saving, setSaving] = useState(false);
   const savePass = async () => {
-    const el = cardRef.current;
-    if (!el || saving) return;
+    if (saving) return;
     setSaving(true);
-    reset();
     try {
-      await new Promise((r) => setTimeout(r, 350));
-      const { default: html2canvas } = await import("html2canvas-pro");
-      const canvas = await html2canvas(el, { backgroundColor: "#0A0F1E", scale: 3, useCORS: true });
+      const QRCode = await import("qrcode");
+      await document.fonts.ready;
+      const canvas = document.createElement("canvas");
+      canvas.width = 1080;
+      canvas.height = 1600;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const gradient = ctx.createLinearGradient(0, 0, 1080, 1600);
+      gradient.addColorStop(0, "#344978");
+      gradient.addColorStop(0.48, "#101a38");
+      gradient.addColorStop(1, "#243b70");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 1080, 1600);
+      const glow = ctx.createRadialGradient(170, 100, 0, 170, 100, 760);
+      glow.addColorStop(0, "rgba(210,225,255,.32)");
+      glow.addColorStop(1, "rgba(10,16,35,0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, 1080, 1600);
+      ctx.strokeStyle = "rgba(235,242,255,.38)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(36, 36, 1008, 1528);
+      ctx.fillStyle = "#dbe5f7";
+      ctx.font = "500 28px Manrope, sans-serif";
+      ctx.fillText("MILE WORLD", 90, 125);
+      ctx.font = "400 98px NoirEtBlanc, serif";
+      ctx.fillText("ACCESO", 90, 245);
+      ctx.fillStyle = "rgba(219,229,247,.65)";
+      ctx.font = "500 23px Manrope, sans-serif";
+      ctx.fillText(members.length > 1 ? "INVITADOS" : "INVITADO", 90, 390);
+      ctx.fillStyle = "#f6f8fc";
+      ctx.font = "400 48px NoirEtBlanc, serif";
+      members.forEach((member, index) => ctx.fillText(titleCase(member.nombre), 90, 470 + index * 64));
+      const detailsY = 710;
+      ctx.fillStyle = "rgba(219,229,247,.65)";
+      ctx.font = "500 22px Manrope, sans-serif";
+      ctx.fillText("FECHA", 90, detailsY);
+      ctx.fillText("APERTURA", 580, detailsY);
+      ctx.fillStyle = "#f6f8fc";
+      ctx.font = "400 32px Manrope, sans-serif";
+      ctx.fillText("01 · 01 · 2027", 90, detailsY + 52);
+      ctx.fillText("20:30 HS", 580, detailsY + 52);
+      ctx.fillStyle = "rgba(219,229,247,.65)";
+      ctx.font = "500 22px Manrope, sans-serif";
+      ctx.fillText("LUGAR", 90, detailsY + 145);
+      ctx.fillStyle = "#f6f8fc";
+      ctx.font = "400 32px Manrope, sans-serif";
+      ctx.fillText("OGA GUASU · SALÓN DE EVENTOS", 90, detailsY + 197);
+      ctx.strokeStyle = "rgba(235,242,255,.22)";
+      ctx.beginPath(); ctx.moveTo(90, 1015); ctx.lineTo(990, 1015); ctx.stroke();
+      const qrUrl = await QRCode.toDataURL(code || "MILE-WORLD", { width: 300, margin: 2, errorCorrectionLevel: "M" });
+      const qr = new Image();
+      await new Promise<void>((resolve, reject) => { qr.onload = () => resolve(); qr.onerror = () => reject(); qr.src = qrUrl; });
+      ctx.fillStyle = "#f7f8fb";
+      ctx.fillRect(690, 1110, 300, 300);
+      ctx.drawImage(qr, 690, 1110, 300, 300);
+      ctx.fillStyle = "#f6f8fc";
+      for (let i = 0; i < 52; i += 1) {
+        const width = i % 7 === 0 ? 7 : i % 3 === 0 ? 4 : 2;
+        ctx.fillRect(90 + i * 9, 1140, width, 220);
+      }
+      ctx.fillStyle = "rgba(219,229,247,.72)";
+      ctx.font = "500 25px Manrope, sans-serif";
+      ctx.fillText(code || "MILE WORLD", 90, 1420);
+      ctx.font = "400 21px Manrope, sans-serif";
+      ctx.fillText("PASE PERSONAL · OBLIGATORIO PARA TU ENTRADA", 90, 1500);
       const blob: Blob | null = await new Promise((res) => canvas.toBlob(res, "image/png"));
       if (!blob) return;
       const file = new File([blob], `MILE-WORLD-${code || "PASE"}.png`, { type: "image/png" });
@@ -1096,13 +1157,8 @@ function Ruleta() {
 
 /* ---------- 7 · TENIDA ELEGANTE (fashion editorial) ---------- */
 function TenidaElegante() {
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const yA = useTransform(scrollYProgress, [0, 1], ["6%", "-8%"]);
-  const yB = useTransform(scrollYProgress, [0, 1], ["-4%", "10%"]);
-
   return (
-    <section ref={ref} className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
+    <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={iridescentDrape.url} opacity={0.54} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={26} />
 
       <div className="mx-auto max-w-5xl">
@@ -1112,16 +1168,19 @@ function TenidaElegante() {
         </div>
         <Title size="text-[17vw] sm:text-8xl" className="mt-4 uppercase">Tenida</Title>
         <Title size="text-[15vw] sm:text-7xl" italic className="pl-[12%] -mt-1" delay={0.15}>elegante</Title>
+        <p className="mt-8 max-w-md font-noir italic text-[clamp(20px,6vw,30px)] leading-snug" style={{ color: "oklch(0.92 0.02 250)" }}>
+          Una noche especial merece una presencia especial.
+        </p>
 
         {/* editorial spread */}
         <div className="mt-14 grid grid-cols-12 gap-4 sm:gap-6 items-start">
-          <motion.div style={{ y: yA }} className="col-span-7 sm:col-span-5">
+          <div className="col-span-7 sm:col-span-5">
             <EditorialPlate image={mile3.url} ratio="aspect-[3/4]" />
-          </motion.div>
+          </div>
 
-          <motion.div style={{ y: yB }} className="col-span-5 sm:col-span-4 mt-16">
+          <div className="col-span-5 sm:col-span-4 mt-16">
             <EditorialPlate image={mile4.url} ratio="aspect-[4/5]" />
-          </motion.div>
+          </div>
 
           <div className="col-span-12 sm:col-span-3 sm:mt-24">
             <motion.div
@@ -1132,7 +1191,7 @@ function TenidaElegante() {
             >
               <div className="font-meta text-[9px]" style={{ color: "oklch(0.66 0.02 255)" }}>Única indicación</div>
               <div className="mt-4 font-noir text-chrome uppercase text-[9vw] sm:text-[30px] leading-[1.05]">
-                Evitar plateado y blanco
+                Evitar blanco y plateado como colores predominantes
               </div>
               <div className="mt-6 h-px w-full" style={{ background: "linear-gradient(90deg, oklch(0.9 0.02 250 / 0.55), transparent)" }} />
             </motion.div>
@@ -1180,19 +1239,32 @@ function Regalo() {
   return (
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgSilkGold.url} opacity={0.58} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-[5] overflow-hidden">
+        <video
+          src={giftRain.url}
+          autoPlay muted loop playsInline preload="metadata"
+          className="h-full w-full object-cover opacity-55"
+          style={{ maskImage: "radial-gradient(ellipse 82% 68% at 50% 47%, #000 25%, transparent 88%)", WebkitMaskImage: "radial-gradient(ellipse 82% 68% at 50% 47%, #000 25%, transparent 88%)" }}
+        />
+        <div className="absolute inset-0" style={{ background: "oklch(0.10 0.04 261 / 0.34)" }} />
+      </div>
 
       <div className="mx-auto max-w-xl text-center">
         
-        <Title align="center" size="text-[clamp(40px,15vw,80px)]" className="mt-4 uppercase">El regalo</Title>
+        <Title align="center" size="text-[clamp(40px,15vw,80px)]" className="mt-4 uppercase">Regalos</Title>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
-          className="mt-10 mx-auto max-w-md font-info text-[clamp(15px,4.2vw,19px)] leading-[1.85]"
+          className="mt-12 mx-auto max-w-lg"
           style={{ color: "oklch(0.9 0.02 255)" }}
         >
-          El mejor regalo es tu presencia. Si igualmente querés tener un gesto con nosotros, dejamos los datos por acá.
-        </motion.p>
+          <span className="font-noir text-chrome text-[clamp(40px,13vw,70px)] leading-none">Lluvia de sobres</span>
+          <span className="ml-2 font-info text-[clamp(14px,4vw,18px)]">durante la celebración.</span>
+          <p className="mt-10 font-info text-[clamp(14px,4vw,17px)] leading-[1.8]">
+            Para quienes prefieran hacerlo de forma digital, habilitamos esta cuenta bancaria.
+          </p>
+        </motion.div>
 
         <div className="mt-10">
           <button onClick={() => setOpen((o) => !o)} className="btn-premium !px-8 !py-4 !text-[12px]">
@@ -1363,10 +1435,10 @@ function IllustratedMap() {
 /* ---------- 11 · CIERRE · MEMORIAS + CRÉDITOS ---------- */
 /** Cuatro recuerdos, dos por turno, alternando en loop detrás de los créditos. */
 const MEMORIES = [
-  { src: memory1.url, className: "left-[-4%] top-[6%] w-[68vw] sm:w-[30vw]", pair: 0 },
-  { src: memory2.url, className: "right-[-6%] bottom-[8%] w-[64vw] sm:w-[27vw]", pair: 0 },
-  { src: memory4.url, className: "right-[-4%] top-[10%] w-[62vw] sm:w-[26vw]", pair: 1 },
-  { src: memory3.url, className: "left-[2%] bottom-[4%] w-[62vw] sm:w-[25vw]", pair: 1 },
+  { src: memory1.url, className: "left-[4%] top-[7%] w-[56vw] sm:left-[7%] sm:w-[30vw]", pair: 0 },
+  { src: memory2.url, className: "right-[4%] bottom-[8%] w-[56vw] sm:right-[7%] sm:w-[27vw]", pair: 0 },
+  { src: memory4.url, className: "right-[4%] top-[8%] w-[56vw] sm:right-[7%] sm:w-[26vw]", pair: 1 },
+  { src: memory3.url, className: "left-[4%] bottom-[7%] w-[56vw] sm:left-[7%] sm:w-[25vw]", pair: 1 },
 ];
 
 function ClosingCredits() {
@@ -1458,16 +1530,15 @@ function MemoryCloud({
           "radial-gradient(ellipse 66% 64% at 50% 50%, #000 45%, rgba(0,0,0,0.45) 72%, transparent 92%)",
         maskImage:
           "radial-gradient(ellipse 66% 64% at 50% 50%, #000 45%, rgba(0,0,0,0.45) 72%, transparent 92%)",
-        filter: "blur(2px)",
-        mixBlendMode: "screen",
+        filter: "none",
       }}
       initial={false}
-      animate={{ opacity: active ? 0.42 : 0, scale: active ? 1 : 1.06 }}
+      animate={{ opacity: active ? 0.5 : 0, scale: active ? 1 : 1.025 }}
       transition={{ duration: 2.6, ease: "easeInOut", delay: (index % 2) * 0.5 }}
     >
       <video
         src={src} autoPlay muted loop playsInline preload="metadata"
-        className="w-full h-full object-cover rounded-[46%]"
+        className="w-full h-full object-cover rounded-[38%]"
       />
     </motion.div>
   );
