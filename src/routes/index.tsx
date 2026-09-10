@@ -7,7 +7,6 @@ import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
 import soundtrack from "@/assets/genesis-soundtrack.mp3.asset.json";
 import bgSilk from "@/assets/bg-silk.jpg.asset.json";
 import bgSilkGold from "@/assets/bg-silk-gold.jpg.asset.json";
-import bgStage from "@/assets/bg-stage.jpg.asset.json";
 import bgChrome from "@/assets/bg-chrome-liquid.jpg.asset.json";
 import bgCorridor from "@/assets/bg-corridor.jpg.asset.json";
 import bgLights from "@/assets/bg-lights.jpg.asset.json";
@@ -217,13 +216,13 @@ function AmbientBackdrop() {
           "radial-gradient(ellipse 100% 65% at 50% 0%, oklch(0.24 0.09 262) 0%, oklch(0.12 0.04 261) 55%, oklch(0.095 0.03 260) 100%)",
       }} />
       <motion.div
-        className="absolute -top-1/3 left-1/2 w-[140vw] h-[80vh] rounded-full -translate-x-1/2"
+        className="absolute -top-1/3 left-1/2 w-[140vw] h-[80vh] rounded-full -translate-x-1/2 hidden sm:block"
         style={{ background: "radial-gradient(closest-side, oklch(0.58 0.18 258 / 0.30), transparent 70%)", filter: "blur(80px)" }}
         animate={{ y: [0, 24, -12, 0], opacity: [0.7, 1, 0.75, 0.7] }}
         transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute inset-x-0 top-1/3 h-[60vh]"
+        className="absolute inset-x-0 top-1/3 h-[60vh] hidden sm:block"
         style={{
           background: "linear-gradient(180deg, transparent, oklch(0.92 0.02 250 / 0.07), transparent)",
           transform: "skewY(-8deg)",
@@ -859,10 +858,8 @@ function VipPass({ guest }: { guest: GuestData }) {
       <div className="mt-12 mx-auto max-w-sm" style={{ perspective: "1200px" }}>
         <motion.div
           ref={cardRef}
-          onPointerMove={(e) => move(e.clientX, e.clientY)}
+          onPointerMove={(e) => { if (e.pointerType === "mouse") move(e.clientX, e.clientY); }}
           onPointerLeave={reset}
-          onTouchMove={(e) => { const t = e.touches[0]; if (t) move(t.clientX, t.clientY); }}
-          onTouchEnd={reset}
           className="relative rounded-[26px] overflow-hidden"
           style={{
             background: "linear-gradient(160deg, oklch(0.24 0.07 262) 0%, oklch(0.13 0.045 262) 45%, oklch(0.18 0.055 262) 100%)",
