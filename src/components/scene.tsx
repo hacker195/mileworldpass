@@ -140,9 +140,9 @@ export function SceneBg({
         transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* soft film grain */}
+      {/* soft film grain — solo en pantallas grandes, sin blend-mode */}
       <div
-        className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
+        className="absolute inset-0 opacity-[0.04] hidden sm:block"
         style={{
           backgroundImage:
             "radial-gradient(circle at 20% 30%, oklch(1 0 0) 0.5px, transparent 1px), radial-gradient(circle at 80% 70%, oklch(1 0 0) 0.5px, transparent 1px)",
