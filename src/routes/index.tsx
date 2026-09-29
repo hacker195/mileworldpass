@@ -733,18 +733,6 @@ function VipPass({ guest }: { guest: GuestData }) {
   const members = useMemo(() => visibleMembers(guest.nombre), [guest.nombre]);
   const code = useMemo(() => accessCodeFor(guest.nombre), [guest.nombre]);
 
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0, gx: 50, gy: 50 });
-
-  const move = (cx: number, cy: number) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (cx - r.left) / r.width;
-    const py = (cy - r.top) / r.height;
-    setTilt({ rx: (0.5 - py) * 9, ry: (px - 0.5) * 11, gx: px * 100, gy: py * 100 });
-  };
-  const reset = () => setTilt({ rx: 0, ry: 0, gx: 50, gy: 50 });
 
   const [saving, setSaving] = useState(false);
   const savePass = async () => {
@@ -856,41 +844,24 @@ function VipPass({ guest }: { guest: GuestData }) {
         <Title size="text-[clamp(38px,14vw,64px)]" className="mt-3 uppercase">Tu acceso</Title>
       </div>
 
-      <div className="mt-12 mx-auto max-w-sm" style={{ perspective: "1200px" }}>
+      <div className="mt-12 mx-auto max-w-[350px]">
         <motion.div
-          ref={cardRef}
-          onPointerMove={(e) => { if (e.pointerType === "mouse") move(e.clientX, e.clientY); }}
-          onPointerLeave={reset}
           className="relative rounded-[26px] overflow-hidden"
           style={{
             background: "linear-gradient(160deg, oklch(0.24 0.07 262) 0%, oklch(0.13 0.045 262) 45%, oklch(0.18 0.055 262) 100%)",
             border: "1px solid oklch(1 0 0 / 0.16)",
-            boxShadow: "0 50px 100px -30px oklch(0.55 0.18 258 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.2)",
-            transformStyle: "preserve-3d",
+            boxShadow: "0 40px 80px -34px oklch(0.55 0.18 258 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.2)",
           }}
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          animate={{ rotateX: tilt.rx, rotateY: tilt.ry }}
-          transition={{ type: "spring", stiffness: 120, damping: 18, mass: 0.6 }}
+          viewport={{ once: true, margin: "-8%" }}
+          transition={{ duration: 0.9, ease: EASE }}
         >
-          {/* chrome highlight that follows the movement */}
-          <div aria-hidden className="absolute inset-0 pointer-events-none mix-blend-screen" style={{
-            background: `radial-gradient(closest-side at ${tilt.gx}% ${tilt.gy}%, oklch(0.95 0.03 250 / 0.22), transparent 70%)`,
-            transition: "background 120ms linear",
+          {/* iluminación fija de vidrio y cromo */}
+          <div aria-hidden className="absolute inset-0 pointer-events-none" style={{
+            background: "radial-gradient(ellipse at 20% 10%, oklch(0.9 0.03 250 / 0.14), transparent 52%), radial-gradient(ellipse at 90% 80%, oklch(0.65 0.16 258 / 0.14), transparent 58%)",
           }} />
-          <div aria-hidden className="absolute inset-0 opacity-30 mix-blend-screen" style={{
-            background: "radial-gradient(ellipse at 20% 10%, oklch(0.9 0.03 250 / 0.4), transparent 50%), radial-gradient(ellipse at 90% 80%, oklch(0.65 0.16 258 / 0.35), transparent 55%)",
-          }} />
-          <motion.div
-            aria-hidden className="absolute inset-0 pointer-events-none z-20"
-            style={{
-              background: "linear-gradient(115deg, transparent 25%, oklch(1 0 0 / 0.2) 45%, oklch(0.75 0.15 258 / 0.28) 50%, oklch(1 0 0 / 0.2) 55%, transparent 75%)",
-              mixBlendMode: "screen",
-            }}
-            initial={{ x: "-130%" }} animate={{ x: "130%" }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatDelay: 2.5 }}
-          />
+
 
           <div className="relative p-6 sm:p-7">
             <div className="flex items-start justify-between gap-4">
