@@ -72,17 +72,16 @@ export function SceneBg({
         transition={{ duration: duration * 2.4, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* DUOTONE — shadows to deep blue, highlights to silver-blue */}
+      {/* DUOTONE — plano, sin blend-modes: misma atmósfera azul/plata sin coste de GPU */}
       <div
         className="absolute inset-0"
-        style={{ background: "oklch(0.34 0.09 262)", mixBlendMode: "color", opacity: 0.6 }}
+        style={{ background: "oklch(0.30 0.085 262 / 0.42)" }}
       />
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(160deg, oklch(0.86 0.03 250 / 0.30) 0%, oklch(0.14 0.06 262 / 0.55) 55%, oklch(0.09 0.03 260 / 0.72) 100%)",
-          mixBlendMode: "soft-light",
+            "linear-gradient(160deg, oklch(0.80 0.03 250 / 0.12) 0%, oklch(0.14 0.06 262 / 0.42) 55%, oklch(0.09 0.03 260 / 0.66) 100%)",
         }}
       />
       <div
@@ -141,9 +140,9 @@ export function SceneBg({
         transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* soft film grain */}
+      {/* soft film grain — solo en pantallas grandes, sin blend-mode */}
       <div
-        className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
+        className="absolute inset-0 opacity-[0.04] hidden sm:block"
         style={{
           backgroundImage:
             "radial-gradient(circle at 20% 30%, oklch(1 0 0) 0.5px, transparent 1px), radial-gradient(circle at 80% 70%, oklch(1 0 0) 0.5px, transparent 1px)",

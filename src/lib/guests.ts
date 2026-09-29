@@ -91,6 +91,7 @@ export function welcomeGreeting(fullName: string): "Bienvenido" | "Bienvenida" {
     "lara", "gracie", "xio", "steffy", "sara", "nicole", "danna", "aylen", "zaira", "gisella", "maira",
     "hinata", "tatiana", "analia", "oyuki", "kiara", "nhayeli", "luana", "melody", "sofia", "aylin",
     "dulce", "leila", "jimena", "norma", "barbie",
+    "alisson", "ivonne", "nathy", "vivian",
   ]);
   const mascExceptions = new Set([
     "andres", "nicolas", "tomas", "matias", "elias", "jose", "luis", "jesus", "moises", "ismael",

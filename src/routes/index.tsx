@@ -58,6 +58,8 @@ const EVENT_DATE = new Date("2027-01-01T20:30:00-03:00");
 const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Oga+Guasu+Salon+de+Eventos";
 const WHATSAPP_NUMBER = "19313275485";
 const GIFT_ALIAS = "CI.3.510.962";
+/** Curva de desaceleración cinematográfica compartida. */
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 /* ============================================================ */
 /*  ROOT                                                        */
@@ -290,77 +292,78 @@ function MuteToggle({ muted, onToggle }: { muted: boolean; onToggle: () => void 
 /* ============================================================ */
 function IntroScreen({ onEnter }: { onEnter: () => void }) {
   const [ready, setReady] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setReady(true), 3200); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setReady(true), 1900); return () => clearTimeout(t); }, []);
 
   return (
     <motion.section
-      className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-6 overflow-hidden"
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}
+      className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-7 overflow-hidden"
+      style={{
+        paddingTop: "max(2.5rem, env(safe-area-inset-top))",
+        paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))",
+      }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.7 }}
     >
-      <SceneBg image={bgLights.url} opacity={0.58} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
+      <SceneBg image={bgLights.url} opacity={0.52} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
+      {/* 0.3s — la línea de origen */}
       <motion.div
-        aria-hidden className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[70vw] max-w-[520px] h-[140vh]"
-        style={{ background: "radial-gradient(ellipse at top, oklch(0.85 0.12 258 / 0.30), transparent 55%)", filter: "blur(28px)", mixBlendMode: "screen" }}
-        initial={{ rotate: -8, opacity: 0 }} animate={{ rotate: [-8, 8, -4], opacity: [0.2, 0.9, 0.6] }}
-        transition={{ duration: 6, ease: "easeInOut" }}
+        aria-hidden
+        className="h-px w-[120px] mb-9"
+        style={{ background: "linear-gradient(90deg, transparent, oklch(0.94 0.02 250 / 0.85), transparent)" }}
+        initial={{ opacity: 0, scaleX: 0 }}
+        animate={{ opacity: 1, scaleX: 1 }}
+        transition={{ delay: 0.3, duration: 0.8, ease: EASE }}
       />
 
+      {/* 0.6s — el logo se revela */}
+      <motion.img
+        src={mLogo.url} alt="MILE WORLD"
+        className="w-[50vw] max-w-[220px] object-contain"
+        style={{ filter: "drop-shadow(0 20px 50px oklch(0.55 0.18 258 / 0.45))" }}
+        initial={{ opacity: 0, y: 12, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 0.6, duration: 0.9, ease: EASE }}
+      />
+
+      {/* 1.1s — THE MILE EXPERIENCE */}
+      <motion.img
+        src={wordmark.url} alt="MILE WORLD — The Mile Experience"
+        className="mt-8 w-[70vw] max-w-[300px] object-contain"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 0.92, y: 0 }}
+        transition={{ delay: 1.1, duration: 0.9, ease: EASE }}
+      />
+
+      {/* 1.5s — fecha */}
       <motion.div
-        initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 1 }}
-        className="font-meta text-[9px] sm:text-[10px] mb-10 sm:mb-14"
-        style={{ color: "oklch(0.78 0.03 255)", letterSpacing: "0.5em" }}
+        className="mt-9 font-meta text-[15px]"
+        style={{ letterSpacing: "0.42em", color: "oklch(0.92 0.015 250)" }}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.9, ease: EASE }}
+      >
+        01 · 01 · 2027
+      </motion.div>
+
+      <motion.div
+        className="mt-4 font-meta text-[9px]"
+        style={{ letterSpacing: "0.45em", color: "oklch(0.7 0.02 255)" }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ delay: 1.7, duration: 0.8 }}
       >
         Una producción MILEWOOD
       </motion.div>
 
-      <div className="relative w-[56vw] max-w-[250px] aspect-square">
-        <motion.img
-          src={mLogo.url} alt="MILE WORLD"
-          className="absolute inset-0 w-full h-full object-contain"
-          style={{ filter: "drop-shadow(0 20px 60px oklch(0.55 0.18 258 / 0.5))" }}
-          initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.8, ease: [0.2, 0.8, 0.2, 1] }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            WebkitMaskImage: `url(${mLogo.url})`, maskImage: `url(${mLogo.url})`,
-            WebkitMaskSize: "contain", maskSize: "contain",
-            WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
-            WebkitMaskPosition: "center", maskPosition: "center",
-          }}
-        >
-          <motion.div
-            className="absolute inset-y-0 -left-full w-1/2"
-            style={{ background: "linear-gradient(105deg, transparent 30%, oklch(1 0 0 / 0.9) 50%, transparent 70%)", filter: "blur(6px)" }}
-            initial={{ x: "-40%" }} animate={{ x: "260%" }}
-            transition={{ delay: 1.4, duration: 1.6, ease: [0.22, 0.9, 0.3, 1] }}
-          />
-        </div>
-      </div>
-
-      <motion.img
-        src={wordmark.url} alt="MILE WORLD — The Mile Experience"
-        className="mt-8 sm:mt-10 w-[68vw] max-w-[320px] opacity-90"
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 0.9, y: 0 }} transition={{ delay: 2.4, duration: 1.2 }}
-      />
-
+      {/* 1.9s — todo se asienta */}
       <AnimatePresence>
         {ready && (
           <motion.button
             key="cta" onClick={onEnter}
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            transition={{ duration: 0.9 }}
-            className="btn-ghost mt-12 sm:mt-16"
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.9, ease: EASE }}
+            className="btn-ghost mt-14 w-full max-w-[320px] !py-[18px] active:scale-[0.98]"
           >
             Comenzar experiencia
-            <motion.span
-              aria-hidden className="absolute inset-0 pointer-events-none"
-              style={{ background: "linear-gradient(105deg, transparent 40%, oklch(1 0 0 / 0.22) 50%, transparent 60%)" }}
-              animate={{ x: ["-120%", "120%"] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
-            />
           </motion.button>
         )}
       </AnimatePresence>
@@ -689,7 +692,7 @@ function Hero() {
 
       <motion.div
         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 1.4, duration: 1 }}
-        className="mt-10 font-meta text-[11px]" style={{ letterSpacing: "0.5em", color: "oklch(0.8 0.02 255)" }}
+        className="mt-10 font-meta text-[16px]" style={{ letterSpacing: "0.45em", color: "oklch(0.92 0.015 250)" }}
       >
         01 · 01 · 2027
       </motion.div>
@@ -732,18 +735,6 @@ function VipPass({ guest }: { guest: GuestData }) {
   const members = useMemo(() => visibleMembers(guest.nombre), [guest.nombre]);
   const code = useMemo(() => accessCodeFor(guest.nombre), [guest.nombre]);
 
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0, gx: 50, gy: 50 });
-
-  const move = (cx: number, cy: number) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (cx - r.left) / r.width;
-    const py = (cy - r.top) / r.height;
-    setTilt({ rx: (0.5 - py) * 9, ry: (px - 0.5) * 11, gx: px * 100, gy: py * 100 });
-  };
-  const reset = () => setTilt({ rx: 0, ry: 0, gx: 50, gy: 50 });
 
   const [saving, setSaving] = useState(false);
   const savePass = async () => {
@@ -783,20 +774,26 @@ function VipPass({ guest }: { guest: GuestData }) {
       ctx.font = "400 48px NoirEtBlanc, serif";
       members.forEach((member, index) => ctx.fillText(titleCase(member.nombre), 90, 470 + index * 64));
       const detailsY = 710;
-      ctx.fillStyle = "rgba(219,229,247,.65)";
-      ctx.font = "500 22px Manrope, sans-serif";
-      ctx.fillText("FECHA", 90, detailsY);
-      ctx.fillText("APERTURA", 580, detailsY);
-      ctx.fillStyle = "#f6f8fc";
-      ctx.font = "400 32px Manrope, sans-serif";
-      ctx.fillText("01 · 01 · 2027", 90, detailsY + 52);
-      ctx.fillText("20:30 HS", 580, detailsY + 52);
-      ctx.fillStyle = "rgba(219,229,247,.65)";
-      ctx.font = "500 22px Manrope, sans-serif";
-      ctx.fillText("LUGAR", 90, detailsY + 145);
-      ctx.fillStyle = "#f6f8fc";
-      ctx.font = "400 32px Manrope, sans-serif";
-      ctx.fillText("OGA GUASU · SALÓN DE EVENTOS", 90, detailsY + 197);
+      const spaced = ctx as CanvasRenderingContext2D & { letterSpacing?: string };
+      const label = (t: string, x: number, y: number) => {
+        ctx.fillStyle = "rgba(219,229,247,.6)";
+        ctx.font = "500 20px Manrope, sans-serif";
+        spaced.letterSpacing = "7px";
+        ctx.fillText(t, x, y);
+      };
+      const value = (t: string, x: number, y: number) => {
+        ctx.fillStyle = "#f2f6fd";
+        ctx.font = "300 30px Manrope, sans-serif";
+        spaced.letterSpacing = "6px";
+        ctx.fillText(t, x, y);
+      };
+      label("FECHA", 90, detailsY);
+      label("APERTURA", 580, detailsY);
+      value("01 · 01 · 27", 90, detailsY + 56);
+      value("20:30 HS", 580, detailsY + 56);
+      label("LUGAR", 90, detailsY + 145);
+      value("OGA GUASU · SALÓN DE EVENTOS", 90, detailsY + 201);
+      spaced.letterSpacing = "0px";
       ctx.strokeStyle = "rgba(235,242,255,.22)";
       ctx.beginPath(); ctx.moveTo(90, 1015); ctx.lineTo(990, 1015); ctx.stroke();
       const qrUrl = await QRCode.toDataURL(code || "MILE-WORLD", { width: 300, margin: 2, errorCorrectionLevel: "M" });
@@ -855,41 +852,24 @@ function VipPass({ guest }: { guest: GuestData }) {
         <Title size="text-[clamp(38px,14vw,64px)]" className="mt-3 uppercase">Tu acceso</Title>
       </div>
 
-      <div className="mt-12 mx-auto max-w-sm" style={{ perspective: "1200px" }}>
+      <div className="mt-12 mx-auto max-w-[350px]">
         <motion.div
-          ref={cardRef}
-          onPointerMove={(e) => { if (e.pointerType === "mouse") move(e.clientX, e.clientY); }}
-          onPointerLeave={reset}
           className="relative rounded-[26px] overflow-hidden"
           style={{
             background: "linear-gradient(160deg, oklch(0.24 0.07 262) 0%, oklch(0.13 0.045 262) 45%, oklch(0.18 0.055 262) 100%)",
             border: "1px solid oklch(1 0 0 / 0.16)",
-            boxShadow: "0 50px 100px -30px oklch(0.55 0.18 258 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.2)",
-            transformStyle: "preserve-3d",
+            boxShadow: "0 40px 80px -34px oklch(0.55 0.18 258 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.2)",
           }}
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          animate={{ rotateX: tilt.rx, rotateY: tilt.ry }}
-          transition={{ type: "spring", stiffness: 120, damping: 18, mass: 0.6 }}
+          viewport={{ once: true, margin: "-8%" }}
+          transition={{ duration: 0.9, ease: EASE }}
         >
-          {/* chrome highlight that follows the movement */}
-          <div aria-hidden className="absolute inset-0 pointer-events-none mix-blend-screen" style={{
-            background: `radial-gradient(closest-side at ${tilt.gx}% ${tilt.gy}%, oklch(0.95 0.03 250 / 0.22), transparent 70%)`,
-            transition: "background 120ms linear",
+          {/* iluminación fija de vidrio y cromo */}
+          <div aria-hidden className="absolute inset-0 pointer-events-none" style={{
+            background: "radial-gradient(ellipse at 20% 10%, oklch(0.9 0.03 250 / 0.14), transparent 52%), radial-gradient(ellipse at 90% 80%, oklch(0.65 0.16 258 / 0.14), transparent 58%)",
           }} />
-          <div aria-hidden className="absolute inset-0 opacity-30 mix-blend-screen" style={{
-            background: "radial-gradient(ellipse at 20% 10%, oklch(0.9 0.03 250 / 0.4), transparent 50%), radial-gradient(ellipse at 90% 80%, oklch(0.65 0.16 258 / 0.35), transparent 55%)",
-          }} />
-          <motion.div
-            aria-hidden className="absolute inset-0 pointer-events-none z-20"
-            style={{
-              background: "linear-gradient(115deg, transparent 25%, oklch(1 0 0 / 0.2) 45%, oklch(0.75 0.15 258 / 0.28) 50%, oklch(1 0 0 / 0.2) 55%, transparent 75%)",
-              mixBlendMode: "screen",
-            }}
-            initial={{ x: "-130%" }} animate={{ x: "130%" }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatDelay: 2.5 }}
-          />
+
 
           <div className="relative p-6 sm:p-7">
             <div className="flex items-start justify-between gap-4">
@@ -914,7 +894,7 @@ function VipPass({ guest }: { guest: GuestData }) {
             </div>
 
             <div className="mt-7 grid grid-cols-2 gap-x-5 gap-y-4">
-              <PassRow label="Fecha" value="01 · 01 · 2027" />
+              <PassRow label="Fecha" value="01 · 01 · 27" />
               <PassRow label="Apertura" value="20:30 hs" />
               <PassRow label="Lugar" value="Oga Guasu · Salón de Eventos" wide />
             </div>
@@ -963,7 +943,12 @@ function PassRow({ label, value, wide }: { label: string; value: string; wide?: 
   return (
     <div className={wide ? "col-span-2" : ""}>
       <div className="font-meta text-[9px]" style={{ letterSpacing: "0.35em", color: "oklch(0.64 0.03 255)" }}>{label}</div>
-      <div className="mt-1.5 font-info text-[13px]" style={{ color: "oklch(0.96 0.01 250)" }}>{value}</div>
+      <div
+        className="mt-2 font-meta font-light text-[12px] uppercase text-chrome"
+        style={{ letterSpacing: "0.2em", lineHeight: 1.5 }}
+      >
+        {value}
+      </div>
     </div>
   );
 }
