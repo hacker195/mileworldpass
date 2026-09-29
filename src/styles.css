@@ -179,7 +179,33 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow-x: hidden;
   }
+
+  img,
+  video {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Deriva ambiental lentísima — CSS puro, compositada por GPU */
+@keyframes ambient-drift {
+  0% { transform: translate3d(-3%, -2%, 0) scale(1.04); }
+  50% { transform: translate3d(3%, 2%, 0) scale(1.08); }
+  100% { transform: translate3d(-3%, -2%, 0) scale(1.04); }
+}
+
+@utility ambient-drift {
+  animation: ambient-drift 26s ease-in-out infinite;
+  will-change: transform;
 }
 
 @utility text-chrome {
