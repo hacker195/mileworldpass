@@ -58,6 +58,8 @@ const EVENT_DATE = new Date("2027-01-01T20:30:00-03:00");
 const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Oga+Guasu+Salon+de+Eventos";
 const WHATSAPP_NUMBER = "19313275485";
 const GIFT_ALIAS = "CI.3.510.962";
+/** Curva de desaceleración cinematográfica compartida. */
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 /* ============================================================ */
 /*  ROOT                                                        */
@@ -886,7 +888,7 @@ function VipPass({ guest }: { guest: GuestData }) {
             </div>
 
             <div className="mt-7 grid grid-cols-2 gap-x-5 gap-y-4">
-              <PassRow label="Fecha" value="01 · 01 · 2027" />
+              <PassRow label="Fecha" value="01 · 01 · 27" />
               <PassRow label="Apertura" value="20:30 hs" />
               <PassRow label="Lugar" value="Oga Guasu · Salón de Eventos" wide />
             </div>
@@ -935,7 +937,12 @@ function PassRow({ label, value, wide }: { label: string; value: string; wide?: 
   return (
     <div className={wide ? "col-span-2" : ""}>
       <div className="font-meta text-[9px]" style={{ letterSpacing: "0.35em", color: "oklch(0.64 0.03 255)" }}>{label}</div>
-      <div className="mt-1.5 font-info text-[13px]" style={{ color: "oklch(0.96 0.01 250)" }}>{value}</div>
+      <div
+        className="mt-2 font-meta font-light text-[12px] uppercase text-chrome"
+        style={{ letterSpacing: "0.2em", lineHeight: 1.5 }}
+      >
+        {value}
+      </div>
     </div>
   );
 }
