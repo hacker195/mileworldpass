@@ -447,3 +447,25 @@
   }
   html { scroll-behavior: auto; }
 }
+
+/* El teléfono es la experiencia principal: superficies continuas y composición estable. */
+@media (max-width: 639px) {
+  .glass-panel {
+    backdrop-filter: none;
+    background: linear-gradient(160deg, oklch(0.18 0.05 262 / 0.96), oklch(0.105 0.035 261 / 0.98));
+  }
+
+  .text-chrome {
+    text-shadow: none;
+  }
+
+  .btn-premium::before,
+  .btn-ghost::before {
+    display: none;
+  }
+
+  .btn-premium:hover,
+  .btn-ghost:hover {
+    transform: none;
+  }
+}

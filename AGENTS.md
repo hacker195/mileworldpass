@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Treat the invitation as a mobile-first experience; avoid continuous scroll transforms, full-screen filters, and more than two simultaneous videos because phone smoothness is the primary constraint.

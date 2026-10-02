@@ -48,12 +48,12 @@ export function SceneBg({
       aria-label={alt || undefined}
       className="pointer-events-none absolute inset-0 overflow-hidden -z-10"
     >
-      {/* base luminous field — never pure black */}
+      {/* Campo continuo y liso: sin grano, trama ni mosaicos. */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 120% 80% at 50% 0%, oklch(0.19 0.07 262) 0%, oklch(0.12 0.04 261) 55%, oklch(0.09 0.03 260) 100%)",
+            "linear-gradient(180deg, oklch(0.17 0.055 262) 0%, oklch(0.115 0.038 261) 52%, oklch(0.09 0.03 260) 100%)",
         }}
       />
       {/* the real photograph — desaturated, lightly blurred, held at 35–55% */}
@@ -63,7 +63,7 @@ export function SceneBg({
           backgroundImage: `url(${image})`,
           backgroundSize: "cover",
           backgroundPosition: position,
-          filter: `blur(${blur}px) saturate(${saturation}%) contrast(104%)`,
+          filter: compact ? `saturate(${saturation}%) contrast(102%)` : `blur(${blur}px) saturate(${saturation}%) contrast(104%)`,
           opacity,
           willChange: reduce || compact ? "auto" : "transform",
         }}
@@ -140,15 +140,6 @@ export function SceneBg({
         transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* soft film grain — solo en pantallas grandes, sin blend-mode */}
-      <div
-        className="absolute inset-0 opacity-[0.04] hidden sm:block"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 30%, oklch(1 0 0) 0.5px, transparent 1px), radial-gradient(circle at 80% 70%, oklch(1 0 0) 0.5px, transparent 1px)",
-          backgroundSize: "3px 3px, 5px 5px",
-        }}
-      />
       {/* shared 130px edge blend — consecutive sections melt into each other */}
       <div
         className="absolute inset-x-0 top-0 h-[130px]"
