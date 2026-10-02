@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
@@ -47,6 +47,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "MILE LIVE · 01 · 01 · 2027. Invitación digital privada a MILE WORLD, la noche de Milena Anahi Montiel Chaparro." },
       { property: "og:title", content: "MILE WORLD — MILE LIVE · 01 · 01 · 2027" },
       { property: "og:description", content: "Invitación digital privada a MILE WORLD, la noche de Milena Anahi Montiel Chaparro." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
@@ -626,7 +628,7 @@ function Experience({ guest, onLevel }: { guest: GuestData; onLevel: (v: number)
       <VolumeZone level={0.72} onLevel={set}><Hero /></VolumeZone>
       <VolumeZone level={0.84} onLevel={set}><VipPass guest={guest} /></VolumeZone>
       <VolumeZone level={0.86} onLevel={set}><Countdown /></VolumeZone>
-      <VolumeZone level={0.88} onLevel={set}><Ruleta /></VolumeZone>
+      <VolumeZone level={0.88} onLevel={set}><Ruleta guest={guest} /></VolumeZone>
       <VolumeZone level={0.86} onLevel={set}><TenidaElegante /></VolumeZone>
       <VolumeZone level={0.86} onLevel={set}><Regalo /></VolumeZone>
       <VolumeZone level={0.92} onLevel={set}><Rsvp guest={guest} /></VolumeZone>
@@ -638,21 +640,17 @@ function Experience({ guest, onLevel }: { guest: GuestData; onLevel: (v: number)
 
 /* ---------- 3 · MILE WORLD (HERO) ---------- */
 function Hero() {
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "16%"]);
-
   return (
-    <section ref={ref} className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 py-24 overflow-hidden">
-      <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
+    <section className="relative isolate min-h-[100svh] flex flex-col items-center justify-center px-6 sm:px-10 py-24 overflow-hidden">
+      <div className="absolute inset-0 -z-10">
         <SceneBg image={silkElectric.url} opacity={0.62} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={34} />
-      </motion.div>
+      </div>
 
       <motion.img
         src={wordmark.url} alt="MILE WORLD"
         className="w-[82vw] max-w-[520px] object-contain"
-        initial={{ opacity: 0, y: 22, filter: "blur(10px)" }}
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 1.5, ease: [0.22, 0.9, 0.3, 1] }}
       />
@@ -679,15 +677,9 @@ function Hero() {
           border: "1px solid oklch(0.85 0.02 250 / 0.18)",
           boxShadow: "0 50px 100px -40px oklch(0 0 0 / 0.85), inset 0 1px 0 oklch(1 0 0 / 0.08)",
         }}
-        initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 1, duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
+        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ delay: 0.12, duration: 0.9, ease: EASE }}
       >
         <PortraitFade />
-        <motion.div
-          aria-hidden className="absolute inset-y-0 -left-1/2 w-1/2 pointer-events-none"
-          style={{ background: "linear-gradient(105deg, transparent 40%, oklch(1 0 0 / 0.08) 50%, transparent 60%)" }}
-          animate={{ x: ["-40%", "320%"] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", repeatDelay: 4 }}
-        />
       </motion.div>
 
       <motion.div
@@ -843,7 +835,6 @@ function VipPass({ guest }: { guest: GuestData }) {
           opacity: 0.3,
           maskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
           WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
-          mixBlendMode: "luminosity",
         }}
       />
 
@@ -982,8 +973,8 @@ function Countdown() {
           <motion.div
             key={u.l}
             className="text-center"
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ delay: i * 0.12, duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
+            initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }}
+            transition={{ delay: i * 0.06, duration: 0.75, ease: EASE }}
           >
             <div className="num-clock text-chrome text-[clamp(36px,12vw,64px)] leading-[1.35] pt-2 pb-2">
               {String(u.v).padStart(2, "0")}
@@ -1008,7 +999,7 @@ const DESTINOS = [
   "Vas a decir “no puedo creer que hice eso”",
 ];
 
-function Ruleta() {
+function Ruleta({ guest }: { guest: GuestData }) {
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -1024,7 +1015,7 @@ function Ruleta() {
     const next = rotation + target - (rotation % 360);
     setRotation(next);
     window.setTimeout(() => {
-      setResult(DESTINOS[idx]);
+      setResult(`${DESTINOS[idx]}, ${firstName(guest.nombre)}`);
       setSpinning(false);
       window.setTimeout(() => setResult(null), 5000);
     }, 4300);
@@ -1186,9 +1177,9 @@ function TenidaElegante() {
 
 function EditorialPlate({ image, ratio }: { image: string; ratio: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 26, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
       className={`relative ${ratio} rounded-[18px] overflow-hidden`}
@@ -1204,12 +1195,6 @@ function EditorialPlate({ image, ratio }: { image: string; ratio: string }) {
       <div className="absolute inset-0" style={{
         background: "linear-gradient(180deg, oklch(0.14 0.05 262 / 0.2), oklch(0.10 0.04 261 / 0.6))",
       }} />
-      <motion.div
-        aria-hidden className="absolute inset-y-0 -left-1/2 w-1/2 pointer-events-none"
-        style={{ background: "linear-gradient(105deg, transparent 40%, oklch(1 0 0 / 0.16) 50%, transparent 60%)", mixBlendMode: "screen" }}
-        animate={{ x: ["-40%", "300%"] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", repeatDelay: 4 }}
-      />
     </motion.div>
   );
 }
@@ -1242,8 +1227,8 @@ function Regalo() {
           style={{ color: "oklch(0.9 0.02 255)" }}
         >
           <span className="font-noir text-chrome text-[clamp(40px,13vw,70px)] leading-none">Lluvia de sobres</span>
-          <span className="ml-2 font-info text-[clamp(14px,4vw,18px)]">durante la celebración.</span>
-          <p className="mt-10 font-info text-[clamp(14px,4vw,17px)] leading-[1.8]">
+          <span className="ml-2 font-noir italic text-[clamp(17px,5vw,23px)]" style={{ color: "oklch(0.84 0.018 250)" }}>durante la celebración.</span>
+          <p className="mt-10 font-meta text-[12px] leading-[2] normal-case" style={{ letterSpacing: "0.12em" }}>
             Para quienes prefieran hacerlo de forma digital, habilitamos esta cuenta bancaria.
           </p>
         </motion.div>
@@ -1304,10 +1289,13 @@ function Rsvp({ guest }: { guest: GuestData }) {
         >
           Confirma tu presencia.
         </motion.p>
+        <div className="mt-8 font-meta text-[10px]" style={{ letterSpacing: "0.35em", color: "oklch(0.78 0.025 255)" }}>
+          (Obligatorio)
+        </div>
       </div>
 
       <motion.div
-        className="mt-12 mx-auto max-w-md text-center"
+        className="mt-5 mx-auto max-w-md text-center"
         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
         <a
@@ -1325,13 +1313,8 @@ function Rsvp({ guest }: { guest: GuestData }) {
 
 /* ---------- 10 · UBICACIÓN ---------- */
 function LocationScene() {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const scale = useTransform(scrollYProgress, [0, 0.55], [1.6, 1]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3], [0.25, 1]);
-
   return (
-    <section ref={ref} className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
+    <section className="relative isolate py-28 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgSilver.url} opacity={0.50} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
       <div className="mx-auto max-w-xl">
@@ -1342,9 +1325,9 @@ function LocationScene() {
 
       <div className="mt-10 mx-auto max-w-md relative rounded-[28px] overflow-hidden"
         style={{ border: "1px solid oklch(1 0 0 / 0.12)", boxShadow: "0 40px 90px -40px oklch(0 0 0 / 0.7)" }}>
-        <motion.div style={{ scale, opacity }} className="relative aspect-[4/3] will-change-transform">
+        <div className="relative aspect-[4/3]">
           <IllustratedMap />
-        </motion.div>
+        </div>
         <div aria-hidden className="absolute inset-0 pointer-events-none" style={{
           background: "radial-gradient(ellipse at 50% 40%, transparent 40%, oklch(0.10 0.04 261 / 0.85) 100%)",
         }} />
@@ -1373,14 +1356,6 @@ function IllustratedMap() {
         </radialGradient>
       </defs>
       <rect width="400" height="300" fill="url(#mapbg)" />
-      <g stroke="oklch(0.85 0.05 255 / 0.16)" strokeWidth="1" fill="none">
-        {Array.from({ length: 9 }).map((_, i) => (
-          <line key={"h" + i} x1="0" y1={i * 34 + 12} x2="400" y2={i * 34 + 20} />
-        ))}
-        {Array.from({ length: 11 }).map((_, i) => (
-          <line key={"v" + i} x1={i * 38 + 10} y1="0" x2={i * 38 + 26} y2="300" />
-        ))}
-      </g>
       <g fill="none" strokeLinecap="round">
         <motion.path
           d="M-10 210 C 80 190, 150 240, 250 200 S 380 150, 420 170"
@@ -1403,12 +1378,7 @@ function IllustratedMap() {
         <rect x="300" y="215" width="46" height="34" rx="8" />
       </g>
       <circle cx="210" cy="158" r="70" fill="url(#mapglow)" />
-      <motion.circle
-        cx="210" cy="158" r="18" fill="none" stroke="oklch(0.95 0.02 250 / 0.6)" strokeWidth="1.5"
-        initial={{ r: 16, opacity: 0.7 }}
-        animate={{ r: [16, 34], opacity: [0.7, 0] }}
-        transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut" }}
-      />
+      <circle cx="210" cy="158" r="20" fill="none" stroke="oklch(0.95 0.02 250 / 0.45)" strokeWidth="1.5" />
       <circle cx="210" cy="158" r="9" fill="oklch(0.97 0.01 250)" />
     </svg>
   );
@@ -1417,17 +1387,13 @@ function IllustratedMap() {
 /* ---------- 11 · CIERRE · MEMORIAS + CRÉDITOS ---------- */
 /** Cuatro recuerdos, dos por turno, alternando en loop detrás de los créditos. */
 const MEMORIES = [
-  { src: memory1.url, className: "left-[4%] top-[7%] w-[56vw] sm:left-[7%] sm:w-[30vw]", pair: 0 },
-  { src: memory2.url, className: "right-[4%] bottom-[8%] w-[56vw] sm:right-[7%] sm:w-[27vw]", pair: 0 },
-  { src: memory4.url, className: "right-[4%] top-[8%] w-[56vw] sm:right-[7%] sm:w-[26vw]", pair: 1 },
-  { src: memory3.url, className: "left-[4%] bottom-[7%] w-[56vw] sm:left-[7%] sm:w-[25vw]", pair: 1 },
+  { src: memory1.url, className: "left-[-2%] top-[12%] w-[64vw] sm:left-[7%] sm:w-[30vw]", pair: 0 },
+  { src: memory2.url, className: "right-[-2%] bottom-[24%] w-[64vw] sm:right-[7%] sm:bottom-[14%] sm:w-[27vw]", pair: 0 },
+  { src: memory4.url, className: "right-[-2%] top-[13%] w-[64vw] sm:right-[7%] sm:w-[26vw]", pair: 1 },
+  { src: memory3.url, className: "left-[-2%] bottom-[23%] w-[64vw] sm:left-[7%] sm:bottom-[13%] sm:w-[25vw]", pair: 1 },
 ];
 
 function ClosingCredits() {
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const fade = useTransform(scrollYProgress, [0.85, 1], [1, 0.15]);
-
   const [turn, setTurn] = useState(0);
   useEffect(() => {
     const t = setInterval(() => setTurn((v) => (v + 1) % 2), 7000);
@@ -1435,18 +1401,20 @@ function ClosingCredits() {
   }, []);
 
   return (
-    <section ref={ref} className="relative isolate min-h-[130svh] flex flex-col items-center justify-center px-6 py-32 overflow-hidden">
+    <section className="relative isolate min-h-[120svh] flex flex-col items-center justify-center px-6 py-28 overflow-hidden">
       <SceneBg image={bgSilk.url} opacity={0.6} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.3)" duration={34} />
 
       {/* memorias — se funden con el fondo, de a dos por turno */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        {MEMORIES.map((m, i) => (
-          <MemoryCloud key={i} src={m.src} className={m.className} active={m.pair === turn} index={i} />
-        ))}
+        <AnimatePresence mode="sync">
+          {MEMORIES.filter((memory) => memory.pair === turn).map((memory, index) => (
+            <MemoryCloud key={memory.src} src={memory.src} className={memory.className} index={index} />
+          ))}
+        </AnimatePresence>
       </div>
 
 
-      <motion.div style={{ opacity: fade }} className="relative z-10 text-center max-w-md">
+      <div className="relative z-10 text-center max-w-md">
         <motion.img
           src={wordmark.url} alt="MILE WORLD"
           className="mx-auto w-[68vw] max-w-[300px] opacity-90"
@@ -1486,7 +1454,7 @@ function ClosingCredits() {
           <div className="pt-6" style={{ color: "oklch(0.54 0.02 255)" }}>© MILEWOOD · Todos los derechos reservados</div>
           <div style={{ color: "oklch(0.82 0.02 255)" }}>@mileeemontiel</div>
         </div>
-      </motion.div>
+      </div>
 
       {/* fade out cinematográfico final */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[35vh] z-20" style={{
@@ -1497,11 +1465,10 @@ function ClosingCredits() {
 }
 
 function MemoryCloud({
-  src, className, active, index,
+  src, className, index,
 }: {
   src: string;
   className: string;
-  active: boolean;
   index: number;
 }) {
   return (
@@ -1509,18 +1476,19 @@ function MemoryCloud({
       className={`absolute ${className} aspect-[3/4]`}
       style={{
         WebkitMaskImage:
-          "radial-gradient(ellipse 66% 64% at 50% 50%, #000 45%, rgba(0,0,0,0.45) 72%, transparent 92%)",
+          "radial-gradient(ellipse 78% 72% at 50% 50%, #000 34%, rgba(0,0,0,0.82) 58%, rgba(0,0,0,0.3) 78%, transparent 96%)",
         maskImage:
-          "radial-gradient(ellipse 66% 64% at 50% 50%, #000 45%, rgba(0,0,0,0.45) 72%, transparent 92%)",
+          "radial-gradient(ellipse 78% 72% at 50% 50%, #000 34%, rgba(0,0,0,0.82) 58%, rgba(0,0,0,0.3) 78%, transparent 96%)",
         filter: "none",
       }}
-      initial={false}
-      animate={{ opacity: active ? 0.5 : 0, scale: active ? 1 : 1.025 }}
-      transition={{ duration: 2.6, ease: "easeInOut", delay: (index % 2) * 0.5 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.58 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1.2, ease: "easeOut", delay: index * 0.12 }}
     >
       <video
         src={src} autoPlay muted loop playsInline preload="metadata"
-        className="w-full h-full object-cover rounded-[38%]"
+        className="w-full h-full object-cover"
       />
     </motion.div>
   );

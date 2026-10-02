@@ -72,7 +72,8 @@ export function firstName(fullName: string): string {
 export function visibleMembers(guestName: string): GuestMember[] {
   const res = findReservationByGuestName(guestName);
   if (!res) return [];
-  const me = res.integrantes.find((m) => normalize(m.nombre) === normalize(guestName))!;
+  const me = res.integrantes.find((m) => normalize(m.nombre) === normalize(guestName));
+  if (!me) return [];
   if (res.integrantes.length === 1) return [me];
   if (me.rol === "adulto") return res.integrantes;
   return [me];
