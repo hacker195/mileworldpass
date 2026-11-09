@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
@@ -1411,6 +1411,7 @@ function ClosingCredits() {
         </div>
       </div>
 
+      <FinalWhisper />
       {/* fade out cinematográfico final */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[35vh] z-20" style={{
         background: "linear-gradient(0deg, oklch(0.045 0.015 260) 0%, transparent 100%)",
@@ -1462,4 +1463,77 @@ function AutoVideo({ src, className = "" }: { src: string; className?: string })
     return () => io.disconnect();
   }, []);
   return <video ref={ref} src={src} muted loop playsInline autoPlay preload="auto" disablePictureInPicture className={className} />;
+}
+
+/** Mensaje final efímero: 4 s después de llegar al fondo, visible 8 s, una vez por visita. */
+let finalWhisperShown = false;
+function FinalWhisper() {
+  const sentinel = useRef<HTMLDivElement | null>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el || finalWhisperShown) return;
+    let wait: ReturnType<typeof setTimeout> | undefined;
+    let hide: ReturnType<typeof setTimeout> | undefined;
+    const io = new IntersectionObserver(([e]) => {
+      if (finalWhisperShown) return;
+      if (e.isIntersecting) {
+        wait = setTimeout(() => {
+          finalWhisperShown = true;
+          io.disconnect();
+          setShow(true);
+          hide = setTimeout(() => setShow(false), 8000);
+        }, 4000);
+      } else if (wait) {
+        clearTimeout(wait);
+      }
+    });
+    io.observe(el);
+    return () => { io.disconnect(); if (wait) clearTimeout(wait); if (hide) clearTimeout(hide); };
+  }, []);
+  return (
+    <>
+      <div ref={sentinel} aria-hidden className="absolute bottom-0 inset-x-0 h-px" />
+      <AnimatePresence>
+        {show && (
+          <motion.div
+            key="final-whisper"
+            role="status"
+            className="pointer-events-none fixed inset-0 z-[55] flex items-center justify-center px-8"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 1.6, ease: EASE }}
+          >
+            <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(ellipse 90% 55% at 50% 50%, oklch(0.07 0.025 260 / 0.78), oklch(0.07 0.025 260 / 0) 75%)" }} />
+            <div className="relative text-center max-w-sm" style={{ textShadow: "0 4px 28px oklch(0.06 0.02 260 / 0.95)" }}>
+              <motion.div
+                className="font-noir italic text-chrome text-[clamp(34px,10vw,52px)] leading-[1.25] py-[0.08em]"
+                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 1.2, ease: EASE }}
+              >
+                Hay un lugar para vos.
+              </motion.div>
+              <motion.div
+                className="mx-auto mt-6 h-px w-16"
+                style={{ background: "linear-gradient(90deg, transparent, oklch(0.9 0.02 250 / 0.7), transparent)" }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 1 }}
+              />
+              <motion.p
+                className="mt-6 font-meta text-[11px] leading-[2] normal-case"
+                style={{ letterSpacing: "0.14em", color: "oklch(0.88 0.02 255)" }}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 1.1, ease: EASE }}
+              >
+                La confirmación de asistencia es obligatoria hasta el 20 de diciembre.
+              </motion.p>
+              <motion.div
+                className="mt-8 font-noir italic text-[clamp(22px,6.5vw,30px)] leading-[1.3]"
+                style={{ color: "oklch(0.96 0.01 250)" }}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.8, duration: 1.2, ease: EASE }}
+              >
+                Te espero.
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

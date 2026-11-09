@@ -10,7 +10,7 @@
   src: url("/__l5e/assets-v1/010745a5-a077-4c0f-b88b-564d5c6c2cc5/noir-et-blanc.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @theme {
@@ -178,7 +178,7 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     overflow-x: hidden;
