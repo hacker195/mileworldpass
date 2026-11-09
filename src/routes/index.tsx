@@ -1503,7 +1503,7 @@ function FinalWhisper() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 1.6, ease: EASE }}
           >
-            <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(ellipse 120% 62% at 50% 50%, oklch(0.07 0.025 260 / 0.94) 0%, oklch(0.07 0.025 260 / 0.88) 45%, oklch(0.07 0.025 260 / 0.35) 80%, oklch(0.07 0.025 260 / 0) 100%)" }} />
+            <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(ellipse 120% 62% at 50% 50%, oklch(0.07 0.025 260 / 0.97) 0%, oklch(0.07 0.025 260 / 0.94) 50%, oklch(0.07 0.025 260 / 0.35) 80%, oklch(0.07 0.025 260 / 0) 100%)" }} />
             <div className="relative text-center max-w-sm" style={{ textShadow: "0 4px 28px oklch(0.06 0.02 260 / 0.95)" }}>
               <motion.div
                 className="font-noir italic text-chrome text-[clamp(34px,10vw,52px)] leading-[1.25] py-[0.08em]"
