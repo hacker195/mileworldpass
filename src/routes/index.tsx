@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import mLogo from "@/assets/mile-m-logo.png.asset.json";
 import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
@@ -18,16 +18,16 @@ import silkElectric from "@/assets/silk-electric.webp.asset.json";
 import chromeFlow from "@/assets/chrome-flow.webp.asset.json";
 import chromeRipple from "@/assets/chrome-ripple.webp.asset.json";
 import iridescentDrape from "@/assets/iridescent-drape.webp.asset.json";
-import memory1 from "@/assets/memory-1.webm.asset.json";
-import memory2 from "@/assets/memory-2.webm.asset.json";
-import memory3 from "@/assets/memory-3.webm.asset.json";
-import memory4 from "@/assets/memory-4.webm.asset.json";
-import milePortrait from "@/assets/mile-portrait.jpg.asset.json";
-import mile1 from "@/assets/mile-1.png.asset.json";
+import memory1 from "@/assets/memory-1.mp4.asset.json";
+import memory2 from "@/assets/memory-2.mp4.asset.json";
+import memory3 from "@/assets/memory-3.mp4.asset.json";
+import memory4 from "@/assets/memory-4.mp4.asset.json";
+import milePortrait from "@/assets/mile-portrait-soft.jpg.asset.json";
+import mile1 from "@/assets/mile-1-new.jpg.asset.json";
 import mile2 from "@/assets/mile-2.png.asset.json";
 import mile3 from "@/assets/mile-3.png.asset.json";
 import mile4 from "@/assets/mile-4.png.asset.json";
-import giftRain from "@/assets/lluvia-de-sobres.mp4.asset.json";
+import giftRain from "@/assets/lluvia-de-sobres-movil.mp4.asset.json";
 import { SceneBg } from "@/components/scene";
 import {
   searchGuests,
@@ -70,40 +70,17 @@ function Index() {
   const [stage, setStage] = useState<Stage>("intro");
   const [guest, setGuest] = useState<GuestData>({ nombre: "", rol: "adulto" });
   const [muted, setMuted] = useState(false);
-  const [level, setLevel] = useState(0.6);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const musicShouldPlay = stage === "validating" || stage === "welcome" || stage === "experience";
 
   useEffect(() => {
-    if (stage === "validating") setLevel(0.6);
-    if (stage === "welcome") setLevel(0.66);
-  }, [stage]);
-
-  useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
+    a.volume = 0.6;
     if (musicShouldPlay && !muted) a.play().catch(() => {});
     else a.pause();
   }, [musicShouldPlay, muted]);
-
-  useEffect(() => {
-    const a = audioRef.current;
-    if (!a) return;
-    const from = a.volume;
-    const to = Math.max(0, Math.min(1, level)) * 0.85;
-    const start = performance.now();
-    const DUR = 5200;
-    let raf = 0;
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / DUR);
-      const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-      a.volume = from + (to - from) * e;
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [level]);
 
   useEffect(() => () => { audioRef.current?.pause(); }, []);
 
@@ -124,7 +101,7 @@ function Index() {
         )}
         {stage === "validating" && <ValidatingScreen key="val" onDone={() => setStage("welcome")} />}
         {stage === "welcome" && <WelcomeScreen key="wel" guest={guest} onContinue={() => setStage("experience")} />}
-        {stage === "experience" && <Experience key="exp" guest={guest} onLevel={setLevel} />}
+        {stage === "experience" && <Experience key="exp" guest={guest} />}
       </AnimatePresence>
     </main>
   );
@@ -169,11 +146,11 @@ function Title({
   const alignCls = align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
   return (
     <motion.h2
-      initial={{ opacity: 0, y: 22, filter: "blur(6px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-12%" }}
-      transition={{ duration: 1.3, delay, ease: [0.22, 0.9, 0.3, 1] }}
-      className={`font-noir text-chrome leading-[0.95] ${italic ? "italic" : ""} ${size} ${alignCls} ${className}`}
+      initial={{ opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.01 }}
+      transition={{ duration: 0.9, delay, ease: EASE }}
+      className={`font-noir text-chrome leading-[1.2] py-[0.08em] ${italic ? "italic" : ""} ${size} ${alignCls} ${className}`}
     >
       {children}
     </motion.h2>
@@ -221,7 +198,7 @@ function AmbientBackdrop() {
       }} />
       <motion.div
         className="absolute -top-1/3 left-1/2 w-[140vw] h-[80vh] rounded-full -translate-x-1/2 hidden sm:block"
-        style={{ background: "radial-gradient(closest-side, oklch(0.58 0.18 258 / 0.30), transparent 70%)", filter: "blur(80px)" }}
+        style={{ background: "radial-gradient(closest-side, oklch(0.58 0.18 258 / 0.30), transparent 70%)" }}
         animate={{ y: [0, 24, -12, 0], opacity: [0.7, 1, 0.75, 0.7] }}
         transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -249,7 +226,6 @@ function TravellingLight() {
         style={{
           background:
             "linear-gradient(100deg, transparent 20%, oklch(0.92 0.04 252 / 0.10) 45%, oklch(0.78 0.12 258 / 0.14) 52%, transparent 78%)",
-          filter: "blur(50px)",
           mixBlendMode: "screen",
           transform: "rotate(8deg)",
         }}
@@ -268,9 +244,9 @@ function MuteToggle({ muted, onToggle }: { muted: boolean; onToggle: () => void 
     <motion.button
       onClick={onToggle}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-      className="fixed top-4 right-4 z-50 w-10 h-10 rounded-2xl grid place-items-center backdrop-blur-md"
+      className="fixed top-4 right-4 z-50 w-10 h-10 rounded-2xl grid place-items-center"
       style={{
-        background: "oklch(1 0 0 / 0.06)",
+        background: "oklch(0.16 0.045 262 / 0.9)",
         border: "1px solid oklch(1 0 0 / 0.16)",
         boxShadow: "0 8px 24px oklch(0 0 0 / 0.4)",
       }}
@@ -448,8 +424,8 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
                     transition={{ duration: 0.18, ease: "easeOut" }}
                     className="absolute left-0 right-0 mt-2 rounded-2xl overflow-hidden z-20"
                     style={{
-                      background: "oklch(0.14 0.04 262 / 0.94)",
-                      backdropFilter: "blur(24px) saturate(140%)",
+                      background: "oklch(0.14 0.04 262 / 0.98)",
+                      
                       border: "1px solid oklch(1 0 0 / 0.12)",
                       boxShadow: "0 24px 48px -12px oklch(0 0 0 / 0.6)",
                     }}
@@ -534,7 +510,7 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 8, filter: "blur(8px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5, duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
           className="mt-9 font-noir text-chrome text-[9vw] sm:text-[42px] leading-none uppercase"
           style={{ letterSpacing: "0.06em" }}
@@ -573,9 +549,9 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
           {greeting}
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, y: 14, filter: "blur(8px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
-          className="mt-4 font-noir text-chrome text-[18vw] sm:text-8xl leading-[0.9]"
+          className="mt-4 font-noir text-chrome text-[18vw] sm:text-8xl leading-[1.15] py-[0.08em]"
         >
           {display}
         </motion.div>
@@ -607,33 +583,20 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
 }
 
 /* ============================================================ */
-/*  VOLUME ZONE                                                 */
-/* ============================================================ */
-function VolumeZone({ level, onLevel, children, className = "" }: {
-  level: number; onLevel: (v: number) => void; children: React.ReactNode; className?: string;
-}) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const inView = useInView(ref, { margin: "-45% 0px -45% 0px" });
-  useEffect(() => { if (inView) onLevel(level); }, [inView, level, onLevel]);
-  return <div ref={ref} className={className}>{children}</div>;
-}
-
-/* ============================================================ */
 /*  EXPERIENCIA                                                 */
 /* ============================================================ */
-function Experience({ guest, onLevel }: { guest: GuestData; onLevel: (v: number) => void }) {
-  const set = useCallback((v: number) => onLevel(v), [onLevel]);
+function Experience({ guest }: { guest: GuestData }) {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }} className="w-full overflow-x-hidden">
-      <VolumeZone level={0.72} onLevel={set}><Hero /></VolumeZone>
-      <VolumeZone level={0.84} onLevel={set}><VipPass guest={guest} /></VolumeZone>
-      <VolumeZone level={0.86} onLevel={set}><Countdown /></VolumeZone>
-      <VolumeZone level={0.88} onLevel={set}><Ruleta guest={guest} /></VolumeZone>
-      <VolumeZone level={0.86} onLevel={set}><TenidaElegante /></VolumeZone>
-      <VolumeZone level={0.86} onLevel={set}><Regalo /></VolumeZone>
-      <VolumeZone level={0.92} onLevel={set}><Rsvp guest={guest} /></VolumeZone>
-      <VolumeZone level={0.86} onLevel={set}><LocationScene /></VolumeZone>
-      <VolumeZone level={1} onLevel={set}><ClosingCredits /></VolumeZone>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9 }} className="w-full overflow-x-hidden">
+      <Hero />
+      <VipPass guest={guest} />
+      <Countdown />
+      <Ruleta guest={guest} />
+      <TenidaElegante />
+      <Regalo />
+      <Rsvp guest={guest} />
+      <LocationScene />
+      <ClosingCredits />
     </motion.div>
   );
 }
@@ -662,7 +625,7 @@ function Hero() {
       />
 
       <motion.p
-        className="mt-7 font-noir italic text-center text-[8vw] sm:text-4xl leading-[1.12]"
+        className="mt-7 font-noir italic text-center text-[8vw] sm:text-4xl leading-[1.3] py-[0.1em]"
         style={{ color: "oklch(0.96 0.01 250)" }}
         initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.8, duration: 1.2 }}
       >
@@ -711,7 +674,9 @@ function PortraitFade() {
           initial={false}
           animate={{ opacity: i === idx ? 1 : 0 }}
           transition={{ duration: 2.2, ease: "easeInOut" }}
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
       ))}
       <div aria-hidden className="absolute inset-0" style={{
@@ -831,10 +796,7 @@ function VipPass({ guest }: { guest: GuestData }) {
           backgroundImage: `url(${milePortrait.url})`,
           backgroundSize: "cover",
           backgroundPosition: "50% 28%",
-          filter: "blur(26px) saturate(55%) brightness(0.85)",
           opacity: 0.3,
-          maskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
-          WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 30%, transparent 80%)",
         }}
       />
 
@@ -853,7 +815,7 @@ function VipPass({ guest }: { guest: GuestData }) {
           }}
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-8%" }}
+          viewport={{ once: true, amount: 0.01 }}
           transition={{ duration: 0.9, ease: EASE }}
         >
           {/* iluminación fija de vidrio y cromo */}
@@ -1045,8 +1007,7 @@ function Ruleta({ guest }: { guest: GuestData }) {
           style={{
             border: "2px solid oklch(0.88 0.02 250 / 0.55)",
             boxShadow: "0 0 70px -10px oklch(0.6 0.18 258 / 0.55), inset 0 0 60px oklch(0 0 0 / 0.6)",
-            filter: spinning ? "blur(0.6px)" : "none",
-          }}
+                      }}
           animate={{ rotate: rotation }}
           transition={{ duration: 4.2, ease: [0.12, 0.72, 0.12, 1] }}
         >
@@ -1110,11 +1071,11 @@ function Ruleta({ guest }: { guest: GuestData }) {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="absolute inset-0" style={{ background: "oklch(0.06 0.025 260 / 0.86)", backdropFilter: "blur(14px)" }} />
+            <div className="absolute inset-0" style={{ background: "oklch(0.06 0.025 260 / 0.94)" }} />
             <motion.div
               className="relative text-center max-w-lg"
-              initial={{ opacity: 0, scale: 0.92, filter: "blur(10px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
             >
@@ -1137,7 +1098,6 @@ function TenidaElegante() {
       <div className="mx-auto max-w-5xl">
         <div className="flex items-end justify-between gap-6">
           <Meta style={{ letterSpacing: "0.45em" }}>Dress code</Meta>
-          <Meta style={{ letterSpacing: "0.35em" }}>Nº 01</Meta>
         </div>
         <Title size="text-[17vw] sm:text-8xl" className="mt-4 uppercase">Tenida</Title>
         <Title size="text-[15vw] sm:text-7xl" italic className="pl-[12%] -mt-1" delay={0.15}>elegante</Title>
@@ -1163,7 +1123,7 @@ function TenidaElegante() {
               style={{ borderColor: "oklch(0.85 0.02 250 / 0.25)" }}
             >
               <div className="font-meta text-[9px]" style={{ color: "oklch(0.66 0.02 255)" }}>Única indicación</div>
-              <div className="mt-4 font-noir text-chrome uppercase text-[9vw] sm:text-[30px] leading-[1.05]">
+              <div className="mt-4 font-noir text-chrome uppercase text-[9vw] sm:text-[30px] leading-[1.25] py-[0.06em]">
                 Evitar blanco y plateado como colores predominantes
               </div>
               <div className="mt-6 h-px w-full" style={{ background: "linear-gradient(90deg, oklch(0.9 0.02 250 / 0.55), transparent)" }} />
@@ -1180,7 +1140,7 @@ function EditorialPlate({ image, ratio }: { image: string; ratio: string }) {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
+      viewport={{ once: true, amount: 0.01 }}
       transition={{ duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
       className={`relative ${ratio} rounded-[18px] overflow-hidden`}
       style={{
@@ -1207,13 +1167,8 @@ function Regalo() {
     <section className="relative isolate py-32 px-5 sm:px-8 overflow-hidden">
       <SceneBg image={bgSilkGold.url} opacity={0.58} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-[5] overflow-hidden">
-        <video
-          src={giftRain.url}
-          autoPlay muted loop playsInline preload="metadata"
-          className="h-full w-full object-cover opacity-55"
-          style={{ maskImage: "radial-gradient(ellipse 82% 68% at 50% 47%, #000 25%, transparent 88%)", WebkitMaskImage: "radial-gradient(ellipse 82% 68% at 50% 47%, #000 25%, transparent 88%)" }}
-        />
-        <div className="absolute inset-0" style={{ background: "oklch(0.10 0.04 261 / 0.34)" }} />
+        <AutoVideo src={giftRain.url} className="h-full w-full object-cover opacity-60" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, oklch(0.105 0.035 261) 0%, oklch(0.105 0.035 261 / 0.25) 22%, oklch(0.105 0.035 261 / 0.25) 78%, oklch(0.105 0.035 261) 100%)" }} />
       </div>
 
       <div className="mx-auto max-w-xl text-center">
@@ -1226,7 +1181,7 @@ function Regalo() {
           className="mt-12 mx-auto max-w-lg"
           style={{ color: "oklch(0.9 0.02 255)" }}
         >
-          <span className="font-noir text-chrome text-[clamp(40px,13vw,70px)] leading-none">Lluvia de sobres</span>
+          <span className="font-noir text-chrome text-[clamp(40px,13vw,70px)] leading-[1.2]">Lluvia de sobres</span>
           <span className="ml-2 font-noir italic text-[clamp(17px,5vw,23px)]" style={{ color: "oklch(0.84 0.018 250)" }}>durante la celebración.</span>
           <p className="mt-10 font-meta text-[12px] leading-[2] normal-case" style={{ letterSpacing: "0.12em" }}>
             Para quienes prefieran hacerlo de forma digital, habilitamos esta cuenta bancaria.
@@ -1387,10 +1342,10 @@ function IllustratedMap() {
 /* ---------- 11 · CIERRE · MEMORIAS + CRÉDITOS ---------- */
 /** Cuatro recuerdos, dos por turno, alternando en loop detrás de los créditos. */
 const MEMORIES = [
-  { src: memory1.url, className: "left-[-2%] top-[12%] w-[64vw] sm:left-[7%] sm:w-[30vw]", pair: 0 },
-  { src: memory2.url, className: "right-[-2%] bottom-[24%] w-[64vw] sm:right-[7%] sm:bottom-[14%] sm:w-[27vw]", pair: 0 },
-  { src: memory4.url, className: "right-[-2%] top-[13%] w-[64vw] sm:right-[7%] sm:w-[26vw]", pair: 1 },
-  { src: memory3.url, className: "left-[-2%] bottom-[23%] w-[64vw] sm:left-[7%] sm:bottom-[13%] sm:w-[25vw]", pair: 1 },
+  { src: memory1.url, className: "left-[2%] top-[10%] w-[60vw] max-w-[340px]", pair: 0 },
+  { src: memory2.url, className: "right-[2%] top-[38%] w-[60vw] max-w-[340px]", pair: 0 },
+  { src: memory4.url, className: "right-[2%] top-[10%] w-[60vw] max-w-[340px]", pair: 1 },
+  { src: memory3.url, className: "left-[2%] top-[38%] w-[60vw] max-w-[340px]", pair: 1 },
 ];
 
 function ClosingCredits() {
@@ -1433,7 +1388,7 @@ function ClosingCredits() {
         <div className="mt-20 space-y-8">
           <motion.div
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 1.4 }}
-            className="font-noir text-chrome uppercase text-[11vw] sm:text-5xl leading-none"
+            className="font-noir text-chrome uppercase text-[11vw] sm:text-5xl leading-[1.2] py-[0.08em]"
           >
             Mile
           </motion.div>
@@ -1456,6 +1411,7 @@ function ClosingCredits() {
         </div>
       </div>
 
+      <FinalWhisper />
       {/* fade out cinematográfico final */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[35vh] z-20" style={{
         background: "linear-gradient(0deg, oklch(0.045 0.015 260) 0%, transparent 100%)",
@@ -1476,20 +1432,108 @@ function MemoryCloud({
       className={`absolute ${className} aspect-[3/4]`}
       style={{
         WebkitMaskImage:
-          "radial-gradient(ellipse 78% 72% at 50% 50%, #000 34%, rgba(0,0,0,0.82) 58%, rgba(0,0,0,0.3) 78%, transparent 96%)",
+          "radial-gradient(closest-side, #000 45%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.18) 88%, transparent 100%)",
         maskImage:
-          "radial-gradient(ellipse 78% 72% at 50% 50%, #000 34%, rgba(0,0,0,0.82) 58%, rgba(0,0,0,0.3) 78%, transparent 96%)",
+          "radial-gradient(closest-side, #000 45%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.18) 88%, transparent 100%)",
         filter: "none",
       }}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.58 }}
+      animate={{ opacity: 0.72 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.2, ease: "easeOut", delay: index * 0.12 }}
     >
-      <video
-        src={src} autoPlay muted loop playsInline preload="metadata"
-        className="w-full h-full object-cover"
-      />
+      <AutoVideo src={src} className="w-full h-full object-cover" />
     </motion.div>
+  );
+}
+
+/** Video silencioso compatible con iPhone: fuerza play() y pausa fuera de pantalla. */
+function AutoVideo({ src, className = "" }: { src: string; className?: string }) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = true;
+    v.setAttribute("webkit-playsinline", "true");
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) v.play().catch(() => {});
+      else v.pause();
+    }, { rootMargin: "200px 0px" });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return <video ref={ref} src={src} muted loop playsInline autoPlay preload="auto" disablePictureInPicture className={className} />;
+}
+
+/** Mensaje final efímero: 4 s después de llegar al fondo, visible 8 s, una vez por visita. */
+let finalWhisperShown = false;
+function FinalWhisper() {
+  const sentinel = useRef<HTMLDivElement | null>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el || finalWhisperShown) return;
+    let wait: ReturnType<typeof setTimeout> | undefined;
+    let hide: ReturnType<typeof setTimeout> | undefined;
+    const io = new IntersectionObserver(([e]) => {
+      if (finalWhisperShown) return;
+      if (e.isIntersecting) {
+        wait = setTimeout(() => {
+          finalWhisperShown = true;
+          io.disconnect();
+          setShow(true);
+          hide = setTimeout(() => setShow(false), 8000);
+        }, 4000);
+      } else if (wait) {
+        clearTimeout(wait);
+      }
+    });
+    io.observe(el);
+    return () => { io.disconnect(); if (wait) clearTimeout(wait); if (hide) clearTimeout(hide); };
+  }, []);
+  return (
+    <>
+      <div ref={sentinel} aria-hidden className="absolute bottom-0 inset-x-0 h-px" />
+      <AnimatePresence>
+        {show && (
+          <motion.div
+            key="final-whisper"
+            role="status"
+            className="pointer-events-none fixed inset-0 z-[55] flex items-center justify-center px-8"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 1.6, ease: EASE }}
+          >
+            <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(ellipse 120% 62% at 50% 50%, oklch(0.07 0.025 260 / 0.97) 0%, oklch(0.07 0.025 260 / 0.94) 50%, oklch(0.07 0.025 260 / 0.35) 80%, oklch(0.07 0.025 260 / 0) 100%)" }} />
+            <div className="relative text-center max-w-sm" style={{ textShadow: "0 4px 28px oklch(0.06 0.02 260 / 0.95)" }}>
+              <motion.div
+                className="font-noir italic text-chrome text-[clamp(34px,10vw,52px)] leading-[1.25] py-[0.08em]"
+                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 1.2, ease: EASE }}
+              >
+                Hay un lugar para vos.
+              </motion.div>
+              <motion.div
+                className="mx-auto mt-6 h-px w-16"
+                style={{ background: "linear-gradient(90deg, transparent, oklch(0.9 0.02 250 / 0.7), transparent)" }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 1 }}
+              />
+              <motion.p
+                className="mt-6 font-meta text-[11px] leading-[2] normal-case"
+                style={{ letterSpacing: "0.14em", color: "oklch(0.88 0.02 255)" }}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 1.1, ease: EASE }}
+              >
+                La confirmación de asistencia es obligatoria hasta el 20 de diciembre.
+              </motion.p>
+              <motion.div
+                className="mt-8 font-noir italic text-[clamp(22px,6.5vw,30px)] leading-[1.3]"
+                style={{ color: "oklch(0.96 0.01 250)" }}
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.8, duration: 1.2, ease: EASE }}
+              >
+                Te espero.
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

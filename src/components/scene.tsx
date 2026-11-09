@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useState, type ReactNode } from "react";
+import { motion } from "motion/react";
+import { type ReactNode } from "react";
 
 /**
  * SceneBg — per-section cinematic environment.
@@ -30,17 +30,7 @@ export function SceneBg({
   tint?: string;
   alt?: string;
 }) {
-  const reduce = useReducedMotion();
-  const [compact, setCompact] = useState(false);
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 639px)");
-    const update = () => setCompact(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
-  const anim = <T,>(v: T) => (reduce || compact ? undefined : v);
-
+  void scale; void blur; void duration; void saturation;
   return (
     <div
       aria-hidden={alt ? undefined : true}
@@ -56,89 +46,24 @@ export function SceneBg({
             "linear-gradient(180deg, oklch(0.17 0.055 262) 0%, oklch(0.115 0.038 261) 52%, oklch(0.09 0.03 260) 100%)",
         }}
       />
-      {/* the real photograph — desaturated, lightly blurred, held at 35–55% */}
-      <motion.div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${image})`,
-          backgroundSize: "cover",
-          backgroundPosition: position,
-          filter: compact ? `saturate(${saturation}%) contrast(102%)` : `blur(${blur}px) saturate(${saturation}%) contrast(104%)`,
-          opacity,
-          willChange: reduce || compact ? "auto" : "transform",
-        }}
-        initial={{ scale }}
-        animate={anim({ scale: [scale, scale * 1.05, scale] })}
-        transition={{ duration: duration * 2.4, repeat: Infinity, ease: "easeInOut" }}
+      {/* Fotografía estática: sin filtros ni animaciones (iPhone la compone una sola vez). */}
+      <img
+        src={image}
+        alt=""
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ objectPosition: position, opacity: opacity * 0.82 }}
       />
-
-      {/* DUOTONE — plano, sin blend-modes: misma atmósfera azul/plata sin coste de GPU */}
-      <div
-        className="absolute inset-0"
-        style={{ background: "oklch(0.30 0.085 262 / 0.42)" }}
-      />
+      {/* DUOTONE plano */}
+      <div className="absolute inset-0" style={{ background: "oklch(0.30 0.085 262 / 0.42)" }} />
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(160deg, oklch(0.80 0.03 250 / 0.12) 0%, oklch(0.14 0.06 262 / 0.42) 55%, oklch(0.09 0.03 260 / 0.66) 100%)",
+            "linear-gradient(160deg, oklch(0.80 0.03 250 / 0.10) 0%, oklch(0.14 0.06 262 / 0.42) 55%, oklch(0.09 0.03 260 / 0.66) 100%)",
         }}
       />
-      <div
-        className="absolute inset-0"
-        style={{ background: tint ?? "oklch(0.11 0.045 262 / 0.35)" }}
-      />
-
-
-      {/* three drifting light layers — 18s / 24s / 30s, never the source itself */}
-      <motion.div
-        className="absolute -inset-[25%] hidden sm:block"
-        style={{
-          background:
-            "radial-gradient(45% 40% at 50% 50%, oklch(0.92 0.02 250 / 0.26), transparent 70%)",
-          mixBlendMode: "screen",
-          filter: "blur(30px)",
-          willChange: "transform, opacity",
-        }}
-        animate={anim({
-          x: ["-14%", "10%", "-4%", "-14%"],
-          y: ["-8%", "9%", "-3%", "-8%"],
-          opacity: [0.6, 1, 0.7, 0.6],
-        })}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute -inset-[25%] hidden md:block"
-        style={{
-          background:
-            "radial-gradient(40% 46% at 50% 50%, oklch(0.66 0.11 258 / 0.22), transparent 72%)",
-          mixBlendMode: "soft-light",
-          filter: "blur(34px)",
-          willChange: "transform, opacity",
-        }}
-        animate={anim({
-          x: ["11%", "-13%", "5%", "11%"],
-          y: ["7%", "-9%", "12%", "7%"],
-          opacity: [0.45, 0.85, 0.5, 0.45],
-        })}
-        transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute -inset-[25%] hidden sm:block"
-        style={{
-          background:
-            "radial-gradient(52% 38% at 50% 50%, oklch(0.80 0.05 252 / 0.18), transparent 74%)",
-          mixBlendMode: "screen",
-          filter: "blur(36px)",
-          willChange: "transform, opacity",
-        }}
-        animate={anim({
-          x: ["-6%", "12%", "-9%", "-6%"],
-          y: ["10%", "-6%", "4%", "10%"],
-          opacity: [0.5, 0.9, 0.55, 0.5],
-        })}
-        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-      />
+      <div className="absolute inset-0" style={{ background: tint ?? "oklch(0.11 0.045 262 / 0.35)" }} />
 
       {/* shared 130px edge blend — consecutive sections melt into each other */}
       <div
@@ -187,7 +112,7 @@ export function EditorialTitle({
     <motion.h2
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-12%" }}
+      viewport={{ once: true, amount: 0.01 }}
       transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       className={`font-editorial text-chrome ${italic ? "italic" : ""} ${size} ${alignCls} ${className}`}
     >
