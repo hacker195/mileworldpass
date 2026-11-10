@@ -91,10 +91,9 @@ function Index() {
     >
       <audio ref={audioRef} src={soundtrack.url} loop preload="auto" />
       <AmbientBackdrop />
-      <TravellingLight />
       {musicShouldPlay && <MuteToggle muted={muted} onToggle={() => setMuted((m) => !m)} />}
       {stage === "experience" && <FloatingMark />}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         {stage === "intro" && <IntroScreen key="intro" onEnter={() => setStage("access")} />}
         {stage === "access" && (
           <AccessScreen key="access" onSubmit={(m) => { setGuest({ nombre: m.nombre, rol: m.rol }); setStage("validating"); }} />
@@ -377,7 +376,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
   return (
     <motion.section
       className="relative isolate min-h-[100svh] flex items-center justify-center px-5 sm:px-6 py-16 overflow-hidden"
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
     >
       <SceneBg image={bgCorridor.url} opacity={0.56} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={28} />
 
@@ -532,7 +531,7 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
   return (
     <motion.section
       className="relative isolate min-h-[100svh] flex items-center px-6 sm:px-10 py-20 overflow-hidden"
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 1 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}
     >
       <SceneBg image={silkNavy.url} opacity={0.62} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
 
@@ -821,7 +820,7 @@ function VipPass({ guest }: { guest: GuestData }) {
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <div className="font-meta text-[9px]" style={{ letterSpacing: "0.45em", color: "oklch(0.76 0.03 255)" }}>MILE WORLD</div>
-                <div className="mt-2 font-noir text-chrome text-[30px] leading-none uppercase">Acceso</div>
+                <div className="mt-2 font-noir text-chrome text-[30px] leading-[1.25] py-1 uppercase">Acceso</div>
               </div>
               <img src={mLogo.url} alt="" className="w-11 h-11 shrink-0 opacity-90" />
             </div>
@@ -1468,8 +1467,8 @@ function FinalWhisper() {
           finalWhisperShown = true;
           io.disconnect();
           setShow(true);
-          hide = setTimeout(() => setShow(false), 8000);
-        }, 4000);
+          hide = setTimeout(() => setShow(false), 6000);
+        }, 1000);
       } else if (wait) {
         clearTimeout(wait);
       }
