@@ -111,8 +111,7 @@ export function EditorialTitle({
   return (
     <motion.h2
       initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.01 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       className={`font-editorial text-chrome ${italic ? "italic" : ""} ${size} ${alignCls} ${className}`}
     >
@@ -143,8 +142,7 @@ export function Kicker({ children, className = "" }: { children: ReactNode; clas
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9 }}
       className={`eyebrow ${className}`}
     >
