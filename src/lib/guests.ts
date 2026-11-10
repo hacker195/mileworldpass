@@ -92,7 +92,7 @@ export function welcomeGreeting(fullName: string): "Bienvenido" | "Bienvenida" {
     "lara", "gracie", "xio", "steffy", "sara", "nicole", "danna", "aylen", "zaira", "gisella", "maira",
     "hinata", "tatiana", "analia", "oyuki", "kiara", "nhayeli", "luana", "melody", "sofia", "aylin",
     "dulce", "leila", "jimena", "norma", "barbie",
-    "alisson", "ivonne", "nathy", "vivian",
+    "alisson", "ivonne", "nathy", "vivian", "milagros", "monserrath", "tulipan", "thiara",
   ]);
   const mascExceptions = new Set([
     "andres", "nicolas", "tomas", "matias", "elias", "jose", "luis", "jesus", "moises", "ismael",
@@ -101,7 +101,7 @@ export function welcomeGreeting(fullName: string): "Bienvenido" | "Bienvenida" {
     "julio", "valentin", "santos", "sebas", "junior", "gito", "matias", "fede", "german", "dario",
     "hector", "gustavo", "david", "jorge", "nico", "edmar", "nahuel", "dante", "jarred", "joseph",
     "fabri", "maxi", "rufino", "kevin", "xander", "angel", "dylan", "joan", "thiago", "mathias",
-    "igor", "yan", "magno",
+    "igor", "yan", "magno", "jeshua", "franco", "marcos", "mauri", "javier", "studio",
   ]);
   if (femExceptions.has(first)) return "Bienvenida";
   if (mascExceptions.has(first)) return "Bienvenido";

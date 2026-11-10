@@ -116,8 +116,7 @@ function Meta({ children, className = "", style }: { children: React.ReactNode; 
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9 }}
       className={`font-meta text-[10px] ${className}`}
       style={{ color: "oklch(0.74 0.02 255)", ...style }}
@@ -147,8 +146,7 @@ function Title({
   return (
     <motion.h2
       initial={{ opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.01 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, delay, ease: EASE }}
       className={`font-noir text-chrome leading-[1.2] py-[0.08em] ${italic ? "italic" : ""} ${size} ${alignCls} ${className}`}
     >
@@ -165,8 +163,7 @@ function Mark({ className = "", w = "w-8" }: { className?: string; w?: string })
       alt=""
       aria-hidden
       className={`${w} opacity-70 ${className}`}
-      style={{ filter: "drop-shadow(0 0 14px oklch(0.7 0.15 258 / 0.4))" }}
-      loading="lazy"
+      loading="eager"
     />
   );
 }
@@ -226,7 +223,6 @@ function TravellingLight() {
         style={{
           background:
             "linear-gradient(100deg, transparent 20%, oklch(0.92 0.04 252 / 0.10) 45%, oklch(0.78 0.12 258 / 0.14) 52%, transparent 78%)",
-          mixBlendMode: "screen",
           transform: "rotate(8deg)",
         }}
         animate={{ x: ["-60vw", "130vw"] }}
@@ -297,7 +293,6 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
       <motion.img
         src={mLogo.url} alt="MILE WORLD"
         className="w-[50vw] max-w-[220px] object-contain"
-        style={{ filter: "drop-shadow(0 20px 50px oklch(0.55 0.18 258 / 0.45))" }}
         initial={{ opacity: 0, y: 12, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.9, ease: EASE }}
@@ -488,7 +483,7 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
     >
       <SceneBg image={chromeFlow.url} opacity={0.54} blur={2} tint="oklch(0.12 0.05 262 / 0.34)" duration={22} />
       <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] max-w-[600px] h-[80vh]" style={{
-        background: "radial-gradient(ellipse at top, oklch(0.85 0.15 258 / 0.4), transparent 60%)", mixBlendMode: "screen",
+        background: "radial-gradient(ellipse at top, oklch(0.85 0.15 258 / 0.4), transparent 60%)",
       }} />
 
       <div className="relative text-center">
@@ -613,21 +608,20 @@ function Hero() {
         src={wordmark.url} alt="MILE WORLD"
         className="w-[82vw] max-w-[520px] object-contain"
         initial={{ opacity: 0, y: 14 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.5, ease: [0.22, 0.9, 0.3, 1] }}
       />
 
       <motion.div
         className="mt-7 h-px w-24"
         style={{ background: "linear-gradient(90deg, transparent, oklch(0.9 0.02 250 / 0.7), transparent)" }}
-        initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ delay: 0.6, duration: 1 }}
+        initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.6, duration: 1 }}
       />
 
       <motion.p
         className="mt-7 font-noir italic text-center text-[8vw] sm:text-4xl leading-[1.3] py-[0.1em]"
         style={{ color: "oklch(0.96 0.01 250)" }}
-        initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.8, duration: 1.2 }}
+        initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 1.2 }}
       >
         <em>Milena Anahi<br />Montiel Chaparro</em>
       </motion.p>
@@ -640,13 +634,13 @@ function Hero() {
           border: "1px solid oklch(0.85 0.02 250 / 0.18)",
           boxShadow: "0 50px 100px -40px oklch(0 0 0 / 0.85), inset 0 1px 0 oklch(1 0 0 / 0.08)",
         }}
-        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ delay: 0.12, duration: 0.9, ease: EASE }}
+        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12, duration: 0.9, ease: EASE }}
       >
         <PortraitFade />
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 1.4, duration: 1 }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1 }}
         className="mt-10 font-meta text-[16px]" style={{ letterSpacing: "0.45em", color: "oklch(0.92 0.015 250)" }}
       >
         01 · 01 · 2027
@@ -814,8 +808,7 @@ function VipPass({ guest }: { guest: GuestData }) {
             boxShadow: "0 40px 80px -34px oklch(0.55 0.18 258 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.2)",
           }}
           initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.01 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: EASE }}
         >
           {/* iluminación fija de vidrio y cromo */}
@@ -830,7 +823,7 @@ function VipPass({ guest }: { guest: GuestData }) {
                 <div className="font-meta text-[9px]" style={{ letterSpacing: "0.45em", color: "oklch(0.76 0.03 255)" }}>MILE WORLD</div>
                 <div className="mt-2 font-noir text-chrome text-[30px] leading-none uppercase">Acceso</div>
               </div>
-              <img src={mLogo.url} alt="" className="w-11 h-11 shrink-0 opacity-90" style={{ filter: "drop-shadow(0 0 14px oklch(0.7 0.15 258 / 0.45))" }} />
+              <img src={mLogo.url} alt="" className="w-11 h-11 shrink-0 opacity-90" />
             </div>
 
             <div className="mt-9">
@@ -922,7 +915,6 @@ function Countdown() {
       <SceneBg image={bgChrome.url} opacity={0.60} blur={2} position="50% 50%" tint="oklch(0.12 0.05 262 / 0.34)" duration={30} />
       <div aria-hidden className="absolute inset-x-0 top-1/3 h-[40vh] pointer-events-none" style={{
         background: "radial-gradient(ellipse 60% 100% at 50% 0%, oklch(0.8 0.12 258 / 0.18), transparent 70%)",
-        mixBlendMode: "screen",
       }} />
 
       <div className="mx-auto max-w-2xl text-center">
@@ -935,7 +927,7 @@ function Countdown() {
           <motion.div
             key={u.l}
             className="text-center"
-            initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }}
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06, duration: 0.75, ease: EASE }}
           >
             <div className="num-clock text-chrome text-[clamp(36px,12vw,64px)] leading-[1.35] pt-2 pb-2">
@@ -999,7 +991,6 @@ function Ruleta({ guest }: { guest: GuestData }) {
             borderLeft: "9px solid transparent",
             borderRight: "9px solid transparent",
             borderTop: "18px solid oklch(0.94 0.01 250)",
-            filter: "drop-shadow(0 4px 10px oklch(0 0 0 / 0.7))",
           }}
         />
         <motion.div
@@ -1037,7 +1028,6 @@ function Ruleta({ guest }: { guest: GuestData }) {
           ))}
           <div aria-hidden className="absolute inset-0 rounded-full" style={{
             background: "radial-gradient(circle at 30% 25%, oklch(0.95 0.02 250 / 0.16), transparent 55%)",
-            mixBlendMode: "screen",
           }} />
         </motion.div>
 
@@ -1117,7 +1107,7 @@ function TenidaElegante() {
 
           <div className="col-span-12 sm:col-span-3 sm:mt-24">
             <motion.div
-              initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
               className="mt-10 sm:mt-0 border-t pt-6"
               style={{ borderColor: "oklch(0.85 0.02 250 / 0.25)" }}
@@ -1139,8 +1129,7 @@ function EditorialPlate({ image, ratio }: { image: string; ratio: string }) {
   return (
       <motion.div
         initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.01 }}
+        animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
       className={`relative ${ratio} rounded-[18px] overflow-hidden`}
       style={{
@@ -1150,7 +1139,7 @@ function EditorialPlate({ image, ratio }: { image: string; ratio: string }) {
     >
       <div className="absolute inset-0" style={{
         backgroundImage: `url(${image})`, backgroundSize: "cover", backgroundPosition: "center",
-        filter: "saturate(85%) contrast(106%)",
+        
       }} />
       <div className="absolute inset-0" style={{
         background: "linear-gradient(180deg, oklch(0.14 0.05 262 / 0.2), oklch(0.10 0.04 261 / 0.6))",
@@ -1176,7 +1165,7 @@ function Regalo() {
         <Title align="center" size="text-[clamp(40px,15vw,80px)]" className="mt-4 uppercase">Regalos</Title>
 
         <motion.div
-          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
           className="mt-12 mx-auto max-w-lg"
           style={{ color: "oklch(0.9 0.02 255)" }}
@@ -1238,7 +1227,7 @@ function Rsvp({ guest }: { guest: GuestData }) {
         <Meta className="!text-center" style={{ letterSpacing: "0.45em" }}>Confirmación</Meta>
         <Title align="center" size="text-[12vw] sm:text-5xl" className="mt-4 uppercase">¿Vas a ser parte de la noche?</Title>
         <motion.p
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3, duration: 1 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 1 }}
           className="mt-6 font-noir italic text-[6.5vw] sm:text-2xl"
           style={{ color: "oklch(0.94 0.01 250)" }}
         >
@@ -1251,7 +1240,7 @@ function Rsvp({ guest }: { guest: GuestData }) {
 
       <motion.div
         className="mt-5 mx-auto max-w-md text-center"
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
         <a
           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`}
@@ -1315,13 +1304,13 @@ function IllustratedMap() {
         <motion.path
           d="M-10 210 C 80 190, 150 240, 250 200 S 380 150, 420 170"
           stroke="oklch(0.9 0.03 250 / 0.45)" strokeWidth="6"
-          initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
           transition={{ duration: 2.4, ease: "easeInOut" }}
         />
         <motion.path
           d="M40 -10 C 70 90, 140 130, 190 160 S 260 250, 250 320"
           stroke="oklch(0.8 0.1 258 / 0.4)" strokeWidth="4"
-          initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
           transition={{ duration: 2.8, delay: 0.3, ease: "easeInOut" }}
         />
         <path d="M400 40 C 320 60, 280 110, 210 150" stroke="oklch(0.9 0.03 250 / 0.25)" strokeWidth="3" />
@@ -1373,12 +1362,12 @@ function ClosingCredits() {
         <motion.img
           src={wordmark.url} alt="MILE WORLD"
           className="mx-auto w-[68vw] max-w-[300px] opacity-90"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 0.9 }} viewport={{ once: true }} transition={{ duration: 1.6 }}
-          loading="lazy"
+          initial={{ opacity: 0 }} animate={{ opacity: 0.9 }} transition={{ duration: 1.6 }}
+          loading="eager"
         />
 
         <motion.div
-          initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.7, duration: 1.5 }}
+          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 1.5 }}
           className="mt-14 font-noir italic text-[7.5vw] sm:text-4xl leading-tight"
           style={{ color: "oklch(0.96 0.01 250)", textShadow: "0 4px 30px oklch(0.1 0.04 261 / 0.9)" }}
         >
@@ -1387,7 +1376,7 @@ function ClosingCredits() {
 
         <div className="mt-20 space-y-8">
           <motion.div
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 1.4 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 1.4 }}
             className="font-noir text-chrome uppercase text-[11vw] sm:text-5xl leading-[1.2] py-[0.08em]"
           >
             Mile
@@ -1430,19 +1419,16 @@ function MemoryCloud({
   return (
     <motion.div
       className={`absolute ${className} aspect-[3/4]`}
-      style={{
-        WebkitMaskImage:
-          "radial-gradient(closest-side, #000 45%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.18) 88%, transparent 100%)",
-        maskImage:
-          "radial-gradient(closest-side, #000 45%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.18) 88%, transparent 100%)",
-        filter: "none",
-      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 0.72 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.2, ease: "easeOut", delay: index * 0.12 }}
     >
       <AutoVideo src={src} className="w-full h-full object-cover" />
+      {/* nube: viñeta plana por encima (sin máscara sobre el video) */}
+      <div aria-hidden className="absolute -inset-px" style={{
+        background: "radial-gradient(closest-side, oklch(0.12 0.045 262 / 0) 38%, oklch(0.12 0.045 262 / 0.55) 68%, oklch(0.12 0.045 262 / 0.92) 88%, oklch(0.12 0.045 262) 100%)",
+      }} />
     </motion.div>
   );
 }
