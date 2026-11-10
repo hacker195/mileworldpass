@@ -59,7 +59,7 @@ interface GuestData { nombre: string; rol: "adulto" | "joven" }
 const EVENT_DATE = new Date("2027-01-01T20:30:00-03:00");
 const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Oga+Guasu+Salon+de+Eventos";
 const WHATSAPP_NUMBER = "19313275485";
-const GIFT_ALIAS = "CI.3.510.962";
+const GIFT_ALIAS = "CI.7.355.366";
 /** Curva de desaceleración cinematográfica compartida. */
 const EASE = [0.16, 1, 0.3, 1] as const;
 
