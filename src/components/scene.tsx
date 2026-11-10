@@ -50,7 +50,7 @@ export function SceneBg({
       <div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(180deg, oklch(0.105 0.035 261) 0px, oklch(0.16 0.06 262 / 0.62) 130px, oklch(0.14 0.055 262 / 0.66) 55%, oklch(0.16 0.06 262 / 0.62) calc(100% - 130px), oklch(0.105 0.035 261) 100%)${tint ? ", " + tint : ""}`,
+          background: `linear-gradient(180deg, oklch(0.105 0.035 261) 0px, oklch(0.16 0.06 262 / 0.62) 130px, oklch(0.14 0.055 262 / 0.66) 55%, oklch(0.16 0.06 262 / 0.62) calc(100% - 130px), oklch(0.105 0.035 261) 100%)${tint ? `, linear-gradient(${tint}, ${tint})` : ""}`,
         }}
       />
     </div>
