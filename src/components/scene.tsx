@@ -37,16 +37,9 @@ export function SceneBg({
       role={alt ? "img" : undefined}
       aria-label={alt || undefined}
       className="pointer-events-none absolute inset-0 overflow-hidden -z-10"
+      style={{ background: "oklch(0.12 0.04 261)" }}
     >
-      {/* Campo continuo y liso: sin grano, trama ni mosaicos. */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, oklch(0.17 0.055 262) 0%, oklch(0.115 0.038 261) 52%, oklch(0.09 0.03 260) 100%)",
-        }}
-      />
-      {/* Fotografía estática: sin filtros ni animaciones (iPhone la compone una sola vez). */}
+      {/* Una sola foto + una sola capa de fusión: mínima carga gráfica en iPhone. */}
       <img
         src={image}
         alt=""
@@ -54,30 +47,10 @@ export function SceneBg({
         className="absolute inset-0 h-full w-full object-cover"
         style={{ objectPosition: position, opacity: opacity * 0.82 }}
       />
-      {/* DUOTONE plano */}
-      <div className="absolute inset-0" style={{ background: "oklch(0.30 0.085 262 / 0.42)" }} />
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "linear-gradient(160deg, oklch(0.80 0.03 250 / 0.10) 0%, oklch(0.14 0.06 262 / 0.42) 55%, oklch(0.09 0.03 260 / 0.66) 100%)",
-        }}
-      />
-      <div className="absolute inset-0" style={{ background: tint ?? "oklch(0.11 0.045 262 / 0.35)" }} />
-
-      {/* shared 130px edge blend — consecutive sections melt into each other */}
-      <div
-        className="absolute inset-x-0 top-0 h-[130px]"
-        style={{
-          background:
-            "linear-gradient(180deg, oklch(0.105 0.035 261) 0%, oklch(0.105 0.035 261 / 0) 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-x-0 bottom-0 h-[130px]"
-        style={{
-          background:
-            "linear-gradient(0deg, oklch(0.105 0.035 261) 0%, oklch(0.105 0.035 261 / 0) 100%)",
+          background: `linear-gradient(180deg, oklch(0.105 0.035 261) 0px, oklch(0.16 0.06 262 / 0.62) 130px, oklch(0.14 0.055 262 / 0.66) 55%, oklch(0.16 0.06 262 / 0.62) calc(100% - 130px), oklch(0.105 0.035 261) 100%)${tint ? `, linear-gradient(${tint}, ${tint})` : ""}`,
         }}
       />
     </div>
