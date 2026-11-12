@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
-import mLogo from "@/assets/mile-m-logo.png.asset.json";
-import wordmark from "@/assets/mileworld-wordmark-official.png.asset.json";
+import mLogo from "@/assets/mile-m-logo-opt.webp.asset.json";
+import wordmark from "@/assets/mileworld-wordmark-official-opt.webp.asset.json";
 import soundtrack from "@/assets/genesis-soundtrack.mp3.asset.json";
 import bgSilk from "@/assets/bg-silk.jpg.asset.json";
 import bgSilkGold from "@/assets/bg-silk-gold.jpg.asset.json";
@@ -24,9 +24,9 @@ import memory3 from "@/assets/memory-3.mp4.asset.json";
 import memory4 from "@/assets/memory-4.mp4.asset.json";
 import milePortrait from "@/assets/mile-portrait-soft.jpg.asset.json";
 import mile1 from "@/assets/mile-1-new.jpg.asset.json";
-import mile2 from "@/assets/mile-2.png.asset.json";
-import mile3 from "@/assets/mile-3.png.asset.json";
-import mile4 from "@/assets/mile-4.png.asset.json";
+import mile2 from "@/assets/mile-2.jpg.asset.json";
+import mile3 from "@/assets/mile-3.jpg.asset.json";
+import mile4 from "@/assets/mile-4.jpg.asset.json";
 import giftRain from "@/assets/lluvia-de-sobres-movil.mp4.asset.json";
 import { SceneBg } from "@/components/scene";
 import {
@@ -50,6 +50,11 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [
+      { rel: "preload", as: "image", href: mLogo.url, fetchPriority: "high" },
+      { rel: "preload", as: "image", href: wordmark.url, fetchPriority: "high" },
+      { rel: "preload", as: "image", href: bgLights.url },
+    ],
   }),
 });
 
@@ -66,8 +71,41 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 /* ============================================================ */
 /*  ROOT                                                        */
 /* ============================================================ */
+/** Todas las imágenes del recorrido: se decodifican al abrir para que iPhone nunca parpadee. */
+const CRITICAL_IMAGES = [
+  mLogo.url, wordmark.url, bgLights.url, bgCorridor.url, chromeFlow.url, silkNavy.url,
+  silkElectric.url, mile1.url, mile2.url,
+];
+const LATER_IMAGES = [
+  chromeRipple.url, milePortrait.url, bgChrome.url, bgSwirl.url, iridescentDrape.url, mile3.url,
+  mile4.url, bgSilkGold.url, bgIridescent.url, bgSilver.url, bgSilk.url,
+];
+const decodedCache: HTMLImageElement[] = [];
+function warm(url: string) {
+  const img = new Image();
+  img.decoding = "async";
+  img.src = url;
+  decodedCache.push(img); // mantener referencia: Safari no descarta la textura
+  return img.decode().catch(() => {});
+}
+
 function Index() {
   const [stage, setStage] = useState<Stage>("intro");
+  const [booted, setBooted] = useState(false);
+
+  useEffect(() => {
+    let done = false;
+    const finish = () => { if (!done) { done = true; setBooted(true); } };
+    const fonts = typeof document !== "undefined" && document.fonts
+      ? Promise.all([document.fonts.load('400 1em "NoirEtBlanc"'), document.fonts.load('200 1em "Manrope"'), document.fonts.load('300 1em "Manrope"')]).catch(() => {})
+      : Promise.resolve();
+    Promise.all([fonts, ...CRITICAL_IMAGES.map(warm)]).then(() => {
+      finish();
+      LATER_IMAGES.forEach(warm);
+    });
+    const t = setTimeout(finish, 2200);
+    return () => clearTimeout(t);
+  }, []);
   const [guest, setGuest] = useState<GuestData>({ nombre: "", rol: "adulto" });
   const [muted, setMuted] = useState(false);
 
@@ -94,7 +132,7 @@ function Index() {
       {musicShouldPlay && <MuteToggle muted={muted} onToggle={() => setMuted((m) => !m)} />}
       {stage === "experience" && <FloatingMark />}
       <AnimatePresence mode="wait" initial={false}>
-        {stage === "intro" && <IntroScreen key="intro" onEnter={() => setStage("access")} />}
+        {booted && stage === "intro" && <IntroScreen key="intro" onEnter={() => setStage("access")} />}
         {stage === "access" && (
           <AccessScreen key="access" onSubmit={(m) => { setGuest({ nombre: m.nombre, rol: m.rol }); setStage("validating"); }} />
         )}
@@ -114,8 +152,8 @@ function Index() {
 function Meta({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.9 }}
       className={`font-meta text-[10px] ${className}`}
       style={{ color: "oklch(0.74 0.02 255)", ...style }}
@@ -144,8 +182,8 @@ function Title({
   const alignCls = align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
   return (
     <motion.h2
-      initial={{ opacity: 0, y: 22 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.9, delay, ease: EASE }}
       className={`font-noir text-chrome leading-[1.2] py-[0.08em] ${italic ? "italic" : ""} ${size} ${alignCls} ${className}`}
     >
@@ -155,13 +193,13 @@ function Title({
 }
 
 /** Small recurring MILE WORLD identity mark. */
-function Mark({ className = "", w = "w-8" }: { className?: string; w?: string }) {
+function Mark({ className = "", w = "w-5" }: { className?: string; w?: string }) {
   return (
     <img
       src={mLogo.url}
       alt=""
       aria-hidden
-      className={`${w} opacity-70 ${className}`}
+      className={`${w} object-contain opacity-70 ${className}`}
       loading="eager"
     />
   );
@@ -177,7 +215,7 @@ function FloatingMark() {
       animate={{ opacity: 0.45 }}
       transition={{ delay: 1.2, duration: 1.4 }}
     >
-      <img src={mLogo.url} alt="" className="w-7" />
+      <img src={mLogo.url} alt="" className="w-5 object-contain" />
     </motion.div>
   );
 }
@@ -291,18 +329,18 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
       {/* 0.6s — el logo se revela */}
       <motion.img
         src={mLogo.url} alt="MILE WORLD"
-        className="w-[50vw] max-w-[220px] object-contain"
-        initial={{ opacity: 0, y: 12, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="w-[34vw] max-w-[150px] object-contain"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.9, ease: EASE }}
       />
 
       {/* 1.1s — THE MILE EXPERIENCE */}
       <motion.img
         src={wordmark.url} alt="MILE WORLD — The Mile Experience"
-        className="mt-8 w-[70vw] max-w-[300px] object-contain"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 0.92, y: 0 }}
+        className="mt-5 w-[84vw] max-w-[380px] object-contain"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.92 }}
         transition={{ delay: 1.1, duration: 0.9, ease: EASE }}
       />
 
@@ -310,8 +348,8 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
       <motion.div
         className="mt-9 font-meta text-[15px]"
         style={{ letterSpacing: "0.42em", color: "oklch(0.92 0.015 250)" }}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 0.9, ease: EASE }}
       >
         01 · 01 · 2027
@@ -331,7 +369,7 @@ function IntroScreen({ onEnter }: { onEnter: () => void }) {
         {ready && (
           <motion.button
             key="cta" onClick={onEnter}
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease: EASE }}
             className="btn-ghost mt-14 w-full max-w-[320px] !py-[18px] active:scale-[0.98]"
           >
@@ -383,7 +421,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
       <div className="relative w-full max-w-md">
         <div className="glass-panel rounded-[26px] px-6 sm:px-8 py-10 relative overflow-hidden">
           <div className="text-center">
-            <Mark className="mx-auto mb-5" w="w-9" />
+            <Mark className="mx-auto mb-5" w="w-6" />
             <div className="font-meta text-[10px]" style={{ letterSpacing: "0.45em", color: "oklch(0.74 0.02 255)" }}>
               MILE WORLD
             </div>
@@ -414,7 +452,7 @@ function AccessScreen({ onSubmit }: { onSubmit: (m: GuestMember) => void }) {
               <AnimatePresence>
                 {open && results.length > 0 && (
                   <motion.ul
-                    initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                     transition={{ duration: 0.18, ease: "easeOut" }}
                     className="absolute left-0 right-0 mt-2 rounded-2xl overflow-hidden z-20"
                     style={{
@@ -487,7 +525,7 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
 
       <div className="relative text-center">
         <motion.div
-          initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 1.1, ease: [0.16, 0.84, 0.24, 1] }}
           className="mx-auto w-20 h-20 rounded-full grid place-items-center relative"
           style={{
@@ -498,13 +536,13 @@ function ValidatingScreen({ onDone }: { onDone: () => void }) {
         >
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "oklch(0.98 0.01 250)" }}>
             <motion.path d="m5 12 5 5L20 7" strokeLinecap="round" strokeLinejoin="round"
-              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.7, duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
             />
           </svg>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
           className="mt-9 font-noir text-chrome text-[9vw] sm:text-[42px] leading-none uppercase"
           style={{ letterSpacing: "0.06em" }}
@@ -537,13 +575,13 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
 
       <div className="relative w-full max-w-2xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25, duration: 1, ease: [0.22, 0.9, 0.3, 1] }}
           className="font-meta text-[10px]" style={{ letterSpacing: "0.5em", color: "oklch(0.76 0.03 255)" }}
         >
           {greeting}
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ delay: 0.7, duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
           className="mt-4 font-noir text-chrome text-[18vw] sm:text-8xl leading-[1.15] py-[0.08em]"
         >
@@ -566,7 +604,7 @@ function WelcomeScreen({ guest, onContinue }: { guest: GuestData; onContinue: ()
 
         <motion.button
           onClick={onContinue}
-          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.8, duration: 0.9 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.8, duration: 0.9 }}
           className="btn-premium mt-12 ml-[6%]"
         >
           Continuar
@@ -605,9 +643,9 @@ function Hero() {
 
       <motion.img
         src={wordmark.url} alt="MILE WORLD"
-        className="w-[82vw] max-w-[520px] object-contain"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
+        className="w-[84vw] max-w-[440px] object-contain"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 1.5, ease: [0.22, 0.9, 0.3, 1] }}
       />
 
@@ -620,7 +658,7 @@ function Hero() {
       <motion.p
         className="mt-7 font-noir italic text-center text-[8vw] sm:text-4xl leading-[1.3] py-[0.1em]"
         style={{ color: "oklch(0.96 0.01 250)" }}
-        initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 1.2 }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 1.2 }}
       >
         <em>Milena Anahi<br />Montiel Chaparro</em>
       </motion.p>
@@ -633,7 +671,7 @@ function Hero() {
           border: "1px solid oklch(0.85 0.02 250 / 0.18)",
           boxShadow: "0 50px 100px -40px oklch(0 0 0 / 0.85), inset 0 1px 0 oklch(1 0 0 / 0.08)",
         }}
-        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12, duration: 0.9, ease: EASE }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.12, duration: 0.9, ease: EASE }}
       >
         <PortraitFade />
       </motion.div>
@@ -659,16 +697,14 @@ function PortraitFade() {
   return (
     <div className="absolute inset-0">
       {shots.map((src, idx) => (
-        <motion.img
+        <img
           key={src}
           src={src}
           alt="Milena Anahi Montiel Chaparro"
           className="absolute inset-0 w-full h-full object-cover"
-          initial={false}
-          animate={{ opacity: i === idx ? 1 : 0 }}
-          transition={{ duration: 2.2, ease: "easeInOut" }}
+          style={{ opacity: i === idx ? 1 : 0, transition: "opacity 2.2s ease-in-out", transform: "translateZ(0)", backfaceVisibility: "hidden" }}
           loading="eager"
-          decoding="async"
+          decoding="sync"
           fetchPriority="high"
         />
       ))}
@@ -806,8 +842,8 @@ function VipPass({ guest }: { guest: GuestData }) {
             border: "1px solid oklch(1 0 0 / 0.16)",
             boxShadow: "0 40px 80px -34px oklch(0.55 0.18 258 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.2)",
           }}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.9, ease: EASE }}
         >
           {/* iluminación fija de vidrio y cromo */}
@@ -822,7 +858,7 @@ function VipPass({ guest }: { guest: GuestData }) {
                 <div className="font-meta text-[9px]" style={{ letterSpacing: "0.45em", color: "oklch(0.76 0.03 255)" }}>MILE WORLD</div>
                 <div className="mt-2 font-noir text-chrome text-[30px] leading-[1.25] py-1 uppercase">Acceso</div>
               </div>
-              <img src={mLogo.url} alt="" className="w-11 h-11 shrink-0 opacity-90" />
+              <img src={mLogo.url} alt="" className="w-9 h-9 object-contain shrink-0 opacity-90" />
             </div>
 
             <div className="mt-9">
@@ -926,7 +962,7 @@ function Countdown() {
           <motion.div
             key={u.l}
             className="text-center"
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ delay: i * 0.06, duration: 0.75, ease: EASE }}
           >
             <div className="num-clock text-chrome text-[clamp(36px,12vw,64px)] leading-[1.35] pt-2 pb-2">
@@ -1063,9 +1099,9 @@ function Ruleta({ guest }: { guest: GuestData }) {
             <div className="absolute inset-0" style={{ background: "oklch(0.06 0.025 260 / 0.94)" }} />
             <motion.div
               className="relative text-center max-w-lg"
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.9, ease: [0.22, 0.9, 0.3, 1] }}
             >
               <div className="font-meta text-[10px]" style={{ letterSpacing: "0.5em", color: "oklch(0.74 0.02 255)" }}>Tu destino</div>
@@ -1106,7 +1142,7 @@ function TenidaElegante() {
 
           <div className="col-span-12 sm:col-span-3 sm:mt-24">
             <motion.div
-              initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
               className="mt-10 sm:mt-0 border-t pt-6"
               style={{ borderColor: "oklch(0.85 0.02 250 / 0.25)" }}
@@ -1127,8 +1163,8 @@ function TenidaElegante() {
 function EditorialPlate({ image, ratio }: { image: string; ratio: string }) {
   return (
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       transition={{ duration: 1.3, ease: [0.22, 0.9, 0.3, 1] }}
       className={`relative ${ratio} rounded-[18px] overflow-hidden`}
       style={{
@@ -1164,7 +1200,7 @@ function Regalo() {
         <Title align="center" size="text-[clamp(40px,15vw,80px)]" className="mt-4 uppercase">Regalos</Title>
 
         <motion.div
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
           className="mt-12 mx-auto max-w-lg"
           style={{ color: "oklch(0.9 0.02 255)" }}
@@ -1239,7 +1275,7 @@ function Rsvp({ guest }: { guest: GuestData }) {
 
       <motion.div
         className="mt-5 mx-auto max-w-md text-center"
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.1, ease: [0.22, 0.9, 0.3, 1] }}
       >
         <a
           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`}
@@ -1303,13 +1339,13 @@ function IllustratedMap() {
         <motion.path
           d="M-10 210 C 80 190, 150 240, 250 200 S 380 150, 420 170"
           stroke="oklch(0.9 0.03 250 / 0.45)" strokeWidth="6"
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 2.4, ease: "easeInOut" }}
         />
         <motion.path
           d="M40 -10 C 70 90, 140 130, 190 160 S 260 250, 250 320"
           stroke="oklch(0.8 0.1 258 / 0.4)" strokeWidth="4"
-          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 2.8, delay: 0.3, ease: "easeInOut" }}
         />
         <path d="M400 40 C 320 60, 280 110, 210 150" stroke="oklch(0.9 0.03 250 / 0.25)" strokeWidth="3" />
@@ -1360,13 +1396,13 @@ function ClosingCredits() {
       <div className="relative z-10 text-center max-w-md">
         <motion.img
           src={wordmark.url} alt="MILE WORLD"
-          className="mx-auto w-[68vw] max-w-[300px] opacity-90"
+          className="mx-auto w-[66vw] max-w-[280px] opacity-90"
           initial={{ opacity: 0 }} animate={{ opacity: 0.9 }} transition={{ duration: 1.6 }}
           loading="eager"
         />
 
         <motion.div
-          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 1.5 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 1.5 }}
           className="mt-14 font-noir italic text-[7.5vw] sm:text-4xl leading-tight"
           style={{ color: "oklch(0.96 0.01 250)", textShadow: "0 4px 30px oklch(0.1 0.04 261 / 0.9)" }}
         >
@@ -1418,16 +1454,16 @@ function MemoryCloud({
   return (
     <motion.div
       className={`absolute ${className} aspect-[3/4]`}
+      style={{
+        WebkitMaskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 40%, rgba(0,0,0,0.55) 68%, transparent 100%)",
+        maskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 40%, rgba(0,0,0,0.55) 68%, transparent 100%)",
+      }}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.72 }}
+      animate={{ opacity: 0.85 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.2, ease: "easeOut", delay: index * 0.12 }}
     >
       <AutoVideo src={src} className="w-full h-full object-cover" />
-      {/* nube: viñeta plana por encima (sin máscara sobre el video) */}
-      <div aria-hidden className="absolute -inset-px" style={{
-        background: "radial-gradient(closest-side, oklch(0.12 0.045 262 / 0) 38%, oklch(0.12 0.045 262 / 0.55) 68%, oklch(0.12 0.045 262 / 0.92) 88%, oklch(0.12 0.045 262) 100%)",
-      }} />
     </motion.div>
   );
 }
@@ -1492,7 +1528,7 @@ function FinalWhisper() {
             <div className="relative text-center max-w-sm" style={{ textShadow: "0 4px 28px oklch(0.06 0.02 260 / 0.95)" }}>
               <motion.div
                 className="font-noir italic text-chrome text-[clamp(34px,10vw,52px)] leading-[1.25] py-[0.08em]"
-                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 1.2, ease: EASE }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 1.2, ease: EASE }}
               >
                 Hay un lugar para vos.
               </motion.div>
@@ -1504,14 +1540,17 @@ function FinalWhisper() {
               <motion.p
                 className="mt-6 font-meta text-[11px] leading-[2] normal-case"
                 style={{ letterSpacing: "0.14em", color: "oklch(0.88 0.02 255)" }}
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 1.1, ease: EASE }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1, duration: 1.1, ease: EASE }}
               >
-                La confirmación de asistencia es obligatoria hasta el 20 de diciembre.
+                La confirmación de asistencia es obligatoria<br />hasta el
+                <span className="mt-3 block font-noir italic text-chrome text-[clamp(26px,8vw,38px)] leading-[1.25] normal-case" style={{ letterSpacing: "0.04em" }}>
+                  15 de diciembre
+                </span>
               </motion.p>
               <motion.div
                 className="mt-8 font-noir italic text-[clamp(22px,6.5vw,30px)] leading-[1.3]"
                 style={{ color: "oklch(0.96 0.01 250)" }}
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.8, duration: 1.2, ease: EASE }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 1.2, ease: EASE }}
               >
                 Te espero.
               </motion.div>
